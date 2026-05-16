@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KaribuStay – Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- ✅ Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1A5C3A;--green-mid:#27A65D;--green-light:#E8F5EE;
+      --amber:#F48942;--red:#E53935;--blue:#1976D2;
+      --gray-bg:#F6F7F9;--gray-border:#E0E0E0;
+      --text:#222;--text-mid:#555;--text-light:#888;--white:#fff;
+    }
+    body{font-family:'Poppins',sans-serif;background:var(--gray-bg);color:var(--text);min-height:100vh;}
+
+    /* ── LOGIN SCREEN ── */
+    .login-screen{
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;background:var(--green);
+      padding:1.5rem;
+    }
+    .login-box{
+      background:var(--white);border-radius:16px;
+      padding:2.8rem 2.5rem;width:100%;max-width:400px;
+      box-shadow:0 24px 60px rgba(0,0,0,.25);
+    }
+    .login-logo{text-align:center;margin-bottom:2rem}
+    .login-logo .logo-icon{width:54px;height:54px;background:var(--green);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem}
+    .login-logo .logo-icon svg{color:var(--white)}
+    .login-logo h1{font-size:1.3rem;font-weight:700;color:var(--text)}
+    .login-logo h1 span{color:var(--amber)}
+    .login-logo p{font-size:.78rem;color:var(--text-light);margin-top:.3rem}
+    .login-field{margin-bottom:1rem}
+    .login-field label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mid);margin-bottom:.35rem}
+    .login-field input{width:100%;border:1.5px solid var(--gray-border);border-radius:8px;padding:.78rem 1rem;font-family:'Poppins',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .15s}
+    .login-field input:focus{border-color:var(--green-mid)}
+    .login-btn{width:100%;background:var(--green);color:var(--white);border:none;padding:.88rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .login-btn:hover{background:#155030}
+    .login-btn:disabled{background:#aaa;cursor:not-allowed}
+    .login-error{background:#FDEDEC;color:var(--red);border-radius:8px;padding:.7rem 1rem;font-size:.8rem;margin-top:.8rem;display:none}
+    .login-error.show{display:block}
+
+    /* ── TOPBAR ── */
+    .topbar{background:var(--green);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:100;}
+    .tb-left{display:flex;align-items:center;gap:1rem}
+    .tb-logo{font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none;}
+    .tb-logo span{color:var(--amber);}
+    .tb-badge{background:rgba(255,255,255,.15);color:#fff;font-size:.72rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;letter-spacing:.04em;}
+    .tb-right{display:flex;align-items:center;gap:1rem}
+    .tb-user{color:rgba(255,255,255,.75);font-size:.78rem;display:flex;align-items:center;gap:.4rem}
+    .tb-user svg{color:var(--amber)}
+    .tb-link{color:rgba(255,255,255,.8);font-size:.8rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:color .15s;}
+    .tb-link:hover{color:#fff;}
+    .btn-logout{background:rgba(255,255,255,.15);color:#fff;border:none;padding:.38rem .9rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:background .15s}
+    .btn-logout:hover{background:rgba(229,57,53,.7)}
+
+    /* ── LAYOUT ── */
+    .layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;padding:1.5rem 2rem;max-width:1400px;margin:0 auto;}
+
+    /* ── FORM PANEL ── */
+    .panel{background:var(--white);border-radius:12px;border:1px solid var(--gray-border);overflow:hidden;position:sticky;top:76px;height:fit-content;}
+    .panel-hdr{background:var(--green-light);padding:1.2rem 1.5rem;border-bottom:1px solid var(--gray-border);}
+    .panel-hdr h2{font-size:1rem;font-weight:700;color:var(--green);}
+    .panel-hdr p{font-size:.75rem;color:var(--text-mid);margin-top:.2rem;}
+    .panel-body{padding:1.4rem 1.5rem;}
+    .form-group{margin-bottom:1rem;}
+    label{display:block;font-size:.72rem;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;}
+    input,select,textarea{width:100%;border:1.5px solid var(--gray-border);border-radius:7px;padding:.68rem .9rem;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;}
+    input:focus,select:focus,textarea:focus{border-color:var(--green-mid);}
+    textarea{resize:vertical;min-height:72px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+    .check-group{display:flex;align-items:center;gap:.5rem;}
+    .check-group input[type=checkbox]{width:16px;height:16px;accent-color:var(--green-mid);}
+    .check-group label{margin:0;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--text);font-weight:400;}
+
+    /* ── SWATCHES ── */
+    .swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem;}
+    .swatch{width:30px;height:30px;border-radius:6px;cursor:pointer;border:3px solid transparent;transition:border-color .15s,transform .15s;}
+    .swatch:hover{transform:scale(1.12);}
+    .swatch.active{border-color:var(--text);}
+
+    /* ── BUTTONS ── */
+    .btn{border:none;border-radius:7px;padding:.72rem 1.2rem;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s,transform .15s;display:inline-flex;align-items:center;gap:.4rem;}
+    .btn:active{transform:scale(.97);}
+    .btn-primary{background:var(--green-mid);color:#fff;width:100%;}
+    .btn-primary:hover{background:#1e9050;}
+    .btn-secondary{background:var(--gray-bg);color:var(--text-mid);width:100%;margin-top:.5rem;}
+    .btn-secondary:hover{background:var(--gray-border);}
+    .btn-sm{padding:.38rem .8rem;font-size:.72rem;}
+    .btn-edit{background:#EBF5FB;color:var(--blue);}
+    .btn-edit:hover{background:#D6EAF8;}
+    .btn-del{background:#FDEDEC;color:var(--red);}
+    .btn-del:hover{background:#FADBD8;}
+
+    /* ── LISTINGS PANEL ── */
+    .listings-panel{display:flex;flex-direction:column;gap:1.2rem;}
+    .lp-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;}
+    .lp-top h2{font-size:1.1rem;font-weight:700;}
+    .stats-row{display:flex;gap:.8rem;flex-wrap:wrap;}
+    .stat-chip{background:var(--white);border:1px solid var(--gray-border);border-radius:8px;padding:.5rem 1rem;font-size:.78rem;}
+    .stat-chip strong{font-weight:700;color:var(--green);font-size:1.1rem;display:block;}
+    .stat-chip span{color:var(--text-light);}
+    .search-row{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem;}
+    .search-row svg{color:var(--text-light);flex-shrink:0;}
+    .search-row input{border:none;outline:none;flex:1;font-size:.85rem;color:var(--text);}
+    .table-wrap{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--green-light);}
+    th{padding:.85rem 1rem;text-align:left;font-size:.72rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+    td{padding:.9rem 1rem;border-top:1px solid var(--gray-bg);font-size:.8rem;vertical-align:middle;}
+    tr:hover td{background:#FAFAFA;}
+    .empty-state{text-align:center;padding:3rem 1rem;}
+    .empty-state svg{color:var(--gray-border);margin-bottom:1rem;}
+    .empty-state h3{font-size:1rem;color:var(--text-mid);margin-bottom:.3rem;}
+    .empty-state p{font-size:.8rem;color:var(--text-light);}
+    .loading{text-align:center;padding:2rem;color:var(--text-light);font-size:.85rem;}
+
+    /* ── PROPERTY CHIP ── */
+    .prop-chip{display:flex;align-items:center;gap:.7rem;}
+    .prop-thumb{width:42px;height:42px;border-radius:7px;flex-shrink:0;}
+    .prop-chip-name{font-weight:600;font-size:.82rem;color:var(--text);}
+    .prop-chip-loc{font-size:.72rem;color:var(--text-light);}
+
+    /* ── BADGES ── */
+    .badge{display:inline-block;padding:.2rem .55rem;border-radius:5px;font-size:.66rem;font-weight:600;}
+    .badge-popular{background:#FEF3C7;color:#92400E;}
+    .badge-new{background:#D1FAE5;color:#065F46;}
+    .badge-none{background:var(--gray-bg);color:var(--text-light);}
+    .type-chip{display:inline-block;padding:.18rem .55rem;border-radius:5px;font-size:.68rem;font-weight:500;}
+    .type-apartment{background:#EBF5FB;color:#1565C0;}
+    .type-hotel{background:#F3E5F5;color:#6A1B9A;}
+    .type-short_stay{background:#FFF3E0;color:#E65100;}
+    .stars{color:var(--amber);font-size:.8rem;}
+
+    /* ── SAVING OVERLAY ── */
+    .saving-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:500;display:none}
+    .saving-box{background:var(--white);border-radius:12px;padding:2rem 2.5rem;text-align:center;font-size:.9rem;font-weight:500;color:var(--green)}
+    .spinner{width:36px;height:36px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .8rem}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#fff;padding:.8rem 1.4rem;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:transform .3s,opacity .3s;z-index:999;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.error{background:var(--red);}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:900px){.layout{grid-template-columns:1fr;}.panel{position:static;}}
+    @media(max-width:600px){.form-row{grid-template-columns:1fr;}.stats-row{flex-direction:column;}}
+
+    /* hide main content until logged in */
+    #main-content{display:none}
+    #login-screen{display:flex}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z" fill="currentColor" opacity=".7"/>
+          <path d="M9 22V13h6v9" fill="currentColor"/>
+        </svg>
+      </div>
+      <h1>Karibu<span>Stay</span></h1>
+      <p>Admin Panel — Authorised Access Only</p>
+    </div>
+
+    <div class="login-field">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="admin@karibustay.com" autocomplete="email"/>
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') doLogin()"/>
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="doLogin()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Sign In to Admin
+    </button>
+
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN ADMIN (shown after login)
+══════════════════════════════════════ -->
+<div id="main-content">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <a href="#" class="tb-logo">Karibu<span>Stay</span></a>
+      <span class="tb-badge">⚙ Admin Panel</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-user">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="admin-email-display"></span>
+      </div>
+      <a href="karibustay.html" class="tb-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        View Website
+      </a>
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- LEFT: ADD / EDIT FORM -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <h2 id="form-title">➕ Add New Property</h2>
+        <p id="form-sub">Fill in the details below to add a listing</p>
+      </div>
+      <div class="panel-body">
+        <input type="hidden" id="edit-id"/>
+
+        <div class="form-group">
+          <label>Property Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Masaki Ocean View Apartment"/>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type *</label>
+            <select id="f-type">
+              <option value="">Select type...</option>
+              <option value="apartment">Apartment</option>
+              <option value="hotel">Hotel</option>
+              <option value="short_stay">Short Stay</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Badge</label>
+            <select id="f-badge">
+              <option value="none">None</option>
+              <option value="popular">● Popular</option>
+              <option value="new">✦ New</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Location *</label>
+          <input type="text" id="f-location" placeholder="e.g. Masaki, Dar es Salaam"/>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price (TZS / night) *</label>
+            <input type="number" id="f-price" placeholder="120000"/>
+          </div>
+          <div class="form-group">
+            <label>Rating (0–5)</label>
+            <input type="number" id="f-rating" placeholder="4.8" min="0" max="5" step="0.1"/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Bedrooms</label>
+            <input type="number" id="f-beds" placeholder="2" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Bathrooms</label>
+            <input type="number" id="f-baths" placeholder="1" min="0"/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Reviews Count</label>
+            <input type="number" id="f-reviews" placeholder="12" min="0"/>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:.1rem">
+            <div class="check-group">
+              <input type="checkbox" id="f-wifi" checked/>
+              <label for="f-wifi">Has Wi-Fi</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <textarea id="f-desc" placeholder="Brief description of the property..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Card Color Theme</label>
+          <div class="swatches" id="swatch-container">
+            <div class="swatch active" data-color="#C88B55,#4A2010" style="background:linear-gradient(135deg,#C88B55,#4A2010)" title="Warm"></div>
+            <div class="swatch" data-color="#7AAF8A,#1E4028" style="background:linear-gradient(135deg,#7AAF8A,#1E4028)" title="Forest"></div>
+            <div class="swatch" data-color="#C8A058,#382000" style="background:linear-gradient(135deg,#C8A058,#382000)" title="Golden"></div>
+            <div class="swatch" data-color="#90B8A0,#254535" style="background:linear-gradient(135deg,#90B8A0,#254535)" title="Sage"></div>
+            <div class="swatch" data-color="#7090B0,#182030" style="background:linear-gradient(135deg,#7090B0,#182030)" title="Ocean"></div>
+            <div class="swatch" data-color="#B07090,#301020" style="background:linear-gradient(135deg,#B07090,#301020)" title="Rose"></div>
+            <div class="swatch" data-color="#909090,#202020" style="background:linear-gradient(135deg,#909090,#202020)" title="Slate"></div>
+            <div class="swatch" data-color="#A0B050,#283010" style="background:linear-gradient(135deg,#A0B050,#283010)" title="Lime"></div>
+          </div>
+          <input type="hidden" id="f-color" value="#C88B55,#4A2010"/>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveProperty()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="save-btn-text">Save Property</span>
+        </button>
+        <button class="btn btn-secondary" onclick="clearForm()" id="cancel-btn" style="display:none">
+          ✕ Cancel Edit
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: LISTINGS TABLE -->
+    <div class="listings-panel">
+      <div class="lp-top">
+        <h2>All Listings</h2>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-chip"><strong id="stat-total">0</strong><span>Total</span></div>
+        <div class="stat-chip"><strong id="stat-apt">0</strong><span>Apartments</span></div>
+        <div class="stat-chip"><strong id="stat-hotel">0</strong><span>Hotels</span></div>
+        <div class="stat-chip"><strong id="stat-short">0</strong><span>Short Stays</span></div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder="Search by name or location..." oninput="renderTable()"/>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div id="tbl-loading" class="loading">
+          <div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .6rem"></div>
+          Loading listings from Supabase...
+        </div>
+        <div id="tbl-content" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Price / Night</th>
+                <th>Rating</th>
+                <th>Badge</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+          <div id="empty-state" class="empty-state" style="display:none">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <h3>No listings yet</h3>
+            <p>Add your first property using the form on the left.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Saving overlay -->
+<div class="saving-overlay" id="saving-overlay">
+  <div class="saving-box">
+    <div class="spinner"></div>
+    Saving to Supabase...
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ══════════════════════════════════════
+  // 🔧 YOUR SUPABASE CREDENTIALS
+  // ══════════════════════════════════════
+  const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let listings = [];
+  let selectedColor = '#C88B55,#4A2010';
+
+  // ══════════════════════════════════════
+  // AUTH
+  // ══════════════════════════════════════
+  async function init() {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      showAdmin(session.user.email);
+    }
+    // Listen for auth changes
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') showAdmin(session.user.email);
+      if (event === 'SIGNED_OUT') showLogin();
+    });
+  }
+
+  function showAdmin(email) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('admin-email-display').textContent = email;
+    loadListings();
+  }
+
+  function showLogin() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+  }
+
+  async function doLogin() {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl    = document.getElementById('login-error');
+    const btn      = document.getElementById('login-btn');
+
+    if (!email || !password) {
+      errEl.textContent = 'Please enter your email and password.';
+      errEl.classList.add('show'); return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+    errEl.classList.remove('show');
+
+    const { error } = await db.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      errEl.textContent = error.message === 'Invalid login credentials'
+        ? '❌ Wrong email or password. Please try again.'
+        : '❌ ' + error.message;
+      errEl.classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Sign In to Admin`;
+    }
+    // success handled by onAuthStateChange
+  }
+
+  async function doLogout() {
+    await db.auth.signOut();
+    showToast('Logged out successfully.');
+  }
+
+  // ══════════════════════════════════════
+  // LOAD LISTINGS FROM SUPABASE
+  // ══════════════════════════════════════
+  async function loadListings() {
+    document.getElementById('tbl-loading').style.display = 'block';
+    document.getElementById('tbl-content').style.display = 'none';
+
+    const { data, error } = await db
+      .from('listings')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    document.getElementById('tbl-loading').style.display = 'none';
+    document.getElementById('tbl-content').style.display = 'block';
+
+    if (error) { showToast('Failed to load listings: ' + error.message, true); return; }
+
+    listings = data || [];
+    renderTable();
+    updateStats();
+  }
+
+  // ══════════════════════════════════════
+  // RENDER TABLE
+  // ══════════════════════════════════════
+  function renderTable() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const filtered = listings.filter(p =>
+      p.name.toLowerCase().includes(q) || p.location.toLowerCase().includes(q)
+    );
+    const tbody  = document.getElementById('table-body');
+    const empty  = document.getElementById('empty-state');
+
+    if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map(p => {
+      const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
+      const stars = p.rating ? '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= .5 ? '½' : '') : '—';
+      const typeLabel = {apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay'}[p.type] || p.type;
+      const price = p.price ? 'TZS ' + Number(p.price).toLocaleString() : '—';
+      return `
+        <tr>
+          <td>
+            <div class="prop-chip">
+              <svg class="prop-thumb" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="th${p.id.slice(0,6)}" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="${esc(c1)}"/>
+                  <stop offset="100%" stop-color="${esc(c2)}"/>
+                </linearGradient></defs>
+                <rect width="42" height="42" rx="7" fill="url(#th${p.id.slice(0,6)})"/>
+                <text x="21" y="27" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="16">
+                  ${p.type==='hotel'?'🏨':p.type==='short_stay'?'📅':'🏠'}
+                </text>
+              </svg>
+              <div>
+                <div class="prop-chip-name">${esc(p.name)}</div>
+                <div class="prop-chip-loc">📍 ${esc(p.location)}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="type-chip type-${p.type}">${typeLabel}</span></td>
+          <td><strong>${price}</strong></td>
+          <td><span class="stars">${stars}</span> <span style="font-size:.75rem;color:var(--text-light)">${p.rating||'—'} (${p.reviews||0})</span></td>
+          <td>${badgeHTML(p.badge)}</td>
+          <td>
+            <div style="display:flex;gap:.4rem">
+              <button class="btn btn-sm btn-edit" onclick="editProperty('${p.id}')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+              <button class="btn btn-sm btn-del" onclick="deleteProperty('${p.id}')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                Del
+              </button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function badgeHTML(b) {
+    if (b === 'popular') return '<span class="badge badge-popular">● Popular</span>';
+    if (b === 'new')     return '<span class="badge badge-new">✦ New</span>';
+    return '<span class="badge badge-none">None</span>';
+  }
+
+  function updateStats() {
+    document.getElementById('stat-total').textContent = listings.length;
+    document.getElementById('stat-apt').textContent   = listings.filter(p=>p.type==='apartment').length;
+    document.getElementById('stat-hotel').textContent  = listings.filter(p=>p.type==='hotel').length;
+    document.getElementById('stat-short').textContent  = listings.filter(p=>p.type==='short_stay').length;
+  }
+
+  // ══════════════════════════════════════
+  // SAVE (INSERT or UPDATE)
+  // ══════════════════════════════════════
+  async function saveProperty() {
+    const name     = document.getElementById('f-name').value.trim();
+    const type     = document.getElementById('f-type').value;
+    const location = document.getElementById('f-location').value.trim();
+    const price    = document.getElementById('f-price').value.trim();
+
+    if (!name || !type || !location || !price) {
+      showToast('Please fill in all required fields (*)', true); return;
+    }
+
+    const prop = {
+      name,
+      type,
+      location,
+      price:       Number(price),
+      rating:      parseFloat(document.getElementById('f-rating').value)  || 0,
+      beds:        parseInt(document.getElementById('f-beds').value)       || 0,
+      baths:       parseInt(document.getElementById('f-baths').value)      || 0,
+      reviews:     parseInt(document.getElementById('f-reviews').value)    || 0,
+      wifi:        document.getElementById('f-wifi').checked,
+      badge:       document.getElementById('f-badge').value,
+      description: document.getElementById('f-desc').value.trim(),
+      color:       selectedColor,
+    };
+
+    showSaving(true);
+    const editId = document.getElementById('edit-id').value;
+
+    if (editId) {
+      // UPDATE
+      const { error } = await db.from('listings').update(prop).eq('id', editId);
+      showSaving(false);
+      if (error) { showToast('Update failed: ' + error.message, true); return; }
+      showToast('✅ Property updated!');
+    } else {
+      // INSERT
+      const { error } = await db.from('listings').insert(prop);
+      showSaving(false);
+      if (error) { showToast('Save failed: ' + error.message, true); return; }
+      showToast('✅ Property added!');
+    }
+
+    clearForm();
+    await loadListings();
+  }
+
+  // ══════════════════════════════════════
+  // EDIT — populate form
+  // ══════════════════════════════════════
+  function editProperty(id) {
+    const p = listings.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('edit-id').value   = p.id;
+    document.getElementById('f-name').value    = p.name;
+    document.getElementById('f-type').value    = p.type;
+    document.getElementById('f-location').value= p.location;
+    document.getElementById('f-price').value   = p.price;
+    document.getElementById('f-rating').value  = p.rating;
+    document.getElementById('f-beds').value    = p.beds;
+    document.getElementById('f-baths').value   = p.baths;
+    document.getElementById('f-reviews').value = p.reviews;
+    document.getElementById('f-wifi').checked  = p.wifi;
+    document.getElementById('f-badge').value   = p.badge || 'none';
+    document.getElementById('f-desc').value    = p.description || '';
+    selectedColor = p.color || '#C88B55,#4A2010';
+    document.getElementById('f-color').value   = selectedColor;
+
+    document.querySelectorAll('.swatch').forEach(s =>
+      s.classList.toggle('active', s.dataset.color === selectedColor)
+    );
+
+    document.getElementById('form-title').textContent     = '✏️ Edit Property';
+    document.getElementById('form-sub').textContent       = 'Update the property details below';
+    document.getElementById('save-btn-text').textContent  = 'Update Property';
+    document.getElementById('cancel-btn').style.display   = 'flex';
+    document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ══════════════════════════════════════
+  // DELETE
+  // ══════════════════════════════════════
+  async function deleteProperty(id) {
+    if (!confirm('Delete this property? This cannot be undone.')) return;
+    showSaving(true);
+    const { error } = await db.from('listings').delete().eq('id', id);
+    showSaving(false);
+    if (error) { showToast('Delete failed: ' + error.message, true); return; }
+    showToast('Property deleted.');
+    await loadListings();
+  }
+
+  // ══════════════════════════════════════
+  // CLEAR FORM
+  // ══════════════════════════════════════
+  function clearForm() {
+    document.getElementById('edit-id').value = '';
+    ['f-name','f-type','f-location','f-price','f-rating','f-beds','f-baths','f-reviews','f-desc']
+      .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-wifi').checked   = true;
+    document.getElementById('f-badge').value    = 'none';
+    document.getElementById('f-color').value    = '#C88B55,#4A2010';
+    selectedColor = '#C88B55,#4A2010';
+    document.querySelectorAll('.swatch').forEach((s,i) => s.classList.toggle('active', i === 0));
+    document.getElementById('form-title').textContent    = '➕ Add New Property';
+    document.getElementById('form-sub').textContent      = 'Fill in the details below to add a listing';
+    document.getElementById('save-btn-text').textContent = 'Save Property';
+    document.getElementById('cancel-btn').style.display  = 'none';
+  }
+
+  // ══════════════════════════════════════
+  // HELPERS
+  // ══════════════════════════════════════
+  function showSaving(on) {
+    document.getElementById('saving-overlay').style.display = on ? 'flex' : 'none';
+  }
+
+  function showToast(msg, error=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (error ? ' error' : '') + ' show';
+    setTimeout(() => t.className = 'toast' + (error ? ' error' : ''), 3500);
+  }
+
+  function esc(str) {
+    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Swatches
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      selectedColor = s.dataset.color;
+      document.getElementById('f-color').value = selectedColor;
+    });
+  });
+
+  // ══════════════════════════════════════
+  // START
+  // ══════════════════════════════════════
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Property – KaribuStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1A5C3A;--green-mid:#27A65D;--green-light:#E8F5EE;
+      --amber:#F48942;--red:#E53935;
+      --gray-bg:#F5F5F5;--gray-border:#E0E0E0;
+      --text:#222;--text-mid:#555;--text-light:#888;--white:#fff;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Poppins',sans-serif;color:var(--text);background:var(--white)}
+
+    /* ── NAV ── */
+    nav{background:var(--green);position:sticky;top:0;z-index:200;padding:0 4vw;display:flex;align-items:center;height:64px;gap:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+    .nav-logo-icon{width:36px;height:36px;background:var(--white);border-radius:7px;display:flex;align-items:center;justify-content:center}
+    .nav-logo-text{font-size:1.2rem;font-weight:700;color:var(--white)}
+    .nav-logo-text span{color:var(--amber)}
+    .nav-links{display:flex;gap:0;list-style:none;flex:1}
+    .nav-links a{color:rgba(255,255,255,.82);text-decoration:none;font-size:.8rem;padding:.45rem .8rem;border-radius:4px;transition:background .15s;white-space:nowrap}
+    .nav-links a:hover{background:rgba(255,255,255,.12);color:var(--white)}
+    .nav-right{display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+    .btn-login-nav{background:var(--green-mid);color:var(--white);border:none;padding:.48rem 1.1rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s}
+    .btn-login-nav:hover{background:#1e9050}
+    .profile-btn-nav{background:rgba(255,255,255,.15);color:#fff;border:none;padding:.38rem .75rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:background .15s;position:relative}
+    .profile-btn-nav:hover{background:rgba(255,255,255,.24)}
+    .p-avatar-nav{width:26px;height:26px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+    .nav-dd{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--gray-border);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);min-width:180px;z-index:300;display:none;overflow:hidden}
+    .nav-dd.open{display:block}
+    .nav-dd-item{display:flex;align-items:center;gap:.6rem;padding:.72rem 1rem;font-size:.8rem;color:var(--text-mid);cursor:pointer;border:none;background:none;width:100%;font-family:'Poppins',sans-serif;transition:background .12s}
+    .nav-dd-item:hover{background:var(--gray-bg);color:var(--text)}
+    .nav-dd-item.danger{color:var(--red)}
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb{padding:.8rem 4vw;background:var(--gray-bg);border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:.45rem;font-size:.75rem;color:var(--text-light);flex-wrap:wrap}
+    .breadcrumb a{color:var(--green-mid);text-decoration:none}
+    .breadcrumb a:hover{color:var(--green)}
+    .bc-sep{color:var(--gray-border)}
+
+    /* ── STATES ── */
+    .state-screen{min-height:55vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:2rem;text-align:center}
+    .state-screen h2{font-size:1.15rem;font-weight:600;color:var(--text-mid)}
+    .state-screen p{font-size:.84rem;color:var(--text-light)}
+    .ks-spinner{width:38px;height:38px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:kspin .7s linear infinite}
+
+    /* ── GALLERY ── */
+    .gallery{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:280px 180px;gap:6px;padding:1.2rem 4vw 0;max-width:1300px;margin:0 auto}
+    .gal-main{grid-row:1/3;border-radius:12px 0 0 12px;overflow:hidden;position:relative}
+    .gal-sm{overflow:hidden;position:relative}
+    .gal-sm:first-of-type{border-radius:0 12px 0 0}
+    .gal-sm:last-child{border-radius:0 0 12px 0}
+    .gal-img{width:100%;height:100%;transition:transform .45s;display:block}
+    .gal-main:hover .gal-img,.gal-sm:hover .gal-img{transform:scale(1.04)}
+    .gal-ov{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.38) 0%,transparent 55%);pointer-events:none}
+    .gal-badge{position:absolute;top:.8rem;left:.8rem;padding:.22rem .65rem;border-radius:5px;font-size:.68rem;font-weight:700}
+    .gb-pop{background:var(--amber);color:#fff}.gb-new{background:var(--green-mid);color:#fff}
+
+    /* ── LAYOUT ── */
+    .prop-layout{display:grid;grid-template-columns:1fr 360px;gap:2.5rem;padding:2rem 4vw 4rem;max-width:1300px;margin:0 auto;align-items:start}
+
+    /* ── DETAILS (left) ── */
+    .prop-type-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--green-mid);margin-bottom:.45rem}
+    .prop-type-tag::before{content:'';width:16px;height:1.5px;background:var(--green-mid)}
+    .prop-title{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;line-height:1.2;margin-bottom:.45rem}
+    .prop-loc{display:flex;align-items:center;gap:.38rem;font-size:.86rem;color:var(--text-mid);margin-bottom:.85rem}
+    .prop-loc svg{color:var(--green-mid)}
+    .prop-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding-bottom:1.2rem;border-bottom:1px solid var(--gray-border)}
+    .rating-row{display:flex;align-items:center;gap:.35rem;font-size:.88rem;font-weight:600}
+    .rating-row .star{color:var(--amber)}
+    .rating-row .rcount{color:var(--text-light);font-weight:400;font-size:.78rem}
+
+    /* QUICK STATS */
+    .quick-stats{display:flex;gap:.85rem;padding:1.2rem 0;flex-wrap:wrap}
+    .qs{display:flex;align-items:center;gap:.55rem;background:var(--gray-bg);border-radius:8px;padding:.55rem .9rem}
+    .qs svg{color:var(--green-mid);flex-shrink:0}
+    .qs-lbl{font-size:.65rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.04em}
+    .qs-val{font-size:.86rem;font-weight:600;color:var(--text)}
+
+    /* SECTION HEADER */
+    .sec-hdr{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem}
+    .sec-hdr::after{content:'';flex:1;height:1px;background:var(--gray-border)}
+
+    /* DESCRIPTION */
+    .prop-desc{font-size:.87rem;color:var(--text-mid);line-height:1.85}
+    .read-more-btn{background:none;border:none;color:var(--green-mid);font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;padding:0;margin-top:.5rem;display:block}
+
+    /* AMENITIES */
+    .amenities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+    .am-item{display:flex;align-items:center;gap:.65rem;padding:.72rem .85rem;background:var(--gray-bg);border-radius:9px;font-size:.79rem}
+    .am-item svg{color:var(--green);flex-shrink:0}
+    .am-item span{font-weight:500;color:var(--text)}
+
+    /* SHARE BAR */
+    .share-bar{display:flex;align-items:center;gap:.7rem;padding:1.1rem 0;border-top:1px solid var(--gray-border);flex-wrap:wrap}
+    .share-lbl{font-size:.78rem;color:var(--text-mid);font-weight:500}
+    .share-btn{display:flex;align-items:center;gap:.38rem;padding:.38rem .85rem;border-radius:20px;border:1.5px solid var(--gray-border);font-family:'Poppins',sans-serif;font-size:.73rem;font-weight:500;cursor:pointer;background:var(--white);color:var(--text-mid);transition:all .15s}
+    .share-btn:hover{border-color:var(--green-mid);color:var(--green)}
+    .fav-btn{display:flex;align-items:center;gap:.38rem;padding:.38rem .85rem;border-radius:20px;border:1.5px solid var(--gray-border);font-family:'Poppins',sans-serif;font-size:.73rem;font-weight:500;cursor:pointer;background:var(--white);color:var(--text-mid);transition:all .15s;margin-left:auto}
+    .fav-btn:hover{border-color:var(--red);color:var(--red)}
+    .fav-btn.liked{background:#FDEDEC;border-color:var(--red);color:var(--red)}
+
+    /* SIMILAR */
+    .similar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
+    .sim-card{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;overflow:hidden;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s;display:block}
+    .sim-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.1)}
+    .sim-img{height:120px;overflow:hidden}
+    .sim-img svg{width:100%;height:100%;display:block;transition:transform .4s}
+    .sim-card:hover .sim-img svg{transform:scale(1.06)}
+    .sim-body{padding:.75rem}
+    .sim-name{font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sim-loc{font-size:.69rem;color:var(--text-light);margin:.12rem 0 .4rem}
+    .sim-price{font-size:.8rem;font-weight:700;color:var(--green)}
+
+    /* ── BOOKING CARD (right) ── */
+    .booking-card{background:var(--white);border:1.5px solid var(--gray-border);border-radius:14px;padding:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.08);position:sticky;top:84px}
+    .bc-price{display:flex;align-items:baseline;gap:.3rem;margin-bottom:.2rem}
+    .bc-amount{font-size:1.65rem;font-weight:800;color:var(--green)}
+    .bc-unit{font-size:.78rem;color:var(--text-light)}
+    .bc-rating{display:flex;align-items:center;gap:.3rem;font-size:.77rem;color:var(--text-mid);margin-bottom:1.1rem}
+    .bc-rating .star{color:var(--amber)}
+    .bc-fields{background:var(--gray-bg);border-radius:10px;overflow:hidden;border:1.5px solid var(--gray-border);margin-bottom:.9rem}
+    .bc-field{padding:.68rem .95rem}
+    .bc-field+.bc-field{border-top:1px solid var(--gray-border)}
+    .bc-field label{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-mid);margin-bottom:.2rem}
+    .bc-field input,.bc-field select{border:none;outline:none;width:100%;font-family:'Poppins',sans-serif;font-size:.84rem;color:var(--text);background:transparent;appearance:none;cursor:pointer}
+    .bc-field-row{display:grid;grid-template-columns:1fr 1fr}
+    .bc-field-row .bc-field:first-child{border-right:1px solid var(--gray-border)}
+    .bc-nights{background:var(--green-light);border-radius:8px;padding:.6rem .95rem;font-size:.79rem;color:var(--green);font-weight:500;margin-bottom:.85rem;display:none;text-align:center}
+    .bc-btn{width:100%;background:var(--green);color:#fff;border:none;padding:.95rem;border-radius:9px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.65rem}
+    .bc-btn:hover{background:#155030}
+    .bc-wa{width:100%;background:#25D366;color:#fff;border:none;padding:.75rem;border-radius:9px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:.45rem;margin-bottom:.9rem}
+    .bc-wa:hover{background:#1ebe5a}
+    .bc-note{font-size:.72rem;color:var(--text-light);text-align:center;margin-bottom:1.1rem}
+    .bc-features{display:flex;flex-direction:column;gap:.48rem;border-top:1px solid var(--gray-border);padding-top:.95rem}
+    .bc-feat{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--text-mid)}
+    .bc-feat svg{color:var(--green-mid);flex-shrink:0}
+
+    /* ── MODALS ── */
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s}
+    .modal-ov.open{opacity:1;pointer-events:all}
+    .mbox{background:#fff;border-radius:14px;width:100%;max-width:420px;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden;animation:mIn .28s both}
+    .mbox.wide{max-width:490px}
+    .mhdr{background:var(--green);padding:1.35rem 1.8rem 1.05rem;position:relative}
+    .mhdr h2{font-size:1.05rem;font-weight:700;color:#fff}
+    .mhdr p{font-size:.75rem;color:rgba(255,255,255,.7);margin-top:.15rem}
+    .mclose{position:absolute;top:.9rem;right:.9rem;background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:background .15s}
+    .mclose:hover{background:rgba(255,255,255,.28)}
+    .mtabs{display:flex;border-bottom:1px solid var(--gray-border)}
+    .mtab{flex:1;padding:.76rem;border:none;background:none;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:500;color:var(--text-mid);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s}
+    .mtab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+    .mbody{padding:1.45rem 1.8rem;max-height:70vh;overflow-y:auto}
+    .apane{display:none}.apane.active{display:block}
+    .mfg{margin-bottom:.85rem}
+    .mfg label{display:block;font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mid);margin-bottom:.28rem}
+    .mfg input,.mfg select,.mfg textarea{width:100%;border:1.5px solid var(--gray-border);border-radius:8px;padding:.68rem .9rem;font-family:'Poppins',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:border-color .15s;background:#fff;appearance:none}
+    .mfg input:focus,.mfg select:focus,.mfg textarea:focus{border-color:var(--green-mid)}
+    .mfg textarea{resize:vertical;min-height:78px;appearance:auto}
+    .mrow{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+    .abtn{width:100%;background:var(--green);color:#fff;border:none;padding:.84rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:.45rem;margin-top:.15rem}
+    .abtn:hover{background:#155030}.abtn:disabled{background:#aaa;cursor:not-allowed}
+    .gbtn{width:100%;background:#fff;color:var(--text);border:1.5px solid var(--gray-border);padding:.74rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;margin-top:.5rem;transition:border-color .15s}
+    .gbtn:hover{border-color:#4285F4}
+    .adiv{text-align:center;font-size:.73rem;color:var(--text-light);margin:.72rem 0;display:flex;align-items:center;gap:.5rem}
+    .adiv::before,.adiv::after{content:'';flex:1;height:1px;background:var(--gray-border)}
+    .aerr{background:#FDEDEC;color:var(--red);border-radius:7px;padding:.58rem .85rem;font-size:.76rem;margin-top:.6rem;display:none}
+    .aerr.show{display:block}
+    .aok{background:var(--green-light);color:var(--green);border-radius:7px;padding:.58rem .85rem;font-size:.76rem;margin-top:.6rem;display:none}
+    .aok.show{display:block}
+    .bk-prop-info{display:flex;align-items:center;gap:.8rem;background:var(--green-light);border-radius:8px;padding:.8rem;margin-bottom:1.1rem}
+    .bk-thumb{width:46px;height:46px;border-radius:8px;flex-shrink:0}
+    .bk-pname{font-size:.84rem;font-weight:600;color:var(--green)}
+    .bk-ploc{font-size:.7rem;color:var(--text-mid);margin-top:.1rem}
+
+    /* TOAST */
+    .ks-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#fff;padding:.76rem 1.3rem;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:transform .3s,opacity .3s;z-index:999;max-width:300px}
+    .ks-toast.show{transform:translateY(0);opacity:1}
+    .ks-toast.err{background:var(--red)}
+
+    /* FOOTER */
+    footer{background:#1a1a1a;color:rgba(255,255,255,.6);padding:1.8rem 4vw 1.2rem}
+    .fbot{display:flex;justify-content:space-between;font-size:.74rem;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:.8rem}
+    .ftag-bar{background:#1a1a1a;text-align:center;padding:1rem;border-top:1px solid rgba(255,255,255,.06)}
+    .ftag-bar p{font-size:1rem;font-style:italic;font-weight:300;color:var(--amber)}
+
+    @keyframes mIn{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes kspin{to{transform:rotate(360deg)}}
+
+    @media(max-width:960px){.prop-layout{grid-template-columns:1fr}.booking-card{position:static}.gallery{grid-template-columns:1fr;grid-template-rows:260px 150px 150px}.gal-main{border-radius:12px 12px 0 0}.amenities-grid{grid-template-columns:1fr 1fr}.similar-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:580px){.nav-links{display:none}.gallery{grid-template-rows:240px}.gal-sm{display:none}.amenities-grid{grid-template-columns:1fr}.similar-grid{grid-template-columns:1fr}.bc-field-row{grid-template-columns:1fr}.bc-field-row .bc-field:first-child{border-right:none;border-bottom:1px solid var(--gray-border)}.mrow{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="karibustay.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z" fill="#1A5C3A"/>
+        <path d="M9 22V13h6v9" fill="#27A65D"/>
+        <path d="M18 6.5C18 4.5 15.5 2 14 1c0 1.8-2 3-2 5a2 2 0 004 0" fill="#F48942"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Karibu<span>Stay</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="karibustay.html?type=apartment">Stays</a></li>
+    <li><a href="karibustay.html?type=hotel">Hotels</a></li>
+    <li><a href="karibustay.html?type=short_stay">Short Stays</a></li>
+    <li><a href="about.html">About Us</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-login-nav" id="btn-open-auth" onclick="openModal('login')">Login / Sign Up</button>
+    <div style="position:relative;display:none" id="profile-wrap">
+      <button class="profile-btn-nav" onclick="toggleDd(event)">
+        <div class="p-avatar-nav" id="nav-avatar">?</div>
+        <span id="nav-name">Guest</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nav-dd" id="nav-dd">
+        <button class="nav-dd-item" onclick="window.location.href='karibustay.html'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Browse Listings
+        </button>
+        <button class="nav-dd-item danger" onclick="doLogout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="karibustay.html">Home</a>
+  <span class="bc-sep">›</span>
+  <a href="#" id="bc-type-link">Properties</a>
+  <span class="bc-sep">›</span>
+  <span id="bc-name" style="color:var(--text);font-weight:500">Loading...</span>
+</div>
+
+<!-- LOADING -->
+<div class="state-screen" id="state-loading">
+  <div class="ks-spinner"></div>
+  <p>Loading property details...</p>
+</div>
+
+<!-- ERROR -->
+<div class="state-screen" id="state-error" style="display:none">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <h2>Property not found</h2>
+  <p>This listing may have been removed or the link is incorrect.</p>
+  <a href="karibustay.html" style="background:var(--green-mid);color:#fff;padding:.7rem 1.6rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;margin-top:.4rem">← Back to Listings</a>
+</div>
+
+<!-- CONTENT -->
+<div id="prop-content" style="display:none">
+
+  <!-- GALLERY -->
+  <div class="gallery" id="gallery-wrap"></div>
+
+  <!-- LAYOUT -->
+  <div class="prop-layout">
+
+    <!-- ── LEFT ── -->
+    <div>
+
+      <!-- Header -->
+      <div style="margin-bottom:1.2rem">
+        <div class="prop-type-tag" id="prop-type-tag">Property</div>
+        <h1 class="prop-title" id="prop-title">Loading...</h1>
+        <div class="prop-loc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="prop-location"></span>
+        </div>
+        <div class="prop-meta">
+          <div class="rating-row">
+            <span class="star">★</span>
+            <span id="prop-rating">—</span>
+            <span class="rcount" id="prop-reviews">(0 reviews)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="quick-stats" id="quick-stats"></div>
+
+      <!-- Share bar -->
+      <div class="share-bar">
+        <span class="share-lbl">Share:</span>
+        <button class="share-btn" onclick="shareWA()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </button>
+        <button class="share-btn" onclick="copyLink()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Copy Link
+        </button>
+        <button class="fav-btn" id="fav-btn" onclick="toggleFav()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="fav-icon"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span id="fav-txt">Save</span>
+        </button>
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom:1.8rem">
+        <h3 class="sec-hdr">About this property</h3>
+        <p class="prop-desc" id="prop-desc-short"></p>
+        <p class="prop-desc" id="prop-desc-rest" style="display:none"></p>
+        <button class="read-more-btn" id="read-more-btn" style="display:none" onclick="toggleDesc()">Read more ↓</button>
+      </div>
+
+      <!-- Amenities -->
+      <div style="margin-bottom:1.8rem">
+        <h3 class="sec-hdr">What's included</h3>
+        <div class="amenities-grid" id="amenities-grid"></div>
+      </div>
+
+      <!-- Similar -->
+      <div id="similar-wrap" style="display:none">
+        <h3 class="sec-hdr">Similar Properties</h3>
+        <div class="similar-grid" id="similar-grid"></div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: BOOKING CARD ── -->
+    <div>
+      <div class="booking-card">
+        <div class="bc-price">
+          <span class="bc-amount" id="bc-amt">TZS 0</span>
+          <span class="bc-unit">/ night</span>
+        </div>
+        <div class="bc-rating">
+          <span class="star">★</span>
+          <span id="bc-rating">—</span>
+          <span style="margin:0 .2rem;color:var(--gray-border)">·</span>
+          <span id="bc-reviews">0 reviews</span>
+        </div>
+
+        <div class="bc-fields">
+          <div class="bc-field-row">
+            <div class="bc-field">
+              <label>Check-in</label>
+              <input type="date" id="bc-in" onchange="calcNights()"/>
+            </div>
+            <div class="bc-field">
+              <label>Check-out</label>
+              <input type="date" id="bc-out" onchange="calcNights()"/>
+            </div>
+          </div>
+          <div class="bc-field">
+            <label>Guests</label>
+            <select id="bc-guests">
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4+ Guests</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bc-nights" id="bc-nights">
+          📅 <span id="bc-nights-txt"></span> · <strong id="bc-total"></strong> total
+        </div>
+
+        <button class="bc-btn" onclick="openBookingModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send Booking Enquiry
+        </button>
+        <button class="bc-wa" onclick="bookViaWA()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Book via WhatsApp
+        </button>
+        <p class="bc-note">No charge yet — we confirm availability first</p>
+
+        <div class="bc-features">
+          <div class="bc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Free cancellation (24hr notice)</div>
+          <div class="bc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Verified property</div>
+          <div class="bc-feat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.1 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>24/7 support</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-ov" id="auth-modal" onclick="if(event.target===this)closeModal()">
+  <div class="mbox">
+    <div class="apane active" id="pane-login">
+      <div class="mhdr"><h2>Welcome back 👋</h2><p>Login to your KaribuStay account</p><button class="mclose" onclick="closeModal()">✕</button></div>
+      <div class="mtabs"><button class="mtab active" onclick="openPane('login')">Login</button><button class="mtab" onclick="openPane('signup')">Sign Up</button></div>
+      <div class="mbody">
+        <div class="mfg"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com"/></div>
+        <div class="mfg"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <button class="abtn" id="li-btn" onclick="doLogin()">Login</button>
+        <div class="adiv">or</div>
+        <button class="gbtn" onclick="doGoogle()">
+          <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+        <div class="aerr" id="li-err"></div>
+      </div>
+    </div>
+    <div class="apane" id="pane-signup">
+      <div class="mhdr"><h2>Create account ✨</h2><p>Join KaribuStay — it's free</p><button class="mclose" onclick="closeModal()">✕</button></div>
+      <div class="mtabs"><button class="mtab" onclick="openPane('login')">Login</button><button class="mtab active" onclick="openPane('signup')">Sign Up</button></div>
+      <div class="mbody">
+        <div class="mrow">
+          <div class="mfg"><label>First Name *</label><input type="text" id="su-first" placeholder="John"/></div>
+          <div class="mfg"><label>Last Name *</label><input type="text" id="su-last" placeholder="Doe"/></div>
+        </div>
+        <div class="mfg"><label>Email *</label><input type="email" id="su-email" placeholder="you@email.com"/></div>
+        <div class="mfg"><label>Password *</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
+        <button class="abtn" id="su-btn" onclick="doSignup()">Create Account</button>
+        <div class="adiv">or</div>
+        <button class="gbtn" onclick="doGoogle()">
+          <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign up with Google
+        </button>
+        <div class="aerr" id="su-err"></div>
+        <div class="aok" id="su-ok">✅ Check your email to confirm, then login.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-ov" id="booking-modal" onclick="if(event.target===this)closeBooking()">
+  <div class="mbox wide">
+    <div class="mhdr"><h2>Send Booking Enquiry</h2><p>We'll confirm availability within a few hours</p><button class="mclose" onclick="closeBooking()">✕</button></div>
+    <div class="mbody">
+      <div class="bk-prop-info" id="bk-info"></div>
+      <div class="mrow">
+        <div class="mfg"><label>Check-in *</label><input type="date" id="bk-in"/></div>
+        <div class="mfg"><label>Check-out *</label><input type="date" id="bk-out"/></div>
+      </div>
+      <div class="mfg"><label>Guests</label>
+        <select id="bk-guests"><option value="1">1 Guest</option><option value="2">2 Guests</option><option value="3">3 Guests</option><option value="4">4+ Guests</option></select>
+      </div>
+      <div class="mfg"><label>Message (optional)</label>
+        <textarea id="bk-msg" placeholder="Any special requests or questions?"></textarea>
+      </div>
+      <button class="abtn" onclick="submitEnquiry()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send Enquiry
+      </button>
+      <div class="aerr" id="bk-err"></div>
+      <div class="aok" id="bk-ok"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fbot">
+    <span>© 2026 KaribuStay. All rights reserved.</span>
+    <span>Privacy · Terms</span>
+    <span>🇹🇿 Tanzania · TZS</span>
+  </div>
+</footer>
+<div class="ftag-bar"><p>Karibu Tanzania, Karibu Nyumbani. ♡</p></div>
+
+<div class="ks-toast" id="ks-toast"></div>
+
+<script>
+  // ══════════════════════════════════════════
+  // 🔧 YOUR SUPABASE CREDENTIALS
+  // ══════════════════════════════════════════
+   const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let property = null;
+  let currentUser = null;
+  let isFav = false;
+  let descExpanded = false;
+
+  const propId = new URLSearchParams(window.location.search).get('id');
+
+  // ══════════════════════════════════════════
+  // INIT
+  // ══════════════════════════════════════════
+  async function init() {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) await onSignedIn(session.user);
+
+    db.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN')  await onSignedIn(session.user);
+      if (event === 'SIGNED_OUT') onSignedOut();
+    });
+
+    if (!propId) { showError(); return; }
+    await loadProperty();
+  }
+
+  // ── AUTH ──
+  async function onSignedIn(user) {
+    currentUser = user;
+    const { data: prof } = await db.from('profiles').select('full_name').eq('id', user.id).single();
+    const name = prof?.full_name || user.email.split('@')[0];
+    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'?';
+    document.getElementById('btn-open-auth').style.display = 'none';
+    document.getElementById('profile-wrap').style.display  = 'block';
+    document.getElementById('nav-avatar').textContent = initials;
+    document.getElementById('nav-name').textContent   = name.split(' ')[0];
+    closeModal();
+    if (property) await checkFav();
+  }
+
+  function onSignedOut() {
+    currentUser = null; isFav = false;
+    document.getElementById('btn-open-auth').style.display = 'block';
+    document.getElementById('profile-wrap').style.display  = 'none';
+    updateFavBtn();
+  }
+
+  // ══════════════════════════════════════════
+  // LOAD PROPERTY
+  // ══════════════════════════════════════════
+  async function loadProperty() {
+    const { data, error } = await db.from('listings').select('*').eq('id', propId).single();
+    if (error || !data) { showError(); return; }
+    property = data;
+    renderProperty(data);
+    await loadSimilar(data.type, data.id);
+    if (currentUser) await checkFav();
+  }
+
+  function renderProperty(p) {
+    document.title = p.name + ' – KaribuStay';
+    const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
+    const typeLabel = {apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay'}[p.type] || p.type;
+    const typeUrl   = 'karibustay.html?type=' + p.type;
+
+    // Breadcrumb
+    document.getElementById('bc-name').textContent = p.name;
+    document.getElementById('bc-type-link').textContent = typeLabel;
+    document.getElementById('bc-type-link').href = typeUrl;
+
+    // Gallery – 3-panel SVG illustration
+    const gid = p.id.replace(/-/g,'').slice(0,8);
+    document.getElementById('gallery-wrap').innerHTML = `
+      <div class="gal-main">
+        <svg class="gal-img" viewBox="0 0 700 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ga${gid}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="${esc(c1)}"/>
+              <stop offset="100%" stop-color="${esc(c2)}"/>
+            </linearGradient>
+          </defs>
+          <rect width="700" height="460" fill="url(#ga${gid})"/>
+          <rect x="0" y="270" width="700" height="190" fill="rgba(0,0,0,.35)"/>
+          <!-- interior scene -->
+          <rect x="50" y="50" width="600" height="380" rx="6" fill="rgba(255,255,255,.05)"/>
+          <rect x="80" y="240" width="540" height="160" rx="5" fill="rgba(255,240,200,.1)"/>
+          <rect x="80" y="224" width="540" height="22" rx="3" fill="rgba(255,240,200,.16)"/>
+          <rect x="95" y="229" width="100" height="16" rx="2" fill="rgba(255,240,200,.38)"/>
+          <rect x="525" y="229" width="90" height="16" rx="2" fill="rgba(255,240,200,.38)"/>
+          <!-- windows -->
+          <rect x="100" y="75" width="220" height="150" rx="5" fill="rgba(180,215,255,.16)"/>
+          <line x1="210" y1="75" x2="210" y2="225" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+          <line x1="100" y1="150" x2="320" y2="150" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+          <rect x="380" y="75" width="220" height="150" rx="5" fill="rgba(180,215,255,.13)"/>
+          <line x1="490" y1="75" x2="490" y2="225" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+          <line x1="380" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+          <!-- type label -->
+          <text x="350" y="200" text-anchor="middle" fill="rgba(255,255,255,.22)" font-family="Georgia,serif" font-size="20" letter-spacing="5">${esc(typeLabel.toUpperCase())}</text>
+          <!-- bottom label -->
+          <text x="350" y="445" text-anchor="middle" fill="rgba(255,255,255,.28)" font-family="Georgia,serif" font-size="13" letter-spacing="3">KARIBUSTAY</text>
+        </svg>
+        <div class="gal-ov"></div>
+        ${p.badge==='popular'?`<div class="gal-badge gb-pop">● Popular</div>`:p.badge==='new'?`<div class="gal-badge gb-new">✦ New</div>`:''}
+      </div>
+
+      <div class="gal-sm">
+        <svg class="gal-img" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="gb${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c2)}"/><stop offset="100%" stop-color="${esc(c1)}"/></linearGradient></defs>
+          <rect width="400" height="200" fill="url(#gb${gid})"/>
+          <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,.22)"/>
+          <rect x="25" y="55" width="350" height="120" rx="5" fill="rgba(255,255,255,.09)"/>
+          <rect x="42" y="70" width="150" height="90" rx="4" fill="rgba(255,255,255,.12)"/>
+          <rect x="208" y="70" width="150" height="90" rx="4" fill="rgba(255,255,255,.1)"/>
+          <text x="200" y="35" text-anchor="middle" fill="rgba(255,255,255,.3)" font-family="serif" font-size="11" letter-spacing="2">INTERIOR</text>
+        </svg>
+        <div class="gal-ov"></div>
+      </div>
+
+      <div class="gal-sm">
+        <svg class="gal-img" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="gc${gid}" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="rgba(0,10,5,.8)"/></linearGradient></defs>
+          <rect width="400" height="180" fill="url(#gc${gid})"/>
+          <rect x="0" y="0" width="400" height="180" fill="rgba(0,0,0,.28)"/>
+          <!-- location pin illustration -->
+          <circle cx="200" cy="75" r="28" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
+          <path d="M200 58 C191 58 184 65 184 74 C184 86 200 100 200 100 C200 100 216 86 216 74 C216 65 209 58 200 58Z" fill="rgba(255,255,255,.55)"/>
+          <circle cx="200" cy="74" r="7" fill="${esc(c1)}" opacity=".8"/>
+          <text x="200" y="128" text-anchor="middle" fill="rgba(255,255,255,.5)" font-family="serif" font-size="11" letter-spacing="1">📍 ${esc(p.location)}</text>
+        </svg>
+        <div class="gal-ov"></div>
+      </div>`;
+
+    // Header
+    document.getElementById('prop-type-tag').textContent   = typeLabel;
+    document.getElementById('prop-title').textContent      = p.name;
+    document.getElementById('prop-location').textContent   = p.location;
+    document.getElementById('prop-rating').textContent     = p.rating || '—';
+    document.getElementById('prop-reviews').textContent    = `(${p.reviews || 0} reviews)`;
+
+    // Booking card header
+    document.getElementById('bc-amt').textContent     = 'TZS ' + Number(p.price).toLocaleString();
+    document.getElementById('bc-rating').textContent  = p.rating || '—';
+    document.getElementById('bc-reviews').textContent = `${p.reviews || 0} reviews`;
+
+    // Quick stats
+    const statsItems = [
+      p.beds  ? `<div class="qs"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div><div class="qs-lbl">Bedrooms</div><div class="qs-val">${p.beds} Bed${p.beds>1?'s':''}</div></div></div>` : '',
+      p.baths ? `<div class="qs"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L9 2M15 6L15 2M3 10h18M5 21h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg><div><div class="qs-lbl">Bathrooms</div><div class="qs-val">${p.baths} Bath${p.baths>1?'s':''}</div></div></div>` : '',
+      p.wifi  ? `<div class="qs"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg><div><div class="qs-lbl">Internet</div><div class="qs-val">Wi-Fi Included</div></div></div>` : '',
+      `<div class="qs"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div><div class="qs-lbl">Stay Type</div><div class="qs-val">${typeLabel}</div></div></div>`,
+      `<div class="qs"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><div><div class="qs-lbl">Per Night</div><div class="qs-val">TZS ${Number(p.price).toLocaleString()}</div></div></div>`,
+    ].filter(Boolean).join('');
+    document.getElementById('quick-stats').innerHTML = statsItems;
+
+    // Description
+    const desc = p.description || `A well-appointed ${typeLabel.toLowerCase()} located in ${p.location}. Perfect for both short and extended stays, this property offers comfort, convenience, and a warm Karibu welcome.`;
+    const SHORT = 240;
+    if (desc.length > SHORT) {
+      document.getElementById('prop-desc-short').textContent = desc.slice(0, SHORT) + '...';
+      document.getElementById('prop-desc-rest').textContent  = desc.slice(SHORT);
+      document.getElementById('read-more-btn').style.display = 'block';
+    } else {
+      document.getElementById('prop-desc-short').textContent = desc;
+    }
+
+    // Amenities
+    const ams = [
+      p.wifi  && ['<path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/>',   'Free Wi-Fi'],
+      p.beds  && ['<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',  `${p.beds} Bedroom${p.beds>1?'s':''}`],
+      p.baths && ['<path d="M9 6L9 2M15 6L15 2M3 10h18M5 21h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/>',`${p.baths} Bathroom${p.baths>1?'s':''}`],
+      ['<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',  'Fully Furnished'],
+      ['<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.1 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 14.92z"/>','24/7 Support'],
+      ['<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>','Secure Access'],
+      ['<polyline points="20 6 9 17 4 12"/>',    'Verified Property'],
+      ['<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',  'Flexible Check-in'],
+    ].filter(Boolean);
+
+    document.getElementById('amenities-grid').innerHTML = ams.map(([icon, label]) => `
+      <div class="am-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${icon}</svg>
+        <span>${label}</span>
+      </div>`).join('');
+
+    // Show content
+    document.getElementById('state-loading').style.display = 'none';
+    document.getElementById('prop-content').style.display  = 'block';
+    document.getElementById('prop-content').style.animation = 'fadeUp .4s ease both';
+  }
+
+  // ══════════════════════════════════════════
+  // SIMILAR PROPERTIES
+  // ══════════════════════════════════════════
+  async function loadSimilar(type, excludeId) {
+    const { data } = await db.from('listings').select('*').eq('type', type).neq('id', excludeId).limit(3);
+    if (!data || data.length === 0) return;
+    document.getElementById('similar-wrap').style.display = 'block';
+    document.getElementById('similar-grid').innerHTML = data.map(p => {
+      const [c1,c2] = (p.color||'#C88B55,#4A2010').split(',');
+      const sid = p.id.replace(/-/g,'').slice(0,6);
+      return `<a class="sim-card" href="property.html?id=${p.id}">
+        <div class="sim-img">
+          <svg viewBox="0 0 300 120" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="ss${sid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs>
+            <rect width="300" height="120" fill="url(#ss${sid})"/>
+            <rect x="0" y="65" width="300" height="55" fill="rgba(0,0,0,.35)"/>
+            <rect x="15" y="15" width="270" height="90" rx="4" fill="rgba(255,255,255,.07)"/>
+          </svg>
+        </div>
+        <div class="sim-body">
+          <div class="sim-name">${esc(p.name)}</div>
+          <div class="sim-loc">📍 ${esc(p.location)}</div>
+          <div class="sim-price">TZS ${Number(p.price).toLocaleString()}<span style="font-size:.68rem;color:var(--text-light);font-weight:400">/night</span></div>
+        </div>
+      </a>`;
+    }).join('');
+  }
+
+  // ══════════════════════════════════════════
+  // FAVOURITES
+  // ══════════════════════════════════════════
+  async function checkFav() {
+    if (!currentUser || !property) return;
+    const { data } = await db.from('favourites').select('id').eq('user_id', currentUser.id).eq('listing_id', property.id).maybeSingle();
+    isFav = !!data;
+    updateFavBtn();
+  }
+
+  async function toggleFav() {
+    if (!currentUser) { openModal('login'); showToast('Login to save favourites', true); return; }
+    if (isFav) {
+      await db.from('favourites').delete().eq('user_id', currentUser.id).eq('listing_id', property.id);
+      isFav = false; showToast('Removed from favourites');
+    } else {
+      await db.from('favourites').insert({ user_id: currentUser.id, listing_id: property.id });
+      isFav = true; showToast('❤️ Saved to favourites!');
+    }
+    updateFavBtn();
+  }
+
+  function updateFavBtn() {
+    const btn  = document.getElementById('fav-btn');
+    const txt  = document.getElementById('fav-txt');
+    const icon = document.getElementById('fav-icon');
+    btn.classList.toggle('liked', isFav);
+    txt.textContent = isFav ? '❤️ Saved' : 'Save';
+    icon.setAttribute('fill', isFav ? '#E53935' : 'none');
+    icon.setAttribute('stroke', isFav ? '#E53935' : 'currentColor');
+  }
+
+  // ══════════════════════════════════════════
+  // BOOKING
+  // ══════════════════════════════════════════
+  function calcNights() {
+    const i = document.getElementById('bc-in').value;
+    const o = document.getElementById('bc-out').value;
+    if (!i || !o || o <= i) { document.getElementById('bc-nights').style.display='none'; return; }
+    const nights = Math.round((new Date(o) - new Date(i)) / 86400000);
+    const total  = nights * (property?.price || 0);
+    document.getElementById('bc-nights-txt').textContent = `${nights} night${nights>1?'s':''}`;
+    document.getElementById('bc-total').textContent = 'TZS ' + total.toLocaleString();
+    document.getElementById('bc-nights').style.display = 'block';
+  }
+
+  function openBookingModal() {
+    if (!currentUser) { openModal('login'); showToast('Login to send a booking enquiry', true); return; }
+    const [c1,c2] = (property.color||'#C88B55,#4A2010').split(',');
+    document.getElementById('bk-info').innerHTML = `
+      <div class="bk-thumb" style="background:linear-gradient(135deg,${c1},${c2})"></div>
+      <div>
+        <div class="bk-pname">${esc(property.name)}</div>
+        <div class="bk-ploc">📍 ${esc(property.location)} · <strong>TZS ${Number(property.price).toLocaleString()}/night</strong></div>
+      </div>`;
+    document.getElementById('bk-in').value  = document.getElementById('bc-in').value || '';
+    document.getElementById('bk-out').value = document.getElementById('bc-out').value || '';
+    ['bk-err','bk-ok'].forEach(id => document.getElementById(id).classList.remove('show'));
+    document.getElementById('booking-modal').classList.add('open');
+  }
+
+  function closeBooking() { document.getElementById('booking-modal').classList.remove('open'); }
+
+  async function submitEnquiry() {
+    const checkin  = document.getElementById('bk-in').value;
+    const checkout = document.getElementById('bk-out').value;
+    const guests   = document.getElementById('bk-guests').value;
+    const msg      = document.getElementById('bk-msg').value.trim();
+    const err      = document.getElementById('bk-err');
+
+    if (!checkin || !checkout) { err.textContent='Please select check-in and check-out dates.'; err.classList.add('show'); return; }
+    if (checkout <= checkin)   { err.textContent='Check-out must be after check-in.'; err.classList.add('show'); return; }
+    err.classList.remove('show');
+
+    const { error } = await db.from('enquiries').insert({
+      user_id:currentUser.id, listing_id:property.id,
+      listing_name:property.name, checkin, checkout,
+      guests:parseInt(guests), message:msg, status:'pending'
+    });
+    if (error) { err.textContent='❌ Failed: '+error.message; err.classList.add('show'); return; }
+
+    const ok = document.getElementById('bk-ok');
+    ok.textContent = "✅ Enquiry sent! We'll be in touch shortly."; ok.classList.add('show');
+    showToast('✅ Booking enquiry sent!');
+    setTimeout(() => closeBooking(), 2500);
+  }
+
+  function bookViaWA() {
+    const checkin  = document.getElementById('bc-in').value  || '—';
+    const checkout = document.getElementById('bc-out').value || '—';
+    const guests   = document.getElementById('bc-guests').value || '1';
+    const msg = `Hi KaribuStay! 👋\n\nI'd like to book:\n*${property?.name}*\n📍 ${property?.location}\n\n📅 Check-in: ${checkin}\n📅 Check-out: ${checkout}\n👥 Guests: ${guests}\n\nPlease confirm availability. Thank you!`;
+    window.open('https://wa.me/255712345678?text=' + encodeURIComponent(msg), '_blank');
+  }
+
+  // ══════════════════════════════════════════
+  // SHARE
+  // ══════════════════════════════════════════
+  function shareWA() {
+    const msg = `Check out this property on KaribuStay: *${property?.name}* in ${property?.location}!\n${window.location.href}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => showToast('🔗 Link copied!'))
+      .catch(() => showToast('Copy failed', true));
+  }
+
+  // ══════════════════════════════════════════
+  // DESCRIPTION TOGGLE
+  // ══════════════════════════════════════════
+  function toggleDesc() {
+    descExpanded = !descExpanded;
+    document.getElementById('prop-desc-rest').style.display = descExpanded ? 'block' : 'none';
+    document.getElementById('read-more-btn').textContent = descExpanded ? 'Read less ↑' : 'Read more ↓';
+    // toggle trailing ellipsis
+    const short = document.getElementById('prop-desc-short');
+    short.textContent = descExpanded
+      ? short.textContent.replace(/\.\.\.$/, '')
+      : short.textContent.replace(/\.?$/, '...');
+  }
+
+  // ══════════════════════════════════════════
+  // AUTH MODAL
+  // ══════════════════════════════════════════
+  function openModal(pane) {
+    document.querySelectorAll('.apane').forEach(p => p.classList.remove('active'));
+    document.getElementById('pane-' + pane).classList.add('active');
+    document.getElementById('auth-modal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('auth-modal').classList.remove('open'); }
+  function openPane(p) { openModal(p); }
+
+  function toggleDd(e) {
+    e.stopPropagation();
+    document.getElementById('nav-dd').classList.toggle('open');
+  }
+  document.addEventListener('click', () => document.getElementById('nav-dd')?.classList.remove('open'));
+
+  async function doLogin() {
+    const email = document.getElementById('li-email').value.trim();
+    const pass  = document.getElementById('li-pass').value;
+    const btn   = document.getElementById('li-btn');
+    if (!email||!pass) { showAErr('li-err','Please enter email and password.'); return; }
+    btn.disabled = true; btn.textContent = 'Logging in...';
+    document.getElementById('li-err').classList.remove('show');
+    const { error } = await db.auth.signInWithPassword({ email, password: pass });
+    btn.disabled = false; btn.textContent = 'Login';
+    if (error) showAErr('li-err', error.message === 'Invalid login credentials' ? '❌ Wrong email or password.' : '❌ ' + error.message);
+    else showToast('✅ Welcome back!');
+  }
+
+  async function doSignup() {
+    const first = document.getElementById('su-first').value.trim();
+    const last  = document.getElementById('su-last').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pass  = document.getElementById('su-pass').value;
+    const btn   = document.getElementById('su-btn');
+    if (!first||!email||!pass) { showAErr('su-err','Please fill in required fields.'); return; }
+    if (pass.length < 6) { showAErr('su-err','Password must be at least 6 characters.'); return; }
+    btn.disabled = true; btn.textContent = 'Creating...';
+    const { error } = await db.auth.signUp({ email, password:pass, options:{ data:{ full_name:`${first} ${last}`.trim() } } });
+    btn.disabled = false; btn.textContent = 'Create Account';
+    if (error) { showAErr('su-err','❌ '+error.message); return; }
+    document.getElementById('su-ok').classList.add('show');
+    showToast('✅ Check your email to confirm!');
+  }
+
+  async function doGoogle() {
+    const { error } = await db.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
+    if (error) showToast('Google login failed: '+error.message, true);
+  }
+
+  async function doLogout() {
+    await db.auth.signOut();
+    showToast('Logged out.');
+  }
+
+  // ══════════════════════════════════════════
+  // HELPERS
+  // ══════════════════════════════════════════
+  function showError() {
+    document.getElementById('state-loading').style.display = 'none';
+    document.getElementById('state-error').style.display   = 'flex';
+  }
+
+  function showAErr(id, msg) { const e=document.getElementById(id); e.textContent=msg; e.classList.add('show'); }
+
+  function showToast(msg, err=false) {
+    const t = document.getElementById('ks-toast');
+    t.textContent = msg;
+    t.className = 'ks-toast' + (err?' err':'') + ' show';
+    setTimeout(() => t.className = 'ks-toast' + (err?' err':''), 3500);
+  }
+
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // START
+  init();
+</script>
+</body>
+</html>

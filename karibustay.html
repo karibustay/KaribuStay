@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KaribuStay – Feel at home, anywhere.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- ✅ Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1A5C3A;--green-mid:#27A65D;--green-light:#E8F5EE;
+      --amber:#F48942;--gray-bg:#F5F5F5;--gray-border:#E0E0E0;
+      --text:#222;--text-mid:#555;--text-light:#888;--white:#fff;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Poppins',sans-serif;color:var(--text);background:var(--white);line-height:1.5}
+
+    /* NAV */
+    nav{background:var(--green);position:sticky;top:0;z-index:200;padding:0 4vw;display:flex;align-items:center;height:64px;gap:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+    .nav-logo-icon{width:36px;height:36px;background:var(--white);border-radius:7px;display:flex;align-items:center;justify-content:center}
+    .nav-logo-text{font-size:1.2rem;font-weight:700;color:var(--white)}
+    .nav-logo-text span{color:var(--amber)}
+    .nav-links{display:flex;gap:0;list-style:none;flex:1}
+    .nav-links a{color:rgba(255,255,255,.82);text-decoration:none;font-size:.8rem;font-weight:400;padding:.45rem .8rem;border-radius:4px;transition:background .15s;white-space:nowrap}
+    .nav-links a:hover{background:rgba(255,255,255,.12);color:var(--white)}
+    .nav-links a.nav-active{background:rgba(255,255,255,.18);color:var(--white);font-weight:600;border-bottom:2px solid var(--amber)}
+    .nav-right{display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+    .btn-login{background:var(--green-mid);color:var(--white);border:none;padding:.48rem 1.1rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+    .btn-login:hover{background:#1e9050}
+
+
+    /* HERO */
+    .hero{position:relative;min-height:500px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 4vw 3.5rem;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,rgba(20,60,35,.88) 0%,rgba(8,25,15,.82) 50%,rgba(30,50,25,.9) 100%)}
+    .hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 50%,rgba(200,130,60,.15) 0%,transparent 55%)}
+    .hero-scene{position:absolute;right:0;top:0;bottom:0;width:45%;opacity:.18;background:linear-gradient(135deg,#2a5a3a 0%,#0e2a18 100%);clip-path:polygon(10% 0%,100% 0%,100% 100%,0% 100%)}
+    .hero-content{position:relative;z-index:2;text-align:center;max-width:720px}
+    .hero-title{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.7rem;text-shadow:0 2px 20px rgba(0,0,0,.4);animation:fadeUp .7s .05s both}
+    .hero-sub{font-size:.92rem;color:rgba(255,255,255,.82);margin-bottom:2rem;font-weight:300;animation:fadeUp .7s .15s both}
+
+    /* SEARCH BAR */
+    .search-bar{background:var(--white);border-radius:10px;display:flex;align-items:stretch;box-shadow:0 8px 40px rgba(0,0,0,.35);overflow:hidden;width:100%;max-width:820px;animation:fadeUp .7s .25s both}
+    .sf{flex:1;padding:.85rem 1.1rem;border:none;outline:none;border-right:1px solid var(--gray-border);min-width:0}
+    .sf:last-of-type{border-right:none}
+    .sf-label{font-size:.65rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem;display:flex;align-items:center;gap:.35rem}
+    .sf-label svg{color:var(--green-mid)}
+    .sf input,.sf select{border:none;outline:none;width:100%;font-family:'Poppins',sans-serif;font-size:.8rem;color:var(--text-mid);background:transparent;appearance:none;cursor:pointer}
+    .search-btn{background:var(--green-mid);color:var(--white);border:none;padding:0 1.6rem;font-family:'Poppins',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+    .search-btn:hover{background:#1e9050}
+
+    /* TRUST */
+    .trust{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-top:1.8rem;animation:fadeUp .7s .38s both}
+    .trust-item{display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,.9)}
+    .trust-ico{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .trust-ico svg{color:var(--amber)}
+    .trust-item strong{display:block;font-size:.75rem;font-weight:600}
+    .trust-item span{font-size:.68rem;opacity:.72}
+
+    /* SECTIONS */
+    .section{padding:3rem 4vw}
+    .sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem}
+    .sec-title{font-size:1.2rem;font-weight:700;color:var(--text)}
+    .view-all{font-size:.8rem;color:var(--green-mid);font-weight:500;text-decoration:none}
+    .view-all:hover{color:var(--green)}
+
+    /* CATEGORY CARDS */
+    .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    .cat{position:relative;border-radius:10px;overflow:hidden;height:160px;cursor:pointer;transition:transform .25s,box-shadow .25s}
+    .cat:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.2)}
+    .cat-bg{width:100%;height:100%;position:absolute;inset:0}
+    .cat-ov{position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,20,12,.72) 0%,rgba(5,20,12,.15) 65%)}
+    .cat-info{position:absolute;bottom:0;left:0;right:0;padding:.9rem}
+    .cat-ico{width:34px;height:34px;background:var(--green-mid);border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:.4rem}
+    .cat-ico svg{color:var(--white)}
+    .cat-name{font-size:.85rem;font-weight:600;color:var(--white)}
+    .cat-sub{font-size:.7rem;color:rgba(255,255,255,.72)}
+
+    /* PROPERTY CARDS */
+    .listings{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}
+    .pcard{background:var(--white);border-radius:10px;border:1px solid var(--gray-border);overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s}
+    .pcard:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(0,0,0,.11)}
+    .pimg{height:175px;position:relative;overflow:hidden}
+    .pimg-bg{width:100%;height:100%;transition:transform .4s}
+    .pcard:hover .pimg-bg{transform:scale(1.06)}
+    .pbadge{position:absolute;top:.65rem;left:.65rem;padding:.2rem .6rem;border-radius:5px;font-size:.66rem;font-weight:600}
+    .b-pop{background:var(--amber);color:var(--white)}
+    .b-new{background:var(--green-mid);color:var(--white)}
+    .pheart{position:absolute;top:.65rem;right:.65rem;width:28px;height:28px;background:rgba(255,255,255,.9);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .pheart svg{color:var(--text-light)}
+    .pheart.liked svg{color:#E53935;fill:#E53935}
+    .pbody{padding:.9rem}
+    .pname{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.22rem}
+    .ploc{display:flex;align-items:center;gap:.28rem;font-size:.72rem;color:var(--text-light);margin-bottom:.6rem}
+    .ploc svg{color:var(--green-mid);flex-shrink:0}
+    .pams{display:flex;gap:.8rem;margin-bottom:.7rem;flex-wrap:wrap}
+    .pam{display:flex;align-items:center;gap:.28rem;font-size:.7rem;color:var(--text-mid)}
+    .pam svg{color:var(--green)}
+    .pfoot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--gray-border);padding-top:.6rem}
+    .pprice .amt{font-size:.92rem;font-weight:700;color:var(--green)}
+    .pprice .unit{font-size:.68rem;color:var(--text-light)}
+    .prate{display:flex;align-items:center;gap:.22rem;font-size:.73rem;font-weight:600}
+    .prate .star{color:var(--amber)}
+    .prate .rev{color:var(--text-light);font-weight:400}
+
+    /* EMPTY / LOADING */
+    .listings-empty{grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-light)}
+    .listings-empty svg{margin-bottom:1rem;color:var(--gray-border)}
+    .listings-empty h3{font-size:1rem;color:var(--text-mid);margin-bottom:.3rem}
+    .listings-empty p{font-size:.82rem}
+    .listings-empty a{color:var(--green-mid);font-weight:600}
+
+    /* HOW IT WORKS */
+    .how{background:var(--green-light);padding:3rem 4vw}
+    .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:1.8rem}
+    .how-step{text-align:center;padding:1.4rem .8rem}
+    .step-n{width:46px;height:46px;border-radius:50%;background:var(--green);color:var(--white);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto .9rem}
+    .how-step h4{font-size:.87rem;font-weight:600;margin-bottom:.35rem}
+    .how-step p{font-size:.76rem;color:var(--text-mid);line-height:1.6}
+
+    /* CTA */
+    .cta{background:linear-gradient(135deg,var(--green) 0%,#0b2a18 100%);padding:3rem 4vw;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+    .cta h2{font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:.3rem}
+    .cta p{font-size:.85rem;color:rgba(255,255,255,.72)}
+    .cta-btns{display:flex;gap:.8rem;flex-wrap:wrap}
+    .btn-wa{background:#25D366;color:var(--white);border:none;padding:.78rem 1.6rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.45rem;transition:background .2s}
+    .btn-wa:hover{background:#1ebe5a}
+    .btn-out{background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.35);padding:.78rem 1.6rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:border-color .2s}
+    .btn-out:hover{border-color:var(--white)}
+
+    /* FOOTER */
+    footer{background:#1a1a1a;color:rgba(255,255,255,.6);padding:2.8rem 4vw 1.5rem}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2rem}
+    .fbrand-name{font-size:1.15rem;font-weight:700;color:var(--white)}
+    .fbrand-name span{color:var(--amber)}
+    .fbrand-tag{font-size:.76rem;color:rgba(255,255,255,.45);font-style:italic;margin-bottom:.8rem}
+    .fbrand p{font-size:.78rem;line-height:1.7;color:rgba(255,255,255,.5)}
+    .fcol h5{font-size:.78rem;font-weight:600;color:var(--white);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.06em}
+    .fcol ul{list-style:none}
+    .fcol li{margin-bottom:.42rem}
+    .fcol a{color:rgba(255,255,255,.5);text-decoration:none;font-size:.78rem;transition:color .15s}
+    .fcol a:hover{color:var(--white)}
+    .fbot{border-top:1px solid rgba(255,255,255,.1);padding-top:1.4rem;display:flex;justify-content:space-between;align-items:center;font-size:.73rem;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:.8rem}
+    .ftag{background:#1a1a1a;text-align:center;padding:1.3rem;border-top:1px solid rgba(255,255,255,.06)}
+    .ftag p{font-size:clamp(.9rem,2vw,1.25rem);font-style:italic;font-weight:300;color:var(--amber);letter-spacing:.05em}
+
+    /* FILTER BAR */
+    .filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.4rem}
+    .filter-btn{border:1.5px solid var(--gray-border);background:var(--white);color:var(--text-mid);padding:.38rem 1rem;border-radius:20px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;transition:all .15s}
+    .filter-btn:hover,.filter-btn.active{background:var(--green);color:var(--white);border-color:var(--green)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes kspin{to{transform:rotate(360deg)}}
+    @media(max-width:1024px){.listings{grid-template-columns:repeat(2,1fr)}.cats{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.nav-links{display:none}.search-bar{flex-direction:column}.sf{border-right:none;border-bottom:1px solid var(--gray-border)}.search-btn{justify-content:center;padding:1rem}.how-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:480px){.listings{grid-template-columns:1fr}.cats{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.how-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z" fill="#1A5C3A"/>
+        <path d="M9 22V13h6v9" fill="#27A65D"/>
+        <path d="M18 6.5C18 4.5 15.5 2 14 1c0 1.8-2 3-2 5a2 2 0 004 0" fill="#F48942"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Karibu<span>Stay</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="karibustay.html?type=apartment" class="nav-tab" data-type="apartment">Stays</a></li>
+    <li><a href="karibustay.html?type=hotel" class="nav-tab" data-type="hotel">Hotels</a></li>
+    <li><a href="karibustay.html?type=short_stay" class="nav-tab" data-type="short_stay">Short Stays</a></li>
+    <li><a href="about.html">About Us</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-login">Login / Sign Up</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-scene"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Find Your Perfect Stay</h1>
+    <p class="hero-sub">Apartments, Hotels, Short Stays &amp; More – All in One Place</p>
+    <div class="search-bar">
+      <div class="sf" style="flex:2">
+        <div class="sf-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Where are you going?
+        </div>
+        <input type="text" placeholder="Search location" id="hero-search"/>
+      </div>
+      <div class="sf">
+        <div class="sf-label">Check in</div>
+        <input type="date"/>
+      </div>
+      <div class="sf">
+        <div class="sf-label">Check out</div>
+        <input type="date"/>
+      </div>
+      <div class="sf">
+        <div class="sf-label">Guests</div>
+        <select><option>Add guests</option><option>1 guest</option><option>2 guests</option><option>3 guests</option><option>4+ guests</option></select>
+      </div>
+      <button class="search-btn" onclick="doSearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </button>
+    </div>
+    <div class="trust">
+      <div class="trust-item"><div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><strong>Verified Properties</strong><span>Quality stays</span></div></div>
+      <div class="trust-item"><div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div><strong>Best Price</strong><span>Guaranteed</span></div></div>
+      <div class="trust-item"><div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.1 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div><div><strong>24/7 Support</strong><span>Always here</span></div></div>
+      <div class="trust-item"><div class="trust-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><strong>Secure Booking</strong><span>Safe &amp; trusted</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section">
+  <div class="sec-hdr"><h2 class="sec-title">Explore by Category</h2></div>
+  <div class="cats">
+    <div class="cat" onclick="setFilter('apartment')">
+      <svg class="cat-bg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#C88B55"/><stop offset="100%" stop-color="#4A2010"/></linearGradient></defs><rect width="400" height="160" fill="url(#cg1)"/><rect x="0" y="0" width="400" height="160" fill="rgba(0,20,10,.3)"/><rect x="70" y="30" width="70" height="130" fill="rgba(255,255,255,.07)"/><rect x="155" y="10" width="90" height="150" fill="rgba(255,255,255,.09)"/><rect x="260" y="40" width="70" height="120" fill="rgba(255,255,255,.06)"/><rect x="165" y="22" width="14" height="10" rx="1" fill="rgba(255,220,100,.4)"/><rect x="185" y="22" width="14" height="10" rx="1" fill="rgba(255,220,100,.3)"/><rect x="165" y="40" width="14" height="10" rx="1" fill="rgba(255,220,100,.35)"/></svg>
+      <div class="cat-ov"></div>
+      <div class="cat-info"><div class="cat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 21V7M16 21V7M2 12h20"/></svg></div><div class="cat-name">Apartments</div><div class="cat-sub">Short &amp; Long-term stays</div></div>
+    </div>
+    <div class="cat" onclick="setFilter('hotel')">
+      <svg class="cat-bg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3A8060"/><stop offset="100%" stop-color="#0a2a18"/></linearGradient></defs><rect width="400" height="160" fill="url(#cg2)"/><rect x="0" y="0" width="400" height="160" fill="rgba(0,15,8,.25)"/><rect x="40" y="85" width="320" height="55" rx="5" fill="rgba(255,240,200,.1)"/><rect x="40" y="72" width="320" height="18" rx="3" fill="rgba(255,240,200,.14)"/><rect x="100" y="30" width="200" height="42" rx="4" fill="rgba(160,210,255,.1)"/></svg>
+      <div class="cat-ov"></div>
+      <div class="cat-info"><div class="cat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="cat-name">Hotels</div><div class="cat-sub">Comfort &amp; Luxury</div></div>
+    </div>
+    <div class="cat" onclick="setFilter('short_stay')">
+      <svg class="cat-bg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#906040"/><stop offset="100%" stop-color="#3A2010"/></linearGradient></defs><rect width="400" height="160" fill="url(#cg3)"/><rect x="0" y="0" width="400" height="160" fill="rgba(0,10,5,.3)"/><rect x="145" y="38" width="110" height="92" rx="6" fill="rgba(255,255,255,.13)"/><rect x="145" y="38" width="110" height="22" rx="6" fill="rgba(244,137,66,.45)"/><rect x="155" y="70" width="16" height="13" rx="2" fill="rgba(255,255,255,.5)"/><rect x="177" y="70" width="16" height="13" rx="2" fill="rgba(255,255,255,.5)"/><rect x="199" y="90" width="16" height="13" rx="2" fill="rgba(244,137,66,.6)"/></svg>
+      <div class="cat-ov"></div>
+      <div class="cat-info"><div class="cat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="cat-name">Short Stays</div><div class="cat-sub">Day &amp; Week</div></div>
+    </div>
+    <div class="cat">
+      <svg class="cat-bg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#305878"/><stop offset="100%" stop-color="#0e1e30"/></linearGradient></defs><rect width="400" height="160" fill="url(#cg4)"/><rect x="0" y="0" width="400" height="160" fill="rgba(0,10,20,.3)"/><rect x="70" y="82" width="260" height="48" rx="9" fill="rgba(255,255,255,.12)"/><path d="M100 82 l32-38 h136 l32 38z" fill="rgba(255,255,255,.09)"/><rect x="110" y="52" width="55" height="30" rx="3" fill="rgba(150,210,255,.25)"/></svg>
+      <div class="cat-ov"></div>
+      <div class="cat-info"><div class="cat-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="cat-name">Transport</div><div class="cat-sub">Airport &amp; City Rides</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section class="section" style="padding-top:0" id="listings-section">
+  <div class="sec-hdr">
+    <h2 class="sec-title">Featured Stays <span id="listings-count" style="font-size:.8rem;color:var(--text-light);font-weight:400"></span></h2>
+    <a href="#" class="view-all" onclick="setFilter('all');return false">View all →</a>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-filter="apartment" onclick="setFilter('apartment')">Apartments</button>
+    <button class="filter-btn" data-filter="hotel" onclick="setFilter('hotel')">Hotels</button>
+    <button class="filter-btn" data-filter="short_stay" onclick="setFilter('short_stay')">Short Stays</button>
+  </div>
+
+  <div class="listings" id="listings-grid">
+    <!-- Listings rendered here dynamically -->
+    <div class="listings-empty" style="display:block;grid-column:1/-1">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p style="font-size:.85rem">Loading listings...</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="sec-hdr"><h2 class="sec-title">How It Works</h2><p style="font-size:.82rem;color:var(--text-mid)">Quick and easy</p></div>
+  <div class="how-grid">
+    <div class="how-step"><div class="step-n">1</div><h4>Search Your Stay</h4><p>Enter your destination, dates, and number of guests to find available properties.</p></div>
+    <div class="how-step"><div class="step-n">2</div><h4>Choose a Property</h4><p>Browse verified listings with photos, amenities, and honest reviews from past guests.</p></div>
+    <div class="how-step"><div class="step-n">3</div><h4>Book via WhatsApp</h4><p>Confirm your booking instantly via WhatsApp or our secure online payment system.</p></div>
+    <div class="how-step"><div class="step-n">4</div><h4>Enjoy Your Stay</h4><p>Check in, relax, and feel at home. We're here 24/7 if you need anything.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div><h2>Ready to find your perfect stay?</h2><p>Contact us on WhatsApp for instant availability and booking assistance.</p></div>
+  <div class="cta-btns">
+    <button class="btn-wa"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Book via WhatsApp</button>
+    <button class="btn-out">Browse All Listings</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="fbrand"><div class="fbrand-name">Karibu<span>Stay</span></div><div class="fbrand-tag">Feel at home, anywhere.</div><p>KaribuStay connects you to the best apartments, rooms, and short stays across Tanzania.</p></div>
+    <div class="fcol"><h5>Explore</h5><ul><li><a href="karibustay.html?type=apartment">Apartments</a></li><li><a href="karibustay.html?type=hotel">Hotels</a></li><li><a href="karibustay.html?type=short_stay">Short Stays</a></li><li><a href="about.html">About Us</a></li></ul></div>
+    <div class="fcol"><h5>Company</h5><ul><li><a href="#">About Us</a></li><li><a href="#">How It Works</a></li><li><a href="#">List Your Property</a></li><li><a href="#">Blog</a></li></ul></div>
+    <div class="fcol"><h5>Contact</h5><ul><li><a href="#">WhatsApp Us</a></li><li><a href="#">info@karibustay.com</a></li><li><a href="#">+255 712 345 678</a></li><li><a href="#">Dar es Salaam, Tanzania</a></li></ul></div>
+  </div>
+  <div class="fbot"><span>© 2026 KaribuStay. All rights reserved.</span><span>Privacy · Terms</span><span>🇹🇿 Tanzania · TZS</span></div>
+</footer>
+<div class="ftag"><p>Karibu Tanzania, Karibu Nyumbani. ♡</p></div>
+
+<script>
+  // ══════════════════════════════════════
+  // 🔧 YOUR SUPABASE CREDENTIALS
+  // ══════════════════════════════════════
+   const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  let allListings = [];
+  let activeFilter = 'all';
+
+  // ── LOAD FROM SUPABASE ──
+  async function loadListings() {
+    // Show skeleton loading state
+    const grid = document.getElementById('listings-grid');
+    grid.innerHTML = `
+      <div class="listings-empty" style="grid-column:1/-1">
+        <div style="width:32px;height:32px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:kspin .7s linear infinite;margin:0 auto .7rem"></div>
+        <p style="font-size:.85rem;color:var(--text-light)">Loading listings...</p>
+      </div>`;
+
+    const { data, error } = await db
+      .from('listings')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error.message);
+      allListings = [];
+    } else {
+      allListings = data || [];
+    }
+    renderListings();
+  }
+
+  // ── FILTER ──
+  function setFilter(type) {
+    activeFilter = type;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === type);
+    });
+    renderListings();
+    if (type !== 'all') document.getElementById('listings-section').scrollIntoView({behavior:'smooth'});
+  }
+
+  // ── HERO SEARCH ──
+  function doSearch() {
+    const q = document.getElementById('hero-search').value.toLowerCase().trim();
+    if (q) {
+      activeFilter = 'all';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter==='all'));
+      renderListings(q);
+      document.getElementById('listings-section').scrollIntoView({behavior:'smooth'});
+    }
+  }
+
+  // ── RENDER ──
+  function renderListings(searchQ = '') {
+    const grid = document.getElementById('listings-grid');
+    let items = allListings;
+    if (activeFilter !== 'all') items = items.filter(p => p.type === activeFilter);
+    if (searchQ) items = items.filter(p =>
+      p.name.toLowerCase().includes(searchQ) || p.location.toLowerCase().includes(searchQ)
+    );
+
+    document.getElementById('listings-count').textContent = items.length ? `(${items.length})` : '';
+
+    if (items.length === 0) {
+      grid.innerHTML = `
+        <div class="listings-empty" style="grid-column:1/-1">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <h3>${allListings.length === 0 ? 'No listings yet' : 'No results found'}</h3>
+          <p>${allListings.length === 0
+            ? 'Open the Admin Panel and add your first property — it will appear here instantly.'
+            : 'Try a different filter or search term.'
+          }</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = items.map(p => buildCard(p)).join('');
+
+    // animate in
+    grid.querySelectorAll('.pcard').forEach((c, i) => {
+      c.style.opacity = '0';
+      c.style.transform = 'translateY(16px)';
+      setTimeout(() => {
+        c.style.transition = 'opacity .35s ease, transform .35s ease';
+        c.style.opacity = '1';
+        c.style.transform = 'translateY(0)';
+      }, i * 55);
+    });
+  }
+
+  function buildCard(p) {
+    const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
+    const uid = 'g' + p.id;
+    const badgeHTML = p.badge === 'popular'
+      ? `<div class="pbadge b-pop">● Popular</div>`
+      : p.badge === 'new'
+      ? `<div class="pbadge b-new">✦ New</div>`
+      : '';
+    const stars = p.rating ? ('★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '')) : '—';
+    const amenities = [
+      p.beds   ? `<span class="pam"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>${p.beds} Bed${p.beds>1?'s':''}</span>` : '',
+      p.baths  ? `<span class="pam"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6L9 2M15 6L15 2M3 10h18M5 21h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg>${p.baths} Bath${p.baths>1?'s':''}</span>` : '',
+      p.wifi   ? `<span class="pam"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>Wi-Fi</span>` : '',
+    ].filter(Boolean).join('');
+
+    return `
+      <div class="pcard">
+        <div class="pimg">
+          <svg class="pimg-bg" viewBox="0 0 380 175" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="${esc(c1)}"/>
+              <stop offset="100%" stop-color="${esc(c2)}"/>
+            </linearGradient></defs>
+            <rect width="380" height="175" fill="url(#${uid})"/>
+            <rect x="0" y="100" width="380" height="75" fill="rgba(0,20,10,.4)"/>
+            <rect x="20" y="30" width="340" height="145" rx="4" fill="rgba(255,255,255,.07)"/>
+            <rect x="40" y="95" width="300" height="55" rx="5" fill="rgba(255,240,200,.12)"/>
+            <rect x="40" y="83" width="300" height="17" rx="3" fill="rgba(255,240,200,.18)"/>
+            <rect x="50" y="88" width="70" height="12" rx="2" fill="rgba(255,240,200,.38)"/>
+            <rect x="270" y="88" width="60" height="12" rx="2" fill="rgba(255,240,200,.38)"/>
+            <rect x="80" y="38" width="220" height="45" rx="3" fill="rgba(180,210,255,.1)"/>
+            <text x="190" y="68" text-anchor="middle" fill="rgba(255,255,255,.25)" font-family="serif" font-size="11" letter-spacing="2">${esc(p.type.toUpperCase().replace('_',' '))}</text>
+          </svg>
+          ${badgeHTML}
+          <button class="pheart" onclick="this.classList.toggle('liked')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="pbody">
+          <div class="pname">${esc(p.name)}</div>
+          <div class="ploc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(p.location)}</div>
+          <div class="pams">${amenities}</div>
+          <div class="pfoot">
+            <div class="pprice"><span class="amt">TZS ${Number(p.price).toLocaleString()}</span><span class="unit"> /night</span></div>
+            <div class="prate"><span class="star">★</span>${p.rating || '—'}<span class="rev">(${p.reviews || 0})</span></div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function esc(str) {
+    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // animate category cards
+  document.querySelectorAll('.cat,.how-step').forEach((el,i) => {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          setTimeout(()=>{e.target.style.opacity='1';e.target.style.transform='translateY(0)'},i*60);
+          io.unobserve(e.target);
+        }
+      });
+    },{threshold:.08});
+    el.style.opacity='0';el.style.transform='translateY(14px)';el.style.transition='opacity .4s,transform .4s';
+    io.observe(el);
+  });
+
+  // Handle ?type= URL param from nav tabs
+  const urlType = new URLSearchParams(window.location.search).get('type');
+  if (urlType) {
+    activeFilter = urlType;
+    // sync filter buttons visually
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === urlType);
+    });
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('listings-section').scrollIntoView({behavior:'smooth'}), 400);
+    });
+  }
+
+  // Highlight active nav tab
+  document.querySelectorAll('.nav-tab').forEach(a => {
+    a.classList.toggle('nav-active', a.dataset.type === activeFilter);
+  });
+
+  loadListings();
+</script>
+</body>
+</html>
