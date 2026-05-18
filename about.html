@@ -4,6 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About Us – KaribuStay</title>
+  <link rel="icon" type="image/png" href="logo3.png"/>
+  <link rel="apple-touch-icon" href="logo3.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -167,19 +169,12 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <div class="nav-logo-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z" fill="#1A5C3A"/>
-        <path d="M9 22V13h6v9" fill="#27A65D"/>
-        <path d="M18 6.5C18 4.5 15.5 2 14 1c0 1.8-2 3-2 5a2 2 0 004 0" fill="#F48942"/>
-      </svg>
-    </div>
-    <span class="nav-logo-text">Karibu<span>Stay</span></span>
+    <img src="logo2.png" alt="KaribuStay" style="height:38px;width:auto;object-fit:contain;filter:brightness(0) invert(1)"/>
   </a>
   <ul class="nav-links">
-    <li><a href="index.html?type=apartment">Stays</a></li>
-    <li><a href="index.html?type=hotel">Hotels</a></li>
-    <li><a href="index.html?type=short_stay">Short Stays</a></li>
+    <li><a href="karibustay.html?type=apartment">Stays</a></li>
+    <li><a href="karibustay.html?type=hotel">Hotels</a></li>
+    <li><a href="karibustay.html?type=short_stay">Short Stays</a></li>
     <li><a href="about.html" class="active">About Us</a></li>
   </ul>
   <div class="nav-right">
@@ -384,7 +379,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
-    <div class="fb"><div class="fb-name">Karibu<span>Stay</span></div><div class="fb-tag">Feel at home, anywhere.</div><p>Connecting guests with trusted apartments, hotels and short stays across Tanzania.</p></div>
+    <div class="fb"><img src="logo2.png" alt="KaribuStay" style="height:34px;width:auto;margin-bottom:.6rem;display:block"/><div class="fb-tag">Feel at home, anywhere.</div><p>Connecting guests with trusted apartments, hotels and short stays across Tanzania.</p></div>
     <div class="fc"><h5>Explore</h5><ul><li><a href="karibustay.html?type=apartment">Apartments</a></li><li><a href="karibustay.html?type=hotel">Hotels</a></li><li><a href="karibustay.html?type=short_stay">Short Stays</a></li></ul></div>
     <div class="fc"><h5>Company</h5><ul><li><a href="about.html">About Us</a></li><li><a href="#">List Your Property</a></li><li><a href="#">Blog</a></li></ul></div>
     <div class="fc"><h5>Contact</h5><ul><li><a href="#">WhatsApp Us</a></li><li><a href="#">info@karibustay.com</a></li><li><a href="#">+255 712 345 678</a></li><li><a href="#">Dar es Salaam, TZ</a></li></ul></div>
@@ -395,39 +390,12 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = 'https://owmfkkhjvuijqlayeyuo.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_NabNgx5f3BFdGNEDkDv3oQ_CrVacV7d';
-  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  async function sendMsg() {
-    const first   = document.getElementById('cf-first').value.trim();
-    const last    = document.getElementById('cf-last').value.trim();
-    const email   = document.getElementById('cf-email').value.trim();
-    const subject = document.getElementById('cf-subject').value;
-    const msg     = document.getElementById('cf-msg').value.trim();
+  function sendMsg() {
+    const first = document.getElementById('cf-first').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const msg   = document.getElementById('cf-msg').value.trim();
     if (!first || !email || !msg) { showToast('Please fill in all required fields.', true); return; }
-
-    const btn = document.querySelector('.btn-submit');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-
-    const { error } = await db.from('messages').insert([{
-      first_name: first,
-      last_name: last,
-      email,
-      subject,
-      message: msg
-    }]);
-
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Message`;
-
-    if (error) {
-      showToast('Failed to send message. Please try again.', true);
-      return;
-    }
     showToast('✓ Message sent! We\'ll get back to you soon.');
     ['cf-first','cf-last','cf-email','cf-subject','cf-msg'].forEach(id => document.getElementById(id).value = '');
   }

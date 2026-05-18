@@ -4,6 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KaribuStay – Admin Panel</title>
+  <link rel="icon" type="image/png" href="logo3.png"/>
+  <link rel="apple-touch-icon" href="logo3.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 
   <!-- ✅ Supabase SDK -->
@@ -148,6 +150,69 @@
     .toast.show{transform:translateY(0);opacity:1;}
     .toast.error{background:var(--red);}
 
+    /* ── ADMIN PAGE TABS ── */
+    .admin-tabs{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--gray-border);padding:0 2rem;position:sticky;top:60px;z-index:90;}
+    .admin-tab{padding:.85rem 1.4rem;border:none;background:none;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:500;color:var(--text-mid);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:.5rem}
+    .admin-tab:hover{color:var(--text)}
+    .admin-tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:700}
+    .admin-tab .tab-badge{background:var(--amber);color:#fff;border-radius:10px;padding:.08rem .42rem;font-size:.62rem;font-weight:700}
+    .admin-tab .tab-badge.green{background:var(--green-mid)}
+
+    /* ── PAGE SECTIONS ── */
+    .admin-page{display:none;padding:1.5rem 2rem;max-width:1400px;margin:0 auto}
+    .admin-page.active{display:block}
+
+    /* ── ENQUIRY CARDS ── */
+    .enq-toolbar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem}
+    .enq-filter{border:1.5px solid var(--gray-border);background:var(--white);padding:.38rem 1rem;border-radius:20px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text-mid)}
+    .enq-filter:hover,.enq-filter.active{background:var(--green);color:#fff;border-color:var(--green)}
+    .enq-filter.amber.active{background:var(--amber);border-color:var(--amber)}
+    .enq-filter.red.active{background:var(--red);border-color:var(--red)}
+    .enq-search{flex:1;min-width:180px;max-width:280px;border:1.5px solid var(--gray-border);border-radius:8px;padding:.5rem .85rem;font-family:'Poppins',sans-serif;font-size:.8rem;outline:none;transition:border-color .15s}
+    .enq-search:focus{border-color:var(--green-mid)}
+
+    .enq-stats{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.4rem}
+    .enq-stat{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:.75rem 1.2rem;display:flex;align-items:center;gap:.8rem}
+    .enq-stat-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .esi-all{background:var(--green-light)} .esi-all svg{color:var(--green)}
+    .esi-pending{background:#FEF3C7} .esi-pending svg{color:#D97706}
+    .esi-confirmed{background:#D1FAE5} .esi-confirmed svg{color:#059669}
+    .esi-declined{background:#FEE2E2} .esi-declined svg{color:var(--red)}
+    .enq-stat-info strong{display:block;font-size:1.2rem;font-weight:700;line-height:1;color:var(--text)}
+    .enq-stat-info span{font-size:.72rem;color:var(--text-light)}
+
+    .enq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.1rem}
+    .enq-card{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden;transition:box-shadow .2s}
+    .enq-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08)}
+    .enq-card-top{padding:1.1rem 1.2rem;border-bottom:1px solid var(--gray-bg)}
+    .enq-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.6rem}
+    .enq-prop{font-size:.88rem;font-weight:700;color:var(--text);line-height:1.3}
+    .enq-schip{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;border-radius:20px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+    .es-pending{background:#FEF3C7;color:#92400E}
+    .es-confirmed{background:#D1FAE5;color:#065F46}
+    .es-declined{background:#FEE2E2;color:var(--red)}
+    .enq-guest{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text-mid)}
+    .enq-guest-av{width:28px;height:28px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--green);flex-shrink:0}
+    .enq-card-body{padding:.9rem 1.2rem;display:flex;flex-direction:column;gap:.45rem}
+    .enq-row{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text-mid)}
+    .enq-row svg{color:var(--green-mid);flex-shrink:0}
+    .enq-row strong{color:var(--text);font-weight:600}
+    .enq-msg{background:var(--gray-bg);border-radius:7px;padding:.6rem .8rem;font-size:.76rem;color:var(--text-mid);line-height:1.55;font-style:italic}
+    .enq-card-foot{padding:.85rem 1.2rem;border-top:1px solid var(--gray-bg);display:flex;gap:.6rem;align-items:center}
+    .btn-confirm{background:var(--green-mid);color:#fff;border:none;padding:.5rem 1.1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:.35rem}
+    .btn-confirm:hover{background:var(--green)}
+    .btn-decline{background:#FEE2E2;color:var(--red);border:none;padding:.5rem 1.1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:.35rem}
+    .btn-decline:hover{background:#FECACA}
+    .btn-wa-enq{background:#25D366;color:#fff;border:none;padding:.5rem 1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;margin-left:auto;transition:background .15s}
+    .btn-wa-enq:hover{background:#1ebe5a}
+    .enq-empty{text-align:center;padding:3.5rem 1rem;background:var(--white);border-radius:12px;border:1px solid var(--gray-border)}
+    .enq-empty svg{color:var(--gray-border);margin-bottom:1rem}
+    .enq-empty h3{font-size:1rem;color:var(--text-mid);margin-bottom:.3rem}
+    .enq-empty p{font-size:.8rem;color:var(--text-light)}
+
+    /* ── NEW BADGE ON TAB ── */
+    .new-dot{width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block;margin-left:2px}
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @media(max-width:900px){.layout{grid-template-columns:1fr;}.panel{position:static;}}
     @media(max-width:600px){.form-row{grid-template-columns:1fr;}.stats-row{flex-direction:column;}}
@@ -165,13 +230,8 @@
 <div class="login-screen" id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="logo-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z" fill="currentColor" opacity=".7"/>
-          <path d="M9 22V13h6v9" fill="currentColor"/>
-        </svg>
-      </div>
-      <h1>Karibu<span>Stay</span></h1>
+      <img src="logo3.png" alt="KaribuStay" style="width:72px;height:72px;border-radius:16px;object-fit:cover;margin:0 auto .9rem;display:block"/>
+      <h1>KaribuStay</h1>
       <p>Admin Panel — Authorised Access Only</p>
     </div>
 
@@ -181,7 +241,7 @@
     </div>
     <div class="login-field">
       <label>Password</label>
-      <input type="password" id="login-password" placeholder="         " autocomplete="current-password"
+      <input type="password" id="login-password" placeholder="••••••••••" autocomplete="current-password"
         onkeydown="if(event.key==='Enter') doLogin()"/>
     </div>
 
@@ -202,7 +262,9 @@
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="tb-left">
-      <a href="#" class="tb-logo">Karibu<span>Stay</span></a>
+      <a href="index.html" class="tb-logo">
+        <img src="logo2.png" alt="KaribuStay" style="height:32px;width:auto;filter:brightness(0) invert(1)"/>
+      </a>
       <span class="tb-badge">⚙ Admin Panel</span>
     </div>
     <div class="tb-right">
@@ -210,7 +272,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="admin-email-display"></span>
       </div>
-      <a href="index.html" class="tb-link">
+      <a href="karibustay.html" class="tb-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         View Website
       </a>
@@ -221,6 +283,21 @@
     </div>
   </div>
 
+  <!-- ADMIN TABS -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" id="tab-listings" onclick="switchTab('listings')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Listings
+    </button>
+    <button class="admin-tab" id="tab-enquiries" onclick="switchTab('enquiries')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Enquiries
+      <span class="tab-badge" id="pending-badge" style="display:none">0</span>
+    </button>
+  </div>
+
+  <!-- ══ PAGE: LISTINGS ══ -->
+  <div class="admin-page active" id="page-listings">
   <!-- LAYOUT -->
   <div class="layout">
 
@@ -376,8 +453,45 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </div><!-- end .layout -->
+  </div><!-- end #page-listings -->
+
+  <!-- ══ PAGE: ENQUIRIES ══ -->
+  <div class="admin-page" id="page-enquiries">
+    <div style="max-width:1400px;margin:0 auto">
+
+      <!-- STATS -->
+      <div class="enq-stats">
+        <div class="enq-stat"><div class="enq-stat-ico esi-all"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="enq-stat-info"><strong id="es-total">0</strong><span>Total</span></div></div>
+        <div class="enq-stat"><div class="enq-stat-ico esi-pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="enq-stat-info"><strong id="es-pending">0</strong><span>Pending</span></div></div>
+        <div class="enq-stat"><div class="enq-stat-ico esi-confirmed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="enq-stat-info"><strong id="es-confirmed">0</strong><span>Confirmed</span></div></div>
+        <div class="enq-stat"><div class="enq-stat-ico esi-declined"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="enq-stat-info"><strong id="es-declined">0</strong><span>Declined</span></div></div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="enq-toolbar">
+        <button class="enq-filter active" data-ef="all"       onclick="filterEnq('all')">All</button>
+        <button class="enq-filter amber"  data-ef="pending"   onclick="filterEnq('pending')">⏳ Pending</button>
+        <button class="enq-filter"        data-ef="confirmed" onclick="filterEnq('confirmed')">✅ Confirmed</button>
+        <button class="enq-filter red"    data-ef="declined"  onclick="filterEnq('declined')">✕ Declined</button>
+        <input class="enq-search" id="enq-search" placeholder="Search guest or property..." oninput="renderEnquiries()"/>
+        <button onclick="loadEnquiries()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;white-space:nowrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Refresh
+        </button>
+      </div>
+
+      <!-- CARDS -->
+      <div class="enq-grid" id="enq-grid">
+        <div class="enq-empty">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <h3>Loading enquiries...</h3>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end #page-enquiries -->
+
+</div><!-- end #main-content -->
 
 <!-- Saving overlay -->
 <div class="saving-overlay" id="saving-overlay">
@@ -394,9 +508,11 @@
   // ══════════════════════════════════════
   // 🔧 YOUR SUPABASE CREDENTIALS
   // ══════════════════════════════════════
-  const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // e.g. https://xxxx.supabase.co
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY'; // eyJ...
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 
   let listings = [];
   let selectedColor = '#C88B55,#4A2010';
@@ -421,6 +537,7 @@
     document.getElementById('main-content').style.display = 'block';
     document.getElementById('admin-email-display').textContent = email;
     loadListings();
+    loadEnquiries();
   }
 
   function showLogin() {
@@ -669,8 +786,173 @@
   }
 
   // ══════════════════════════════════════
+  // TAB SWITCHING
+  // ══════════════════════════════════════
+  function switchTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('page-' + tab).classList.add('active');
+    if (tab === 'enquiries') loadEnquiries();
+  }
+
+  // ══════════════════════════════════════
+  // ENQUIRIES
+  // ══════════════════════════════════════
+  let allEnquiries   = [];
+  let enqFilter      = 'all';
+
+  async function loadEnquiries() {
+    const grid = document.getElementById('enq-grid');
+    if (grid) grid.innerHTML = `<div class="enq-empty"><div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .7rem"></div><p style="color:var(--text-light);font-size:.82rem">Loading enquiries...</p></div>`;
+
+    const { data, error } = await db
+      .from('enquiries')
+      .select(`*, profiles(full_name, phone)`)
+      .order('created_at', { ascending: false });
+
+    if (error) { showToast('Failed to load enquiries: ' + error.message, true); return; }
+
+    allEnquiries = data || [];
+    updateEnqStats();
+    renderEnquiries();
+    updatePendingBadge();
+  }
+
+  function updateEnqStats() {
+    document.getElementById('es-total').textContent     = allEnquiries.length;
+    document.getElementById('es-pending').textContent   = allEnquiries.filter(e=>e.status==='pending').length;
+    document.getElementById('es-confirmed').textContent = allEnquiries.filter(e=>e.status==='confirmed').length;
+    document.getElementById('es-declined').textContent  = allEnquiries.filter(e=>e.status==='declined').length;
+  }
+
+  function updatePendingBadge() {
+    const count = allEnquiries.filter(e=>e.status==='pending').length;
+    const badge = document.getElementById('pending-badge');
+    if (count > 0) { badge.textContent = count; badge.style.display = 'inline'; }
+    else badge.style.display = 'none';
+  }
+
+  function filterEnq(f) {
+    enqFilter = f;
+    document.querySelectorAll('.enq-filter').forEach(b => b.classList.toggle('active', b.dataset.ef === f));
+    renderEnquiries();
+  }
+
+  function renderEnquiries() {
+    const grid = document.getElementById('enq-grid');
+    const q    = (document.getElementById('enq-search')?.value || '').toLowerCase();
+
+    let items = allEnquiries;
+    if (enqFilter !== 'all') items = items.filter(e => e.status === enqFilter);
+    if (q) items = items.filter(e =>
+      (e.listing_name||'').toLowerCase().includes(q) ||
+      (e.profiles?.full_name||'').toLowerCase().includes(q) ||
+      (e.message||'').toLowerCase().includes(q)
+    );
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="enq-empty">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <h3>${allEnquiries.length === 0 ? 'No enquiries yet' : 'No results found'}</h3>
+        <p>${allEnquiries.length === 0 ? 'When guests submit booking requests they will appear here.' : 'Try a different filter.'}</p>
+      </div>`; return;
+    }
+
+    grid.innerHTML = items.map(e => buildEnqCard(e)).join('');
+  }
+
+  function buildEnqCard(e) {
+    const guestName = e.profiles?.full_name || 'Guest';
+    const initials  = guestName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) || 'G';
+    const phone     = e.profiles?.phone || '';
+    const nights    = e.checkin && e.checkout ? Math.max(1, Math.round((new Date(e.checkout)-new Date(e.checkin))/(1000*60*60*24))) : null;
+    const statusMap = { pending:'es-pending', confirmed:'es-confirmed', declined:'es-declined' };
+    const statusLabel = { pending:'⏳ Pending', confirmed:'✅ Confirmed', declined:'✕ Declined' };
+    const created   = new Date(e.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+    const actionBtns = e.status === 'pending' ? `
+      <button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Confirm
+      </button>
+      <button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline
+      </button>` :
+      e.status === 'confirmed' ? `
+      <button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline
+      </button>` :
+      `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Re-confirm
+      </button>`;
+
+    const waMsg = encodeURIComponent(`Hi ${guestName}, your booking enquiry for *${e.listing_name}* (${e.checkin} → ${e.checkout}) has been ${e.status === 'confirmed' ? '✅ confirmed' : 'received'}. Thank you for choosing KaribuStay!`);
+    const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>` : '';
+
+    return `
+      <div class="enq-card" id="enq-${e.id}">
+        <div class="enq-card-top">
+          <div class="enq-card-head">
+            <div class="enq-prop">${esc(e.listing_name || 'Unknown Property')}</div>
+            <span class="enq-schip ${statusMap[e.status]||'es-pending'}">${statusLabel[e.status]||e.status}</span>
+          </div>
+          <div class="enq-guest">
+            <div class="enq-guest-av">${initials}</div>
+            <div>
+              <div style="font-weight:600;font-size:.8rem">${esc(guestName)}</div>
+              ${phone ? `<div style="font-size:.7rem;color:var(--text-light)">${esc(phone)}</div>` : ''}
+            </div>
+            <div style="margin-left:auto;font-size:.7rem;color:var(--text-light)">${created}</div>
+          </div>
+        </div>
+        <div class="enq-card-body">
+          <div class="enq-row">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <strong>${e.checkin || '—'}</strong> → <strong>${e.checkout || '—'}</strong>
+            ${nights ? `<span style="background:var(--green-light);color:var(--green);padding:.1rem .45rem;border-radius:5px;font-size:.68rem;font-weight:600;margin-left:.3rem">${nights} night${nights>1?'s':''}</span>` : ''}
+          </div>
+          <div class="enq-row">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span>${e.guests || 1} guest${(e.guests||1)>1?'s':''}</span>
+          </div>
+          ${e.message ? `<div class="enq-msg">"${esc(e.message)}"</div>` : ''}
+        </div>
+        <div class="enq-card-foot">
+          ${actionBtns}
+          ${waBtn}
+        </div>
+      </div>`;
+  }
+
+  async function updateEnqStatus(id, status) {
+    const card = document.getElementById('enq-' + id);
+    if (card) card.style.opacity = '.5';
+
+    const { error } = await db.from('enquiries').update({ status }).eq('id', id);
+
+    if (error) {
+      showToast('Update failed: ' + error.message, true);
+      if (card) card.style.opacity = '1';
+      return;
+    }
+
+    // Update local data
+    const idx = allEnquiries.findIndex(e => e.id === id);
+    if (idx !== -1) allEnquiries[idx].status = status;
+
+    updateEnqStats();
+    updatePendingBadge();
+    renderEnquiries();
+
+    const labels = { confirmed: '✅ Booking confirmed!', declined: 'Booking declined.' };
+    showToast(labels[status] || 'Status updated.');
+  }
+
+  // ══════════════════════════════════════
   // HELPERS
   // ══════════════════════════════════════
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
   function showSaving(on) {
     document.getElementById('saving-overlay').style.display = on ? 'flex' : 'none';
   }
@@ -680,10 +962,6 @@
     t.textContent = msg;
     t.className = 'toast' + (error ? ' error' : '') + ' show';
     setTimeout(() => t.className = 'toast' + (error ? ' error' : ''), 3500);
-  }
-
-  function esc(str) {
-    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   // Swatches
@@ -696,9 +974,7 @@
     });
   });
 
-  // ══════════════════════════════════════
   // START
-  // ══════════════════════════════════════
   init();
 </script>
 </body>
