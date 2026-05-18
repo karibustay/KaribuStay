@@ -207,9 +207,9 @@
     <img src="logo2.png" alt="KaribuStay" style="height:38px;width:auto;object-fit:contain;filter:brightness(0) invert(1)"/>
   </a>
   <ul class="nav-links">
-    <li><a href="karibustay.html?type=apartment">Stays</a></li>
-    <li><a href="karibustay.html?type=hotel">Hotels</a></li>
-    <li><a href="karibustay.html?type=short_stay">Short Stays</a></li>
+    <li><a href="index.html?type=apartment">Stays</a></li>
+    <li><a href="index.html?type=hotel">Hotels</a></li>
+    <li><a href="index.html?type=short_stay">Short Stays</a></li>
     <li><a href="about.html">About Us</a></li>
   </ul>
   <div class="nav-right">
@@ -221,7 +221,7 @@
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="nav-dd" id="nav-dd">
-        <button class="nav-dd-item" onclick="window.location.href='karibustay.html'">
+        <button class="nav-dd-item" onclick="window.location.href='index.html'">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
           Browse Listings
         </button>
@@ -236,7 +236,7 @@
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-  <a href="karibustay.html">Home</a>
+  <a href="index.html">Home</a>
   <span class="bc-sep">›</span>
   <a href="#" id="bc-type-link">Properties</a>
   <span class="bc-sep">›</span>
@@ -254,7 +254,7 @@
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
   <h2>Property not found</h2>
   <p>This listing may have been removed or the link is incorrect.</p>
-  <a href="karibustay.html" style="background:var(--green-mid);color:#fff;padding:.7rem 1.6rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;margin-top:.4rem">← Back to Listings</a>
+  <a href="index.html" style="background:var(--green-mid);color:#fff;padding:.7rem 1.6rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;margin-top:.4rem">← Back to Listings</a>
 </div>
 
 <!-- CONTENT -->
@@ -471,8 +471,8 @@
   // ══════════════════════════════════════════
   // 🔧 YOUR SUPABASE CREDENTIALS
   // ══════════════════════════════════════════
-  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -783,7 +783,7 @@
     const checkout = document.getElementById('bc-out').value || '—';
     const guests   = document.getElementById('bc-guests').value || '1';
     const msg = `Hi KaribuStay! 👋\n\nI'd like to book:\n*${property?.name}*\n📍 ${property?.location}\n\n📅 Check-in: ${checkin}\n📅 Check-out: ${checkout}\n👥 Guests: ${guests}\n\nPlease confirm availability. Thank you!`;
-    window.open('https://wa.me/255712345678?text=' + encodeURIComponent(msg), '_blank');
+    window.open('https://wa.me/+255745999918?text=' + encodeURIComponent(msg), '_blank');
   }
 
   // ══════════════════════════════════════════
