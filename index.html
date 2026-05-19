@@ -601,53 +601,15 @@
     const email = document.getElementById('su-email').value.trim();
     const phone = document.getElementById('su-phone').value.trim();
     const pass  = document.getElementById('su-pass').value;
-
-    const btn = document.getElementById('su-btn');
-
-    if (!first || !last || !email || !pass) {
-        showAErr('su-err', 'Please fill all fields');
-        return;
-    }
-
-    if (pass.length < 6) {
-        showAErr('su-err', 'Password must be at least 6 characters');
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = 'Creating account...';
-
-    try {
-
-        const { data, error } = await db.auth.signUp({
-            email: email,
-            password: pass,
-            options: {
-                data: {
-                    full_name: `${first} ${last}`,
-                    phone: phone
-                }
-            }
-        });
-
-        if (error) throw error;
-
-        console.log(data);
-
-        document.getElementById('su-ok').classList.add('show');
-
-        showToast('✅ Account created successfully');
-
-    } catch (err) {
-
-        console.error(err);
-
-        showAErr('su-err', err.message);
-
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = 'Create Account';
+    const btn   = document.getElementById('su-btn');
+    if (!first||!last||!email||!pass) { showAErr('su-err','Please fill in all required fields.'); return; }
+    if (pass.length<6) { showAErr('su-err','Password must be at least 6 characters.'); return; }
+    btn.disabled=true; btn.textContent='Creating account...';
+    const { error } = await db.auth.signUp({ email, password:pass, options:{ data:{ full_name:`${first} ${last}`, phone } } });
+    btn.disabled=false; btn.textContent='Create Account';
+    if (error) { showAErr('su-err','❌ '+error.message); return; }
+    document.getElementById('su-ok').classList.add('show');
+    showToast('✅ Check your email to confirm your account!');
 }
 
   async function doGoogleLogin() {
