@@ -609,6 +609,11 @@
         return;
     }
 
+    if (pass.length < 6) {
+        showAErr('su-err', 'Password must be at least 6 characters');
+        return;
+    }
+
     btn.disabled = true;
     btn.innerHTML = 'Creating account...';
 
@@ -629,9 +634,9 @@
 
         console.log(data);
 
-        showToast('✅ Account created successfully');
-
         document.getElementById('su-ok').classList.add('show');
+
+        showToast('✅ Account created successfully');
 
     } catch (err) {
 
@@ -644,7 +649,6 @@
     btn.disabled = false;
     btn.innerHTML = 'Create Account';
 }
-  }
 
   async function doGoogleLogin() {
     const { error } = await db.auth.signInWithOAuth({
