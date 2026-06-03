@@ -808,7 +808,7 @@
 
     const { data, error } = await db
       .from('enquiries')
-      .select(`*, profiles(full_name, phone)`)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) { showToast('Failed to load enquiries: ' + error.message, true); return; }
@@ -847,7 +847,7 @@
     if (enqFilter !== 'all') items = items.filter(e => e.status === enqFilter);
     if (q) items = items.filter(e =>
       (e.listing_name||'').toLowerCase().includes(q) ||
-      (e.profiles?.full_name||'').toLowerCase().includes(q) ||
+      (e.guest_name||e.profiles?.full_name||'').toLowerCase().includes(q) ||
       (e.message||'').toLowerCase().includes(q)
     );
 
@@ -863,9 +863,9 @@
   }
 
   function buildEnqCard(e) {
-    const guestName = e.profiles?.full_name || 'Guest';
+    const guestName = e.guest_name || e.profiles?.full_name || 'Guest';
     const initials  = guestName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) || 'G';
-    const phone     = e.profiles?.phone || '';
+    const phone     = e.guest_phone || e.phone || e.profiles?.phone || '';
     const nights    = e.checkin && e.checkout ? Math.max(1, Math.round((new Date(e.checkout)-new Date(e.checkin))/(1000*60*60*24))) : null;
     const statusMap = { pending:'es-pending', confirmed:'es-confirmed', declined:'es-declined' };
     const statusLabel = { pending:'⏳ Pending', confirmed:'✅ Confirmed', declined:'✕ Declined' };
