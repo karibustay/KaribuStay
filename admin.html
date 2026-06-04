@@ -542,14 +542,46 @@ async function init() {
 }
 
 async function verifyAdmin(user) {
-  const { data } = await db.from('admin_profiles').select('role').eq('id', user.id).single();
+  // ── DEBUG: log the authenticated user before the profile lookup
+  console.log('[verifyAdmin] Authenticated user:', user);
+
+  const { data, error } = await db
+    .from('admin_profiles')
+    .select('id, user_id, email, role')
+    .eq('user_id', user.id)   // FIX: schema uses user_id, not id
+    .maybeSingle();            // FIX: .single() throws 406 on 0 or >1 rows
+
+  // ── DEBUG: log the raw response from admin_profiles
+  console.log('[verifyAdmin] admin_profiles data:', data);
+  console.log('[verifyAdmin] admin_profiles error:', error);
+
+  // Handle Supabase query error (network, RLS, etc.)
+  if (error) {
+    console.error('[verifyAdmin] Query error:', error);
+    showToast('Admin check failed: ' + error.message, true);
+    await db.auth.signOut();
+    return;
+  }
+
+  // Handle null / no matching row
   if (!data) {
+    console.warn('[verifyAdmin] No admin_profiles row found for user_id:', user.id);
     showToast('Access denied — not an admin account.', true);
     await db.auth.signOut();
     return;
   }
+
+  // Handle row found but missing role
+  if (!data.role) {
+    console.warn('[verifyAdmin] Admin profile has no role set:', data);
+    showToast('Access denied — admin role not configured.', true);
+    await db.auth.signOut();
+    return;
+  }
+
+  console.log('[verifyAdmin] Access granted. Role:', data.role);
   currentAdminRole = data.role;
-  document.getElementById('admin-role-badge').textContent = data.role.replace('_', ' ').toUpperCase();
+  document.getElementById('admin-role-badge').textContent = data.role.replace(/_/g, ' ').toUpperCase();
   showAdmin(user.email);
 }
 
@@ -557,8 +589,30 @@ function showAdmin(email) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-content').style.display = 'block';
   document.getElementById('admin-email-display').textContent = email;
+  // Load all sections so tab badges are populated immediately
   loadListings();
   loadEnquiries();
+  loadBookingsBadge();
+  loadReviewsBadge();
+}
+
+// Lightweight badge loaders — only fetch counts, don't render full tables
+async function loadBookingsBadge() {
+  const { data, error } = await db.from('bookings').select('booking_status');
+  if (error) { console.warn('[loadBookingsBadge] error:', error); return; }
+  const pending = (data || []).filter(b => b.booking_status === 'pending').length;
+  const badge = document.getElementById('bookings-badge');
+  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
+}
+
+async function loadReviewsBadge() {
+  const { data, error } = await db.from('reviews').select('approved');
+  if (error) { console.warn('[loadReviewsBadge] error:', error); return; }
+  const pending = (data || []).filter(r => !r.approved).length;
+  const badge = document.getElementById('reviews-badge');
+  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
 }
 function showLogin() {
   document.getElementById('login-screen').style.display = 'flex';
