@@ -892,13 +892,14 @@ async function updateEnqStatus(id, status) {
 async function loadBookings() {
   document.getElementById('bookings-loading').style.display = 'block';
   document.getElementById('bookings-table').style.display = 'none';
-  const { data, error } = await db.from('bookings').select('*, listings(name,location), profiles(full_name)').order('created_at', { ascending: false });
+  const { data, error } = await db.from('bookings').select('*').order('created_at', { ascending: false });
   document.getElementById('bookings-loading').style.display = 'none';
-  if (error) { showToast('Bookings load failed: ' + error.message, true); return; }
+  if (error) { console.error('[loadBookings] error:', error); showToast('Bookings load failed: ' + error.message, true); return; }
   allBookings = data || [];
   const pending = allBookings.filter(b => b.booking_status === 'pending').length;
   const badge = document.getElementById('bookings-badge');
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
   renderBookings();
 }
 
@@ -915,8 +916,8 @@ function renderBookings() {
   table.style.display = 'table';
   if (!items.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light)">No bookings found.</td></tr>`; return; }
   tbody.innerHTML = items.map(b => {
-    const guestName = b.profiles?.full_name || 'Guest';
-    const property = b.listings?.name || 'Unknown Property';
+    const guestName = b.guest_name || b.full_name || 'Guest';
+    const property = b.listing_name || b.property_name || 'Unknown Property';
     return `<tr>
       <td>${esc(guestName)}</td>
       <td>${esc(property)}</td>
@@ -981,8 +982,8 @@ async function updatePaymentStatus(id, status) {
 
 /* ── REVIEWS ── */
 async function loadReviews() {
-  const { data, error } = await db.from('reviews').select('*, listings(name), profiles(full_name)').order('created_at', { ascending: false });
-  if (error) { showToast('Reviews load failed: ' + error.message, true); return; }
+  const { data, error } = await db.from('reviews').select('*').order('created_at', { ascending: false });
+  if (error) { console.error('[loadReviews] error:', error); showToast('Reviews load failed: ' + error.message, true); return; }
   allReviews = data || [];
   const pending = allReviews.filter(r => !r.approved).length;
   const badge = document.getElementById('reviews-badge');
@@ -1010,7 +1011,7 @@ function renderReviews() {
     <div class="review-stars">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</div>
     <div class="review-comment">"${esc(r.comment||'No comment')}"</div>
     <div class="review-meta">
-      <strong>${esc(r.profiles?.full_name||'Guest')}</strong> · ${esc(r.listings?.name||'Property')}<br/>
+      <strong>${esc(r.guest_name||r.reviewer_name||'Guest')}</strong> · ${esc(r.listing_name||r.property_name||'Property')}<br/>
       ${new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
       <span class="status-chip sc-${r.approved?'approved':'pending'}" style="margin-left:.5rem">${r.approved?'Approved':'Pending'}</span>
     </div>
