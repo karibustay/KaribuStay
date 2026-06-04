@@ -1,253 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KaribuStay – Admin Panel</title>
-  <link rel="icon" type="image/png" href="logo3.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --green:#1A5C3A;--green-mid:#27A65D;--green-light:#E8F5EE;
-      --amber:#F48942;--red:#E53935;--blue:#1976D2;
-      --gray-bg:#F6F7F9;--gray-border:#E0E0E0;
-      --text:#222;--text-mid:#555;--text-light:#888;--white:#fff;
-    }
-    body{font-family:'Poppins',sans-serif;background:var(--gray-bg);color:var(--text);min-height:100vh}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-    /* ── LOGIN ── */
-    .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--green);padding:1.5rem}
-    .login-box{background:var(--white);border-radius:16px;padding:2.8rem 2.5rem;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
-    .login-logo{text-align:center;margin-bottom:2rem}
-    .login-logo-icon{width:54px;height:54px;background:var(--green);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem}
-    .login-logo h1{font-size:1.3rem;font-weight:700}.login-logo h1 span{color:var(--amber)}
-    .login-logo p{font-size:.78rem;color:var(--text-light);margin-top:.3rem}
-    .login-field{margin-bottom:1rem}
-    .login-field label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mid);margin-bottom:.35rem}
-    .login-field input{width:100%;border:1.5px solid var(--gray-border);border-radius:8px;padding:.78rem 1rem;font-family:'Poppins',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .15s}
-    .login-field input:focus{border-color:var(--green-mid)}
-    .login-btn{width:100%;background:var(--green);color:#fff;border:none;padding:.88rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
-    .login-btn:hover{background:#155030}
-    .login-btn:disabled{background:#aaa;cursor:not-allowed}
-    .login-error{background:#FDEDEC;color:var(--red);border-radius:8px;padding:.7rem 1rem;font-size:.8rem;margin-top:.8rem;display:none}
-    .login-error.show{display:block}
-
-    /* ── TOPBAR ── */
-    .topbar{background:var(--green);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
-    .tb-left{display:flex;align-items:center;gap:1rem}
-    .tb-logo{font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none}
-    .tb-logo span{color:var(--amber)}
-    .tb-badge{background:rgba(255,255,255,.15);color:#fff;font-size:.72rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;letter-spacing:.04em}
-    .tb-right{display:flex;align-items:center;gap:1rem}
-    .tb-user{color:rgba(255,255,255,.75);font-size:.78rem;display:flex;align-items:center;gap:.4rem}
-    .tb-link{color:rgba(255,255,255,.8);font-size:.8rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:color .15s}
-    .tb-link:hover{color:#fff}
-    .btn-logout{background:rgba(255,255,255,.15);color:#fff;border:none;padding:.38rem .9rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:background .15s}
-    .btn-logout:hover{background:rgba(229,57,53,.7)}
-
-    /* ── TABS ── */
-    .tab-bar{background:var(--white);border-bottom:1px solid var(--gray-border);display:flex;padding:0 2rem;gap:0;position:sticky;top:60px;z-index:90}
-    .admin-tab{padding:1rem 1.4rem;font-size:.82rem;font-weight:500;color:var(--text-mid);cursor:pointer;border:none;background:none;font-family:'Poppins',sans-serif;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:.4rem;position:relative}
-    .admin-tab:hover{color:var(--green)}
-    .admin-tab.active{color:var(--green);border-bottom-color:var(--green-mid);font-weight:600}
-    .tab-badge{background:var(--amber);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .45rem;border-radius:10px;min-width:18px;text-align:center}
-
-    /* ── PAGES ── */
-    #main-content{display:none}
-    .admin-page{display:none;padding:1.5rem 2rem;animation:fadeIn .3s ease}
-    .admin-page.active{display:block}
-
-    /* ── LAYOUT ── */
-    .layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;max-width:1400px;margin:0 auto}
-
-    /* ── PANEL (FORM) ── */
-    .panel{background:var(--white);border-radius:12px;border:1px solid var(--gray-border);overflow:hidden;position:sticky;top:120px;height:fit-content;max-height:calc(100vh - 140px);overflow-y:auto}
-    .panel-hdr{background:var(--green-light);padding:1.2rem 1.5rem;border-bottom:1px solid var(--gray-border)}
-    .panel-hdr h2{font-size:1rem;font-weight:700;color:var(--green)}
-    .panel-hdr p{font-size:.75rem;color:var(--text-mid);margin-top:.2rem}
-    .panel-body{padding:1.4rem 1.5rem}
-    .form-group{margin-bottom:1rem}
-    label{display:block;font-size:.72rem;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
-    input,select,textarea{width:100%;border:1.5px solid var(--gray-border);border-radius:7px;padding:.68rem .9rem;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
-    input:focus,select:focus,textarea:focus{border-color:var(--green-mid)}
-    textarea{resize:vertical;min-height:72px}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-    .check-group{display:flex;align-items:center;gap:.5rem}
-    .check-group input[type=checkbox]{width:16px;height:16px;accent-color:var(--green-mid)}
-    .check-group label{margin:0;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--text);font-weight:400}
-    /* Image preview */
-    .img-preview{width:100%;height:120px;border-radius:8px;overflow:hidden;background:var(--gray-bg);border:1.5px dashed var(--gray-border);display:flex;align-items:center;justify-content:center;margin-top:.5rem;position:relative}
-    .img-preview img{width:100%;height:100%;object-fit:cover;display:none}
-    .img-preview .img-placeholder{font-size:.76rem;color:var(--text-light);text-align:center}
-
-    /* ── SWATCHES ── */
-    .swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem}
-    .swatch{width:30px;height:30px;border-radius:6px;cursor:pointer;border:3px solid transparent;transition:border-color .15s,transform .15s}
-    .swatch:hover{transform:scale(1.12)}
-    .swatch.active{border-color:var(--text)}
-
-    /* ── BUTTONS ── */
-    .btn{border:none;border-radius:7px;padding:.72rem 1.2rem;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s,transform .15s;display:inline-flex;align-items:center;gap:.4rem}
-    .btn:active{transform:scale(.97)}
-    .btn-primary{background:var(--green-mid);color:#fff;width:100%}
-    .btn-primary:hover{background:#1e9050}
-    .btn-secondary{background:var(--gray-bg);color:var(--text-mid);width:100%;margin-top:.5rem}
-    .btn-secondary:hover{background:var(--gray-border)}
-    .btn-sm{padding:.38rem .8rem;font-size:.72rem}
-    .btn-edit{background:#EBF5FB;color:var(--blue)}
-    .btn-edit:hover{background:#D6EAF8}
-    .btn-del{background:#FDEDEC;color:var(--red)}
-    .btn-del:hover{background:#FADADD}
-    .btn-feat{background:#FEF9E7;color:#D4A017}
-    .btn-feat:hover{background:#FDF2CE}
-
-    /* ── LISTINGS PANEL ── */
-    .listings-panel{background:var(--white);border-radius:12px;border:1px solid var(--gray-border);overflow:hidden}
-    .lp-top{padding:1.2rem 1.5rem;border-bottom:1px solid var(--gray-border);display:flex;justify-content:space-between;align-items:center}
-    .lp-top h2{font-size:1rem;font-weight:700}
-    .stats-row{display:flex;gap:.7rem;padding:1rem 1.5rem;border-bottom:1px solid var(--gray-border);flex-wrap:wrap}
-    .stat-chip{background:var(--green-light);border:1px solid #c8e6d0;border-radius:8px;padding:.5rem 1rem;display:flex;flex-direction:column;align-items:center;min-width:70px}
-    .stat-chip strong{font-size:1.1rem;font-weight:700;color:var(--green)}
-    .stat-chip span{font-size:.65rem;color:var(--text-mid);margin-top:.1rem}
-    .search-row{display:flex;align-items:center;gap:.6rem;padding:.8rem 1.5rem;border-bottom:1px solid var(--gray-border)}
-    .search-row input{border:1.5px solid var(--gray-border);border-radius:7px;padding:.55rem .9rem;font-family:'Poppins',sans-serif;font-size:.82rem;outline:none;flex:1;transition:border-color .15s}
-    .search-row input:focus{border-color:var(--green-mid)}
-    .search-row svg{color:var(--text-light);flex-shrink:0}
-    .table-wrap{overflow-x:auto}
-    table{width:100%;border-collapse:collapse;font-size:.8rem}
-    thead th{padding:.9rem 1rem;text-align:left;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mid);background:var(--gray-bg);border-bottom:1px solid var(--gray-border);white-space:nowrap}
-    tbody td{padding:.85rem 1rem;border-bottom:1px solid var(--gray-border);vertical-align:middle}
-    tbody tr:hover{background:#fafafa}
-    tbody tr:last-child td{border-bottom:none}
-    .prop-chip{display:flex;align-items:center;gap:.7rem}
-    .prop-thumb{width:42px;height:42px;border-radius:7px;flex-shrink:0;object-fit:cover}
-    .prop-chip-name{font-weight:600;font-size:.82rem}
-    .prop-chip-loc{font-size:.7rem;color:var(--text-light)}
-    .type-chip{padding:.2rem .65rem;border-radius:5px;font-size:.68rem;font-weight:600;letter-spacing:.03em}
-    .type-apartment{background:#E8F5EE;color:var(--green)}
-    .type-hotel{background:#EBF5FB;color:var(--blue)}
-    .type-short_stay{background:#FEF9E7;color:#D4A017}
-    .type-villa{background:#FDE8E8;color:var(--red)}
-    .type-hostel{background:#F0E8FE;color:#7C3AED}
-    .stars{color:#F48942}
-    .badge{padding:.18rem .55rem;border-radius:4px;font-size:.65rem;font-weight:600}
-    .badge-popular{background:linear-gradient(135deg,var(--green-mid),var(--green));color:#fff}
-    .badge-new{background:linear-gradient(135deg,var(--amber),#c04a10);color:#fff}
-    .badge-none{background:var(--gray-bg);color:var(--text-light)}
-    .featured-badge{background:#FEF9E7;color:#D4A017;padding:.18rem .55rem;border-radius:4px;font-size:.65rem;font-weight:600}
-    .loading{text-align:center;padding:3rem;color:var(--text-light);font-size:.84rem}
-    .empty-state{text-align:center;padding:3rem;color:var(--text-light)}
-    .empty-state h3{font-size:1rem;font-weight:600;margin:.6rem 0 .3rem}
-    .empty-state p{font-size:.8rem}
-
-    /* ── ENQUIRIES ── */
-    .enq-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
-    .enq-stat{background:var(--white);border-radius:10px;border:1px solid var(--gray-border);padding:1rem 1.2rem;display:flex;align-items:center;gap:.9rem}
-    .enq-stat-ico{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .esi-all{background:#E8F5EE;color:var(--green-mid)}
-    .esi-pending{background:#FEF9E7;color:var(--amber)}
-    .esi-confirmed{background:#E8F5EE;color:var(--green-mid)}
-    .esi-declined{background:#FDEDEC;color:var(--red)}
-    .enq-stat-info strong{display:block;font-size:1.3rem;font-weight:700}
-    .enq-stat-info span{font-size:.72rem;color:var(--text-light)}
-    .enq-toolbar{display:flex;align-items:center;gap:.6rem;margin-bottom:1.2rem;flex-wrap:wrap}
-    .enq-filter{background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:7px;padding:.45rem .9rem;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;color:var(--text-mid);transition:all .15s}
-    .enq-filter:hover,.enq-filter.active{background:var(--green-light);border-color:var(--green-mid);color:var(--green)}
-    .enq-filter.amber.active{background:#FEF9E7;border-color:var(--amber);color:var(--amber)}
-    .enq-filter.red.active{background:#FDEDEC;border-color:var(--red);color:var(--red)}
-    .enq-search{border:1.5px solid var(--gray-border);border-radius:7px;padding:.45rem .9rem;font-family:'Poppins',sans-serif;font-size:.8rem;outline:none;flex:1;min-width:180px;transition:border-color .15s}
-    .enq-search:focus{border-color:var(--green-mid)}
-    .enq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem}
-    .enq-card{background:var(--white);border-radius:12px;border:1px solid var(--gray-border);overflow:hidden;transition:box-shadow .2s,opacity .3s}
-    .enq-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.1)}
-    .enq-card-top{padding:1rem 1.1rem;border-bottom:1px solid var(--gray-border)}
-    .enq-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;gap:.5rem}
-    .enq-prop{font-weight:600;font-size:.84rem;flex:1}
-    .enq-schip{padding:.22rem .65rem;border-radius:5px;font-size:.68rem;font-weight:600;white-space:nowrap}
-    .es-pending{background:#FEF9E7;color:var(--amber)}
-    .es-confirmed{background:#E8F5EE;color:var(--green)}
-    .es-declined{background:#FDEDEC;color:var(--red)}
-    .enq-guest{display:flex;align-items:center;gap:.6rem}
-    .enq-guest-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-mid));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
-    .enq-card-body{padding:.9rem 1.1rem;border-bottom:1px solid var(--gray-border)}
-    .enq-row{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--text-mid);margin-bottom:.4rem}
-    .enq-msg{font-size:.78rem;color:var(--text-light);font-style:italic;margin-top:.5rem;padding:.6rem;background:var(--gray-bg);border-radius:6px;line-height:1.5}
-    .enq-card-foot{padding:.8rem 1.1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
-    .btn-confirm{background:#E8F5EE;color:var(--green);border:none;padding:.42rem .85rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:background .15s}
-    .btn-confirm:hover{background:#c8e6d0}
-    .btn-decline{background:#FDEDEC;color:var(--red);border:none;padding:.42rem .85rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:background .15s}
-    .btn-decline:hover{background:#FADADD}
-    .btn-wa-enq{background:#E8F8EF;color:#25D366;border:none;padding:.42rem .85rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;text-decoration:none;transition:background .15s}
-    .btn-wa-enq:hover{background:#C8EFD8}
-    .enq-empty{text-align:center;padding:3rem;color:var(--text-light)}
-    .enq-empty h3{font-size:1rem;font-weight:600;margin:.6rem 0 .3rem;color:var(--text-mid)}
-    .enq-empty p{font-size:.8rem}
-
-    /* ── SAVING OVERLAY ── */
-    .saving-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center}
-    .saving-box{background:var(--white);border-radius:12px;padding:1.8rem 2.5rem;display:flex;align-items:center;gap:1rem;font-size:.9rem;font-weight:500;box-shadow:0 16px 48px rgba(0,0,0,.2)}
-    .spinner{width:22px;height:22px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-
-    /* ── TOAST ── */
-    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(10px);background:var(--green);color:#fff;padding:.7rem 1.5rem;border-radius:50px;font-size:.82rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:9999;white-space:nowrap}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .toast.error{background:var(--red)}
-
-    @media(max-width:900px){
-      .layout{grid-template-columns:1fr}
-      .panel{position:static;max-height:none}
-      .enq-stats{grid-template-columns:1fr 1fr}
-      .enq-grid{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KaribuStay – Admin Panel</title>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1A5C3A;--green-mid:#27A65D;--green-light:#E8F5EE;
+  --amber:#F48942;--red:#E53935;--blue:#1976D2;--purple:#7B1FA2;
+  --gray-bg:#F6F7F9;--gray-border:#E0E0E0;
+  --text:#222;--text-mid:#555;--text-light:#888;--white:#fff;
+}
+body{font-family:'Poppins',sans-serif;background:var(--gray-bg);color:var(--text);min-height:100vh}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--green);padding:1.5rem}
+.login-box{background:var(--white);border-radius:16px;padding:2.8rem 2.5rem;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.login-logo{text-align:center;margin-bottom:2rem}
+.login-logo img{width:72px;height:72px;border-radius:16px;object-fit:cover;margin:0 auto .9rem;display:block}
+.login-logo h1{font-size:1.3rem;font-weight:700;color:var(--text)}
+.login-logo h1 span{color:var(--amber)}
+.login-logo p{font-size:.78rem;color:var(--text-light);margin-top:.3rem}
+.login-field{margin-bottom:1rem}
+.login-field label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mid);margin-bottom:.35rem}
+.login-field input{width:100%;border:1.5px solid var(--gray-border);border-radius:8px;padding:.78rem 1rem;font-family:'Poppins',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .15s}
+.login-field input:focus{border-color:var(--green-mid)}
+.login-btn{width:100%;background:var(--green);color:var(--white);border:none;padding:.88rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.login-btn:hover{background:#155030}
+.login-btn:disabled{background:#aaa;cursor:not-allowed}
+.login-error{background:#FDEDEC;color:var(--red);border-radius:8px;padding:.7rem 1rem;font-size:.8rem;margin-top:.8rem;display:none}
+.login-error.show{display:block}
+/* TOPBAR */
+.topbar{background:var(--green);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.tb-left{display:flex;align-items:center;gap:1rem}
+.tb-logo{font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none}
+.tb-logo span{color:var(--amber)}
+.tb-badge{background:rgba(255,255,255,.15);color:#fff;font-size:.72rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;letter-spacing:.04em}
+.tb-role{background:rgba(244,137,66,.25);color:var(--amber);font-size:.68rem;font-weight:700;padding:.22rem .65rem;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
+.tb-right{display:flex;align-items:center;gap:1rem}
+.tb-user{color:rgba(255,255,255,.75);font-size:.78rem;display:flex;align-items:center;gap:.4rem}
+.tb-user svg{color:var(--amber)}
+.tb-link{color:rgba(255,255,255,.8);font-size:.8rem;text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:color .15s}
+.tb-link:hover{color:#fff}
+.btn-logout{background:rgba(255,255,255,.15);color:#fff;border:none;padding:.38rem .9rem;border-radius:6px;font-family:'Poppins',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:background .15s}
+.btn-logout:hover{background:rgba(229,57,53,.7)}
+/* TABS */
+.admin-tabs{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--gray-border);padding:0 2rem;position:sticky;top:60px;z-index:90;overflow-x:auto}
+.admin-tab{padding:.85rem 1.4rem;border:none;background:none;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:500;color:var(--text-mid);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:.5rem;white-space:nowrap}
+.admin-tab:hover{color:var(--text)}
+.admin-tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:700}
+.tab-badge{background:var(--amber);color:#fff;border-radius:10px;padding:.08rem .42rem;font-size:.62rem;font-weight:700}
+.tab-badge.green{background:var(--green-mid)}
+.tab-badge.blue{background:var(--blue)}
+/* PAGES */
+.admin-page{display:none;padding:1.5rem 2rem;max-width:1500px;margin:0 auto}
+.admin-page.active{display:block}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem}
+/* PANEL */
+.panel{background:var(--white);border-radius:12px;border:1px solid var(--gray-border);overflow:hidden;position:sticky;top:120px;height:fit-content;max-height:calc(100vh - 140px);overflow-y:auto}
+.panel-hdr{background:var(--green-light);padding:1.2rem 1.5rem;border-bottom:1px solid var(--gray-border)}
+.panel-hdr h2{font-size:1rem;font-weight:700;color:var(--green)}
+.panel-hdr p{font-size:.75rem;color:var(--text-mid);margin-top:.2rem}
+.panel-body{padding:1.4rem 1.5rem}
+.form-group{margin-bottom:1rem}
+label{display:block;font-size:.72rem;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
+input,select,textarea{width:100%;border:1.5px solid var(--gray-border);border-radius:7px;padding:.68rem .9rem;font-family:'Poppins',sans-serif;font-size:.82rem;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--green-mid)}
+textarea{resize:vertical;min-height:72px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.check-group{display:flex;align-items:center;gap:.5rem}
+.check-group input[type=checkbox]{width:16px;height:16px;accent-color:var(--green-mid)}
+.check-group label{margin:0;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--text);font-weight:400}
+/* SWATCHES */
+.swatches{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem}
+.swatch{width:30px;height:30px;border-radius:6px;cursor:pointer;border:3px solid transparent;transition:border-color .15s,transform .15s}
+.swatch:hover{transform:scale(1.12)}
+.swatch.active{border-color:var(--text)}
+/* BUTTONS */
+.btn{border:none;border-radius:7px;padding:.72rem 1.2rem;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s,transform .15s;display:inline-flex;align-items:center;gap:.4rem}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--green-mid);color:#fff;width:100%}
+.btn-primary:hover{background:#1e9050}
+.btn-secondary{background:var(--gray-bg);color:var(--text-mid);width:100%;margin-top:.5rem}
+.btn-secondary:hover{background:var(--gray-border)}
+.btn-sm{padding:.38rem .8rem;font-size:.72rem}
+.btn-edit{background:#EBF5FB;color:var(--blue)}
+.btn-edit:hover{background:#D6EAF8}
+.btn-del{background:#FDEDEC;color:var(--red)}
+.btn-del:hover{background:#FADBD8}
+.btn-approve{background:#D1FAE5;color:#065F46}
+.btn-approve:hover{background:#A7F3D0}
+/* LISTINGS PANEL */
+.listings-panel{display:flex;flex-direction:column;gap:1.2rem}
+.lp-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem}
+.lp-top h2{font-size:1.1rem;font-weight:700}
+.stats-row{display:flex;gap:.8rem;flex-wrap:wrap}
+.stat-chip{background:var(--white);border:1px solid var(--gray-border);border-radius:8px;padding:.5rem 1rem;font-size:.78rem}
+.stat-chip strong{font-weight:700;color:var(--green);font-size:1.1rem;display:block}
+.stat-chip span{color:var(--text-light)}
+.search-row{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem}
+.search-row svg{color:var(--text-light);flex-shrink:0}
+.search-row input{border:none;outline:none;flex:1;font-size:.85rem;color:var(--text)}
+.table-wrap{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--green-light)}
+th{padding:.85rem 1rem;text-align:left;font-size:.72rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:.9rem 1rem;border-top:1px solid var(--gray-bg);font-size:.8rem;vertical-align:middle}
+tr:hover td{background:#FAFAFA}
+.empty-state{text-align:center;padding:3rem 1rem}
+.empty-state svg{color:var(--gray-border);margin-bottom:1rem}
+.empty-state h3{font-size:1rem;color:var(--text-mid);margin-bottom:.3rem}
+.empty-state p{font-size:.8rem;color:var(--text-light)}
+.loading{text-align:center;padding:2rem;color:var(--text-light);font-size:.85rem}
+/* PROP CHIP */
+.prop-chip{display:flex;align-items:center;gap:.7rem}
+.prop-thumb{width:42px;height:42px;border-radius:7px;flex-shrink:0;object-fit:cover}
+.prop-thumb-svg{width:42px;height:42px;border-radius:7px;flex-shrink:0}
+.prop-chip-name{font-weight:600;font-size:.82rem;color:var(--text)}
+.prop-chip-loc{font-size:.72rem;color:var(--text-light)}
+/* BADGES */
+.badge{display:inline-block;padding:.2rem .55rem;border-radius:5px;font-size:.66rem;font-weight:600}
+.badge-popular{background:#FEF3C7;color:#92400E}
+.badge-new{background:#D1FAE5;color:#065F46}
+.badge-none{background:var(--gray-bg);color:var(--text-light)}
+.type-chip{display:inline-block;padding:.18rem .55rem;border-radius:5px;font-size:.68rem;font-weight:500}
+.type-apartment{background:#EBF5FB;color:#1565C0}
+.type-hotel{background:#F3E5F5;color:#6A1B9A}
+.type-short_stay{background:#FFF3E0;color:#E65100}
+.type-villa{background:#E8F5E9;color:#1B5E20}
+.stars{color:var(--amber);font-size:.8rem}
+/* STATUS CHIP */
+.status-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.66rem;font-weight:700}
+.sc-pending{background:#FEF3C7;color:#92400E}
+.sc-confirmed{background:#D1FAE5;color:#065F46}
+.sc-approved{background:#D1FAE5;color:#065F46}
+.sc-cancelled,.sc-declined,.sc-rejected{background:#FEE2E2;color:var(--red)}
+.sc-completed{background:#EDE9FE;color:#5B21B6}
+.sc-paid{background:#D1FAE5;color:#065F46}
+.sc-failed,.sc-refunded{background:#FEE2E2;color:var(--red)}
+/* ENQUIRY CARDS */
+.enq-toolbar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.enq-filter{border:1.5px solid var(--gray-border);background:var(--white);padding:.38rem 1rem;border-radius:20px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text-mid)}
+.enq-filter:hover,.enq-filter.active{background:var(--green);color:#fff;border-color:var(--green)}
+.enq-filter.amber.active{background:var(--amber);border-color:var(--amber)}
+.enq-filter.red.active{background:var(--red);border-color:var(--red)}
+.enq-search{flex:1;min-width:180px;max-width:280px;border:1.5px solid var(--gray-border);border-radius:8px;padding:.5rem .85rem;font-family:'Poppins',sans-serif;font-size:.8rem;outline:none;transition:border-color .15s}
+.enq-search:focus{border-color:var(--green-mid)}
+.enq-stats{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.enq-stat{background:var(--white);border:1px solid var(--gray-border);border-radius:10px;padding:.75rem 1.2rem;display:flex;align-items:center;gap:.8rem}
+.enq-stat-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.esi-all{background:var(--green-light)}.esi-all svg{color:var(--green)}
+.esi-pending{background:#FEF3C7}.esi-pending svg{color:#D97706}
+.esi-confirmed{background:#D1FAE5}.esi-confirmed svg{color:#059669}
+.esi-declined{background:#FEE2E2}.esi-declined svg{color:var(--red)}
+.enq-stat-info strong{display:block;font-size:1.2rem;font-weight:700;line-height:1;color:var(--text)}
+.enq-stat-info span{font-size:.72rem;color:var(--text-light)}
+.enq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.1rem}
+.enq-card{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden;transition:box-shadow .2s}
+.enq-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.enq-card-top{padding:1.1rem 1.2rem;border-bottom:1px solid var(--gray-bg)}
+.enq-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.6rem}
+.enq-prop{font-size:.88rem;font-weight:700;color:var(--text);line-height:1.3}
+.enq-guest{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text-mid)}
+.enq-guest-av{width:28px;height:28px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--green);flex-shrink:0}
+.enq-card-body{padding:.9rem 1.2rem;display:flex;flex-direction:column;gap:.45rem}
+.enq-row{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text-mid)}
+.enq-row svg{color:var(--green-mid);flex-shrink:0}
+.enq-row strong{color:var(--text);font-weight:600}
+.enq-msg{background:var(--gray-bg);border-radius:7px;padding:.6rem .8rem;font-size:.76rem;color:var(--text-mid);line-height:1.55;font-style:italic}
+.enq-card-foot{padding:.85rem 1.2rem;border-top:1px solid var(--gray-bg);display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.btn-confirm{background:var(--green-mid);color:#fff;border:none;padding:.5rem 1.1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:.35rem}
+.btn-confirm:hover{background:var(--green)}
+.btn-decline{background:#FEE2E2;color:var(--red);border:none;padding:.5rem 1.1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:.35rem}
+.btn-decline:hover{background:#FECACA}
+.btn-wa-enq{background:#25D366;color:#fff;border:none;padding:.5rem 1rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.35rem;margin-left:auto;transition:background .15s;text-decoration:none}
+.btn-wa-enq:hover{background:#1ebe5a}
+.enq-empty{text-align:center;padding:3.5rem 1rem;background:var(--white);border-radius:12px;border:1px solid var(--gray-border)}
+.enq-empty svg{color:var(--gray-border);margin-bottom:1rem}
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.metric-card{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;padding:1.4rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.metric-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi-green{background:var(--green-light)}.mi-green svg{color:var(--green)}
+.mi-amber{background:#FEF3C7}.mi-amber svg{color:#D97706}
+.mi-blue{background:#EBF5FB}.mi-blue svg{color:var(--blue)}
+.mi-purple{background:#F3E5F5}.mi-purple svg{color:var(--purple)}
+.mi-red{background:#FEE2E2}.mi-red svg{color:var(--red)}
+.metric-val{font-size:1.5rem;font-weight:700;color:var(--text);line-height:1}
+.metric-lbl{font-size:.72rem;color:var(--text-light);margin-top:.2rem}
+/* REVENUE CHART */
+.chart-wrap{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;padding:1.4rem 1.5rem;margin-bottom:1.5rem}
+.chart-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.chart-hdr h3{font-size:.95rem;font-weight:700}
+.bar-chart{display:flex;align-items:flex-end;gap:.5rem;height:140px;padding-top:.5rem}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:default}
+.bar-fill{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--green-mid),var(--green));min-height:4px;transition:height .5s ease}
+.bar-lbl{font-size:.6rem;color:var(--text-light);text-align:center}
+.bar-val{font-size:.6rem;color:var(--text-mid);font-weight:600;text-align:center}
+/* BOOKINGS PAGE */
+.book-toolbar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.book-filter{border:1.5px solid var(--gray-border);background:var(--white);padding:.38rem 1rem;border-radius:20px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text-mid)}
+.book-filter:hover,.book-filter.active{background:var(--green);color:#fff;border-color:var(--green)}
+/* PAYMENTS PAGE */
+.pay-table-wrap{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden}
+/* REVIEWS */
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.review-card{background:var(--white);border:1px solid var(--gray-border);border-radius:12px;padding:1.2rem;transition:box-shadow .2s}
+.review-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.review-stars{color:var(--amber);font-size:.88rem;margin-bottom:.5rem}
+.review-comment{font-size:.82rem;color:var(--text-mid);line-height:1.65;margin-bottom:.8rem;font-style:italic}
+.review-meta{font-size:.72rem;color:var(--text-light)}
+/* SAVING OVERLAY */
+.saving-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:500}
+.saving-box{background:var(--white);border-radius:12px;padding:2rem 2.5rem;text-align:center;font-size:.9rem;font-weight:500;color:var(--green)}
+.spinner{width:36px;height:36px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .8rem}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#fff;padding:.8rem 1.4rem;border-radius:8px;font-size:.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:transform .3s,opacity .3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--red)}
+/* SECTION TITLE ROW */
+.sec-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.6rem}
+.sec-title-row h2{font-size:1.05rem;font-weight:700}
+@keyframes spin{to{transform:rotate(360deg)}}
+#main-content{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.panel{position:static;max-height:none}}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.analytics-grid{grid-template-columns:1fr 1fr}.admin-tabs{padding:0 1rem}.admin-page{padding:1rem}}
+</style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div class="login-screen" id="login-screen">
+<!-- LOGIN -->
+<div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-icon">
-        <svg width="28" height="28" viewBox="0 0 60 60" fill="none"><path d="M12 44L30 16L48 44H36L30 30L24 44H12Z" fill="white"/></svg>
-      </div>
-      <h1>Karibu<span>Stay</span></h1>
-      <p>Admin Control Panel</p>
+      <img src="logo3.png" alt="KaribuStay" onerror="this.style.display='none'"/>
+      <h1>KaribuStay <span>Admin</span></h1>
+      <p>Authorised Access Only</p>
     </div>
     <div class="login-field">
       <label>Email Address</label>
-      <input type="email" id="login-email" placeholder="admin@karibustay.co.tz" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <input type="email" id="login-email" placeholder="admin@karibustay.com" autocomplete="email"/>
     </div>
     <div class="login-field">
       <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <input type="password" id="login-password" placeholder="••••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doLogin()"/>
     </div>
-    <div class="login-error" id="login-error"></div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
       Sign In to Admin
     </button>
+    <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
 <!-- MAIN ADMIN -->
 <div id="main-content">
-
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="tb-left">
-      <a class="tb-logo" href="index.html" target="_blank">Karibu<span>Stay</span></a>
-      <span class="tb-badge">Admin Panel</span>
+      <a href="index.html" class="tb-logo">KaribuStay <span>Admin</span></a>
+      <span class="tb-badge">⚙ Control Panel</span>
+      <span class="tb-role" id="admin-role-badge">Admin</span>
     </div>
     <div class="tb-right">
-      <span class="tb-user">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <div class="tb-user">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="admin-email-display"></span>
-      </span>
-      <a class="tb-link" href="index.html" target="_blank">
+      </div>
+      <a href="index.html" class="tb-link" target="_blank">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         View Site
       </a>
@@ -258,10 +281,9 @@
     </div>
   </div>
 
-  <!-- TABS -->
-  <div class="tab-bar">
+  <div class="admin-tabs">
     <button class="admin-tab active" id="tab-listings" onclick="switchTab('listings')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       Listings
     </button>
     <button class="admin-tab" id="tab-enquiries" onclick="switchTab('enquiries')">
@@ -269,13 +291,29 @@
       Enquiries
       <span class="tab-badge" id="pending-badge" style="display:none">0</span>
     </button>
+    <button class="admin-tab" id="tab-bookings" onclick="switchTab('bookings')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Bookings
+      <span class="tab-badge blue" id="bookings-badge" style="display:none">0</span>
+    </button>
+    <button class="admin-tab" id="tab-payments" onclick="switchTab('payments')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Payments
+    </button>
+    <button class="admin-tab" id="tab-reviews" onclick="switchTab('reviews')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+      <span class="tab-badge" id="reviews-badge" style="display:none">0</span>
+    </button>
+    <button class="admin-tab" id="tab-analytics" onclick="switchTab('analytics')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </button>
   </div>
 
-  <!-- PAGE: LISTINGS -->
+  <!-- ══ LISTINGS ══ -->
   <div class="admin-page active" id="page-listings">
     <div class="layout">
-
-      <!-- FORM -->
       <div class="panel">
         <div class="panel-hdr">
           <h2 id="form-title">➕ Add New Property</h2>
@@ -283,15 +321,11 @@
         </div>
         <div class="panel-body">
           <input type="hidden" id="edit-id"/>
-          <div class="form-group">
-            <label>Property Name *</label>
-            <input type="text" id="f-name" placeholder="e.g. Masaki Luxury Apartment"/>
-          </div>
+          <div class="form-group"><label>Property Name *</label><input type="text" id="f-name" placeholder="e.g. Masaki Ocean View Apartment"/></div>
           <div class="form-row">
-            <div class="form-group">
-              <label>Type *</label>
+            <div class="form-group"><label>Type *</label>
               <select id="f-type">
-                <option value="">Select type</option>
+                <option value="">Select…</option>
                 <option value="apartment">Apartment</option>
                 <option value="hotel">Hotel</option>
                 <option value="short_stay">Short Stay</option>
@@ -299,121 +333,67 @@
                 <option value="hostel">Hostel</option>
               </select>
             </div>
-            <div class="form-group">
-              <label>Price / Night (TZS) *</label>
-              <input type="number" id="f-price" placeholder="e.g. 80000" min="0"/>
+            <div class="form-group"><label>Badge</label>
+              <select id="f-badge"><option value="none">None</option><option value="popular">● Popular</option><option value="new">✦ New</option></select>
             </div>
           </div>
-          <div class="form-group">
-            <label>Location *</label>
-            <input type="text" id="f-location" placeholder="e.g. Masaki, Dar es Salaam"/>
-          </div>
+          <div class="form-group"><label>Location *</label><input type="text" id="f-location" placeholder="e.g. Masaki, Dar es Salaam"/></div>
           <div class="form-row">
-            <div class="form-group">
-              <label>City</label>
-              <input type="text" id="f-city" placeholder="Dar es Salaam"/>
-            </div>
-            <div class="form-group">
-              <label>Country</label>
-              <input type="text" id="f-country" placeholder="Tanzania" value="Tanzania"/>
-            </div>
-          </div>
-          <!-- IMAGE URL -->
-          <div class="form-group">
-            <label>Image URL</label>
-            <input type="url" id="f-image-url" placeholder="https://…" oninput="previewImg(this.value)"/>
-            <div class="img-preview" id="img-preview">
-              <img id="img-preview-img" src="" alt="preview"/>
-              <div class="img-placeholder" id="img-placeholder">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <div style="margin-top:.3rem">Image preview</div>
-              </div>
+            <div class="form-group"><label>Price (TZS / night) *</label><input type="number" id="f-price" placeholder="120000" min="0"/></div>
+            <div class="form-group"><label>Status</label>
+              <select id="f-status"><option value="approved">Approved</option><option value="pending">Pending</option><option value="rejected">Rejected</option></select>
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
-              <label>Bedrooms</label>
-              <input type="number" id="f-beds" min="0" placeholder="0"/>
-            </div>
-            <div class="form-group">
-              <label>Bathrooms</label>
-              <input type="number" id="f-baths" min="0" placeholder="0"/>
-            </div>
+            <div class="form-group"><label>Bedrooms</label><input type="number" id="f-beds" placeholder="2" min="0"/></div>
+            <div class="form-group"><label>Bathrooms</label><input type="number" id="f-baths" placeholder="1" min="0"/></div>
           </div>
           <div class="form-row">
-            <div class="form-group">
-              <label>Rating (0–5)</label>
-              <input type="number" id="f-rating" min="0" max="5" step="0.1" placeholder="4.5"/>
-            </div>
-            <div class="form-group">
-              <label>Reviews Count</label>
-              <input type="number" id="f-reviews" min="0" placeholder="0"/>
-            </div>
+            <div class="form-group"><label>Rating (0–5)</label><input type="number" id="f-rating" placeholder="4.8" min="0" max="5" step="0.1"/></div>
+            <div class="form-group"><label>Reviews Count</label><input type="number" id="f-reviews" placeholder="12" min="0"/></div>
           </div>
+          <div class="form-group"><label>Image URL</label><input type="url" id="f-image" placeholder="https://…"/></div>
+          <div class="form-group"><label>Description</label><textarea id="f-desc" placeholder="Brief description…"></textarea></div>
           <div class="form-group">
-            <label>Badge</label>
-            <select id="f-badge">
-              <option value="none">None</option>
-              <option value="popular">Popular</option>
-              <option value="new">New</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <div class="check-group">
-              <input type="checkbox" id="f-wifi" checked/>
-              <label for="f-wifi">Wi-Fi Included</label>
+            <label>Amenities</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem .8rem;margin-top:.3rem">
+              <div class="check-group"><input type="checkbox" id="f-wifi" checked/><label for="f-wifi">Wi-Fi</label></div>
+              <div class="check-group"><input type="checkbox" id="f-parking"/><label for="f-parking">Parking</label></div>
+              <div class="check-group"><input type="checkbox" id="f-pool"/><label for="f-pool">Pool</label></div>
+              <div class="check-group"><input type="checkbox" id="f-ac"/><label for="f-ac">A/C</label></div>
+              <div class="check-group"><input type="checkbox" id="f-kitchen"/><label for="f-kitchen">Kitchen</label></div>
+              <div class="check-group"><input type="checkbox" id="f-breakfast"/><label for="f-breakfast">Breakfast</label></div>
             </div>
           </div>
           <div class="form-group">
-            <div class="check-group">
-              <input type="checkbox" id="f-featured"/>
-              <label for="f-featured">Featured Property</label>
+            <label>Card Colour Theme</label>
+            <div class="swatches" id="swatch-container">
+              <div class="swatch active" data-color="#C88B55,#4A2010" style="background:linear-gradient(135deg,#C88B55,#4A2010)" title="Warm"></div>
+              <div class="swatch" data-color="#7AAF8A,#1E4028" style="background:linear-gradient(135deg,#7AAF8A,#1E4028)" title="Forest"></div>
+              <div class="swatch" data-color="#C8A058,#382000" style="background:linear-gradient(135deg,#C8A058,#382000)" title="Golden"></div>
+              <div class="swatch" data-color="#90B8A0,#254535" style="background:linear-gradient(135deg,#90B8A0,#254535)" title="Sage"></div>
+              <div class="swatch" data-color="#7090B0,#182030" style="background:linear-gradient(135deg,#7090B0,#182030)" title="Ocean"></div>
+              <div class="swatch" data-color="#B07090,#301020" style="background:linear-gradient(135deg,#B07090,#301020)" title="Rose"></div>
+              <div class="swatch" data-color="#909090,#202020" style="background:linear-gradient(135deg,#909090,#202020)" title="Slate"></div>
+              <div class="swatch" data-color="#A0B050,#283010" style="background:linear-gradient(135deg,#A0B050,#283010)" title="Lime"></div>
             </div>
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="f-desc" placeholder="Describe the property…"></textarea>
-          </div>
-          <!-- GRADIENT COLOR (fallback when no image) -->
-          <div class="form-group">
-            <label>Card Gradient (fallback)</label>
-            <input type="text" id="f-color" placeholder="#C88B55,#4A2010" value="#C88B55,#4A2010"/>
-            <div class="swatches" id="swatches">
-              <div class="swatch active" data-color="#C88B55,#4A2010" style="background:linear-gradient(135deg,#C88B55,#4A2010)" title="Amber"></div>
-              <div class="swatch" data-color="#27A65D,#1A5C3A" style="background:linear-gradient(135deg,#27A65D,#1A5C3A)" title="Green"></div>
-              <div class="swatch" data-color="#1976D2,#0D47A1" style="background:linear-gradient(135deg,#1976D2,#0D47A1)" title="Blue"></div>
-              <div class="swatch" data-color="#7B1FA2,#4A148C" style="background:linear-gradient(135deg,#7B1FA2,#4A148C)" title="Purple"></div>
-              <div class="swatch" data-color="#D32F2F,#B71C1C" style="background:linear-gradient(135deg,#D32F2F,#B71C1C)" title="Red"></div>
-              <div class="swatch" data-color="#F57F17,#E65100" style="background:linear-gradient(135deg,#F57F17,#E65100)" title="Orange"></div>
-              <div class="swatch" data-color="#00838F,#006064" style="background:linear-gradient(135deg,#00838F,#006064)" title="Teal"></div>
-              <div class="swatch" data-color="#2E7D32,#1B5E20" style="background:linear-gradient(135deg,#2E7D32,#1B5E20)" title="Dark Green"></div>
-            </div>
+            <input type="hidden" id="f-color" value="#C88B55,#4A2010"/>
           </div>
           <button class="btn btn-primary" onclick="saveProperty()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="save-btn-text">Save Property</span>
           </button>
-          <button class="btn btn-secondary" onclick="clearForm()" id="cancel-btn" style="display:none">
-            ✕ Cancel Edit
-          </button>
+          <button class="btn btn-secondary" onclick="clearForm()" id="cancel-btn" style="display:none">✕ Cancel Edit</button>
         </div>
       </div>
-
-      <!-- TABLE -->
       <div class="listings-panel">
-        <div class="lp-top">
-          <h2>All Listings</h2>
-          <button onclick="loadListings()" style="background:var(--green-light);color:var(--green);border:none;padding:.45rem .9rem;border-radius:7px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-            Refresh
-          </button>
-        </div>
+        <div class="lp-top"><h2>All Listings</h2></div>
         <div class="stats-row">
           <div class="stat-chip"><strong id="stat-total">0</strong><span>Total</span></div>
-          <div class="stat-chip"><strong id="stat-apt">0</strong><span>Apts</span></div>
+          <div class="stat-chip"><strong id="stat-apt">0</strong><span>Apartments</span></div>
           <div class="stat-chip"><strong id="stat-hotel">0</strong><span>Hotels</span></div>
-          <div class="stat-chip"><strong id="stat-short">0</strong><span>Short Stay</span></div>
-          <div class="stat-chip"><strong id="stat-villa">0</strong><span>Villas</span></div>
+          <div class="stat-chip"><strong id="stat-short">0</strong><span>Short Stays</span></div>
+          <div class="stat-chip"><strong id="stat-pending-list">0</strong><span>Pending</span></div>
         </div>
         <div class="search-row">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -422,77 +402,136 @@
         <div class="table-wrap">
           <div id="tbl-loading" class="loading">
             <div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .6rem"></div>
-            Loading listings from Supabase…
+            Loading listings…
           </div>
           <div id="tbl-content" style="display:none">
             <table>
-              <thead>
-                <tr>
-                  <th>Property</th>
-                  <th>Type</th>
-                  <th>Price / Night</th>
-                  <th>Rating</th>
-                  <th>Badge</th>
-                  <th>Featured</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Property</th><th>Type</th><th>Price/Night</th><th>Rating</th><th>Status</th><th>Badge</th><th>Actions</th></tr></thead>
               <tbody id="table-body"></tbody>
             </table>
             <div id="empty-state" class="empty-state" style="display:none">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
-              <h3>No listings yet</h3>
-              <p>Add your first property using the form.</p>
+              <h3>No listings yet</h3><p>Add your first property using the form.</p>
             </div>
           </div>
         </div>
       </div>
-
-    </div>
-  </div><!-- end #page-listings -->
-
-  <!-- PAGE: ENQUIRIES -->
-  <div class="admin-page" id="page-enquiries">
-    <div style="max-width:1400px;margin:0 auto">
-      <div class="enq-stats">
-        <div class="enq-stat"><div class="enq-stat-ico esi-all"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="enq-stat-info"><strong id="es-total">0</strong><span>Total</span></div></div>
-        <div class="enq-stat"><div class="enq-stat-ico esi-pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="enq-stat-info"><strong id="es-pending">0</strong><span>Pending</span></div></div>
-        <div class="enq-stat"><div class="enq-stat-ico esi-confirmed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="enq-stat-info"><strong id="es-confirmed">0</strong><span>Confirmed</span></div></div>
-        <div class="enq-stat"><div class="enq-stat-ico esi-declined"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="enq-stat-info"><strong id="es-declined">0</strong><span>Declined</span></div></div>
-      </div>
-      <div class="enq-toolbar">
-        <button class="enq-filter active" data-ef="all" onclick="filterEnq('all')">All</button>
-        <button class="enq-filter amber" data-ef="pending" onclick="filterEnq('pending')">⏳ Pending</button>
-        <button class="enq-filter" data-ef="confirmed" onclick="filterEnq('confirmed')">✅ Confirmed</button>
-        <button class="enq-filter red" data-ef="declined" onclick="filterEnq('declined')">✕ Declined</button>
-        <input class="enq-search" id="enq-search" placeholder="Search guest or property…" oninput="renderEnquiries()"/>
-        <button onclick="loadEnquiries()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;white-space:nowrap">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Refresh
-        </button>
-      </div>
-      <div class="enq-grid" id="enq-grid">
-        <div class="enq-empty"><h3>Loading enquiries…</h3></div>
-      </div>
     </div>
   </div>
 
-</div><!-- end #main-content -->
+  <!-- ══ ENQUIRIES ══ -->
+  <div class="admin-page" id="page-enquiries">
+    <div class="enq-stats">
+      <div class="enq-stat"><div class="enq-stat-ico esi-all"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="enq-stat-info"><strong id="es-total">0</strong><span>Total</span></div></div>
+      <div class="enq-stat"><div class="enq-stat-ico esi-pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="enq-stat-info"><strong id="es-pending">0</strong><span>Pending</span></div></div>
+      <div class="enq-stat"><div class="enq-stat-ico esi-confirmed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="enq-stat-info"><strong id="es-confirmed">0</strong><span>Confirmed</span></div></div>
+      <div class="enq-stat"><div class="enq-stat-ico esi-declined"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="enq-stat-info"><strong id="es-declined">0</strong><span>Declined</span></div></div>
+    </div>
+    <div class="enq-toolbar">
+      <button class="enq-filter active" data-ef="all" onclick="filterEnq('all')">All</button>
+      <button class="enq-filter amber" data-ef="pending" onclick="filterEnq('pending')">⏳ Pending</button>
+      <button class="enq-filter" data-ef="confirmed" onclick="filterEnq('confirmed')">✅ Confirmed</button>
+      <button class="enq-filter red" data-ef="declined" onclick="filterEnq('declined')">✕ Declined</button>
+      <input class="enq-search" id="enq-search" placeholder="Search guest or property…" oninput="renderEnquiries()"/>
+      <button onclick="loadEnquiries()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Refresh
+      </button>
+    </div>
+    <div class="enq-grid" id="enq-grid">
+      <div class="enq-empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><h3>Loading…</h3></div>
+    </div>
+  </div>
 
-<div class="saving-overlay" id="saving-overlay">
-  <div class="saving-box"><div class="spinner"></div>Saving to Supabase…</div>
+  <!-- ══ BOOKINGS ══ -->
+  <div class="admin-page" id="page-bookings">
+    <div class="sec-title-row"><h2>Booking Management</h2></div>
+    <div class="book-toolbar">
+      <button class="book-filter active" data-bf="all" onclick="filterBookings('all')">All</button>
+      <button class="book-filter" data-bf="pending" onclick="filterBookings('pending')">⏳ Pending</button>
+      <button class="book-filter" data-bf="confirmed" onclick="filterBookings('confirmed')">✅ Confirmed</button>
+      <button class="book-filter" data-bf="completed" onclick="filterBookings('completed')">✔ Completed</button>
+      <button class="book-filter" data-bf="cancelled" onclick="filterBookings('cancelled')">✕ Cancelled</button>
+      <button onclick="loadBookings()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem;margin-left:auto">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Refresh
+      </button>
+    </div>
+    <div class="table-wrap" id="bookings-table-wrap">
+      <div class="loading" id="bookings-loading"><div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .6rem"></div>Loading bookings…</div>
+      <table id="bookings-table" style="display:none">
+        <thead><tr><th>Guest</th><th>Property</th><th>Dates</th><th>Nights</th><th>Amount</th><th>Status</th><th>Payment</th><th>Actions</th></tr></thead>
+        <tbody id="bookings-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ PAYMENTS ══ -->
+  <div class="admin-page" id="page-payments">
+    <div class="sec-title-row">
+      <h2>Payment History</h2>
+      <div style="font-size:.82rem;color:var(--text-mid)">Total Revenue: <strong id="total-revenue" style="color:var(--green)">TZS 0</strong></div>
+    </div>
+    <div class="pay-table-wrap">
+      <div class="loading" id="payments-loading"><div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .6rem"></div>Loading payments…</div>
+      <table id="payments-table" style="display:none">
+        <thead><tr><th>Date</th><th>Booking</th><th>Amount</th><th>Provider</th><th>Tx ID</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="payments-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ REVIEWS ══ -->
+  <div class="admin-page" id="page-reviews">
+    <div class="sec-title-row">
+      <h2>Guest Reviews</h2>
+      <div style="display:flex;gap:.6rem">
+        <button onclick="filterReviews('pending')" class="book-filter active" data-rf="pending">⏳ Pending</button>
+        <button onclick="filterReviews('approved')" class="book-filter" data-rf="approved">✅ Approved</button>
+        <button onclick="filterReviews('all')" class="book-filter" data-rf="all">All</button>
+      </div>
+    </div>
+    <div class="review-grid" id="reviews-grid">
+      <div class="enq-empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><h3>Loading reviews…</h3></div>
+    </div>
+  </div>
+
+  <!-- ══ ANALYTICS ══ -->
+  <div class="admin-page" id="page-analytics">
+    <div class="sec-title-row"><h2>Platform Analytics</h2><button onclick="loadAnalytics()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer">Refresh</button></div>
+    <div class="analytics-grid">
+      <div class="metric-card"><div class="metric-ico mi-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div><div class="metric-val" id="m-listings">—</div><div class="metric-lbl">Total Listings</div></div></div>
+      <div class="metric-card"><div class="metric-ico mi-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="metric-val" id="m-users">—</div><div class="metric-lbl">Registered Users</div></div></div>
+      <div class="metric-card"><div class="metric-ico mi-amber"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="metric-val" id="m-bookings">—</div><div class="metric-lbl">Total Bookings</div></div></div>
+      <div class="metric-card"><div class="metric-ico mi-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="metric-val" id="m-revenue">—</div><div class="metric-lbl">Total Revenue</div></div></div>
+      <div class="metric-card"><div class="metric-ico mi-amber"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="metric-val" id="m-pending">—</div><div class="metric-lbl">Pending Enquiries</div></div></div>
+      <div class="metric-card"><div class="metric-ico mi-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="metric-val" id="m-reviews-count">—</div><div class="metric-lbl">Total Reviews</div></div></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-hdr"><h3>Monthly Bookings Trend</h3></div>
+      <div class="bar-chart" id="bookings-chart"></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-hdr"><h3>Revenue Trend (TZS)</h3></div>
+      <div class="bar-chart" id="revenue-chart"></div>
+    </div>
+  </div>
 </div>
+
+<div class="saving-overlay" id="saving-overlay"><div class="saving-box"><div class="spinner"></div>Saving…</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SUPABASE ──────────────────────────
+'use strict';
 const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const { createClient } = window.supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { autoRefreshToken: true, persistSession: true } });
 
-let listings = [], selectedColor = '#C88B55,#4A2010';
+let listings = [], allEnquiries = [], allBookings = [], allPayments = [], allReviews = [];
+let selectedColor = '#C88B55,#4A2010';
+let enqFilter = 'all', bookFilter = 'all', reviewFilter = 'pending';
+let currentAdminRole = null;
 
-// ── INIT / AUTH ───────────────────────
+/* ── AUTH ── */
 async function init() {
   const { data: { session } } = await db.auth.getSession();
   if (session) await verifyAdmin(session.user);
@@ -503,22 +542,14 @@ async function init() {
 }
 
 async function verifyAdmin(user) {
-  // FIX: query uses user_id column (not id)
-  const { data, error } = await db.from('admin_profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (error || !data) {
-    const errEl = document.getElementById('login-error');
-    errEl.textContent = '❌ Access denied — your account is not an admin.';
-    errEl.classList.add('show');
-    const btn = document.getElementById('login-btn');
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Sign In to Admin`;
+  const { data } = await db.from('admin_profiles').select('role').eq('id', user.id).single();
+  if (!data) {
+    showToast('Access denied — not an admin account.', true);
     await db.auth.signOut();
     return;
   }
+  currentAdminRole = data.role;
+  document.getElementById('admin-role-badge').textContent = data.role.replace('_', ' ').toUpperCase();
   showAdmin(user.email);
 }
 
@@ -533,277 +564,216 @@ function showLogin() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('main-content').style.display = 'none';
 }
-function showLogin() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('main-content').style.display = 'none';
-}
 
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-password').value;
-  const err   = document.getElementById('login-error');
-  const btn   = document.getElementById('login-btn');
-  if (!email || !pass) { err.textContent = 'Please enter email and password.'; err.classList.add('show'); return; }
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.classList.remove('show');
+  if (!email || !password) { errEl.textContent = 'Please enter email and password.'; errEl.classList.add('show'); return; }
   btn.disabled = true; btn.textContent = 'Signing in…';
-  err.classList.remove('show');
-  const { error } = await db.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    err.textContent = error.message === 'Invalid login credentials' ? '❌ Wrong email or password.' : '❌ ' + error.message;
-    err.classList.add('show');
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Sign In to Admin`;
-  }
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Sign In to Admin';
+  if (error) { errEl.textContent = error.message === 'Invalid login credentials' ? '❌ Wrong email or password.' : '❌ ' + error.message; errEl.classList.add('show'); }
+}
+async function doLogout() { await db.auth.signOut(); showToast('Logged out.'); }
+
+/* ── TABS ── */
+function switchTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + tab));
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.toggle('active', p.id === 'page-' + tab));
+  if (tab === 'bookings' && !allBookings.length) loadBookings();
+  if (tab === 'payments' && !allPayments.length) loadPayments();
+  if (tab === 'reviews' && !allReviews.length) loadReviews();
+  if (tab === 'analytics') loadAnalytics();
 }
 
-async function doLogout() {
-  await db.auth.signOut();
-  showToast('Logged out.');
-}
-
-// ── LOAD LISTINGS ─────────────────────
+/* ── LISTINGS ── */
 async function loadListings() {
   document.getElementById('tbl-loading').style.display = 'block';
   document.getElementById('tbl-content').style.display = 'none';
-  // FIX: no status filter so admin sees all listings
   const { data, error } = await db.from('listings').select('*').order('created_at', { ascending: false });
   document.getElementById('tbl-loading').style.display = 'none';
   document.getElementById('tbl-content').style.display = 'block';
-  if (error) { showToast('Failed to load: ' + error.message, true); return; }
+  if (error) { showToast('Failed to load listings: ' + error.message, true); return; }
   listings = data || [];
-  renderTable();
-  updateStats();
+  renderTable(); updateStats();
 }
 
-// ── RENDER TABLE ──────────────────────
 function renderTable() {
-  const q = (document.getElementById('search-input').value || '').toLowerCase();
-  const filtered = listings.filter(p =>
-    (p.name || '').toLowerCase().includes(q) ||
-    (p.location || '').toLowerCase().includes(q)
-  );
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const filtered = listings.filter(p => (p.name||'').toLowerCase().includes(q) || (p.location||'').toLowerCase().includes(q));
   const tbody = document.getElementById('table-body');
   const empty = document.getElementById('empty-state');
-  if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  if (!filtered.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-
   tbody.innerHTML = filtered.map(p => {
     const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
-    const ptype = p.property_type || p.type || 'apartment';
-    const typeLabel = { apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay', villa:'Villa', hostel:'Hostel' }[ptype] || ptype;
-    const stars = p.rating ? '★'.repeat(Math.floor(p.rating)) : '—';
+    const typeLabel = { apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay', villa:'Villa', hostel:'Hostel' }[p.type] || p.type;
     const price = p.price ? 'TZS ' + Number(p.price).toLocaleString() : '—';
-    const imgSrc = p.image_url || (Array.isArray(p.images) && p.images[0]) || '';
-
-    let thumb = '';
-    if (imgSrc) {
-      thumb = `<img src="${esc(imgSrc)}" class="prop-thumb" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-               <svg class="prop-thumb" viewBox="0 0 42 42" style="display:none"><rect width="42" height="42" rx="7" fill="${esc(c1)}"/><text x="21" y="27" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="16">${ptype==='hotel'?'🏨':ptype==='short_stay'?'📅':ptype==='villa'?'🏡':'🏠'}</text></svg>`;
-    } else {
-      thumb = `<svg class="prop-thumb" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th${p.id.slice(0,6)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs><rect width="42" height="42" rx="7" fill="url(#th${p.id.slice(0,6)})"/><text x="21" y="27" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="16">${ptype==='hotel'?'🏨':ptype==='short_stay'?'📅':ptype==='villa'?'🏡':'🏠'}</text></svg>`;
-    }
-
+    const stars = p.rating ? '★'.repeat(Math.min(5, Math.floor(p.rating))) : '—';
     return `<tr>
-      <td><div class="prop-chip">${thumb}<div><div class="prop-chip-name">${esc(p.name)}</div><div class="prop-chip-loc">📍 ${esc(p.location || '')}</div></div></div></td>
-      <td><span class="type-chip type-${ptype}">${typeLabel}</span></td>
+      <td><div class="prop-chip">
+        ${p.image_url ? `<img class="prop-thumb" src="${esc(p.image_url)}" alt="" onerror="this.style.display='none'"/>` : `<svg class="prop-thumb-svg" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th${p.id.slice(0,6)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs><rect width="42" height="42" rx="7" fill="url(#th${p.id.slice(0,6)})"/><text x="21" y="27" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="16">${p.type==='hotel'?'🏨':p.type==='short_stay'?'📅':p.type==='villa'?'🏡':'🏠'}</text></svg>`}
+        <div><div class="prop-chip-name">${esc(p.name)}</div><div class="prop-chip-loc">📍 ${esc(p.location)}</div></div>
+      </div></td>
+      <td><span class="type-chip type-${p.type}">${typeLabel}</span></td>
       <td><strong>${price}</strong></td>
-      <td><span class="stars">${stars}</span> <span style="font-size:.72rem;color:var(--text-light)">${p.rating || '—'} (${p.reviews || 0})</span></td>
+      <td><span class="stars">${stars}</span> <span style="font-size:.72rem;color:var(--text-light)">${p.rating||'—'} (${p.reviews||0})</span></td>
+      <td><span class="status-chip sc-${p.status||'pending'}">${p.status||'pending'}</span></td>
       <td>${badgeHTML(p.badge)}</td>
-      <td>${p.featured ? '<span class="featured-badge">⭐ Featured</span>' : '<span style="font-size:.72rem;color:var(--text-light)">—</span>'}</td>
-      <td>
-        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
-          <button class="btn btn-sm btn-edit" onclick="editProperty('${p.id}')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
-          </button>
-          <button class="btn btn-sm btn-feat" onclick="toggleFeatured('${p.id}',${!p.featured})" title="${p.featured ? 'Unfeature' : 'Feature'}">
-            ${p.featured ? '★ Unfeature' : '☆ Feature'}
-          </button>
-          <button class="btn btn-sm btn-del" onclick="deleteProperty('${p.id}')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Del
-          </button>
-        </div>
-      </td>
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        ${p.status === 'pending' ? `<button class="btn btn-sm btn-approve" onclick="approveListing('${p.id}')">✓ Approve</button>` : ''}
+        <button class="btn btn-sm btn-edit" onclick="editProperty('${p.id}')">Edit</button>
+        <button class="btn btn-sm btn-del" onclick="deleteProperty('${p.id}')">Del</button>
+      </div></td>
     </tr>`;
   }).join('');
 }
 
 function badgeHTML(b) {
   if (b === 'popular') return '<span class="badge badge-popular">● Popular</span>';
-  if (b === 'new')     return '<span class="badge badge-new">✦ New</span>';
+  if (b === 'new') return '<span class="badge badge-new">✦ New</span>';
   return '<span class="badge badge-none">None</span>';
 }
 
 function updateStats() {
   document.getElementById('stat-total').textContent = listings.length;
-  document.getElementById('stat-apt').textContent   = listings.filter(p => (p.property_type||p.type) === 'apartment').length;
-  document.getElementById('stat-hotel').textContent  = listings.filter(p => (p.property_type||p.type) === 'hotel').length;
-  document.getElementById('stat-short').textContent  = listings.filter(p => (p.property_type||p.type) === 'short_stay').length;
-  document.getElementById('stat-villa').textContent  = listings.filter(p => (p.property_type||p.type) === 'villa').length;
+  document.getElementById('stat-apt').textContent = listings.filter(p => p.type === 'apartment').length;
+  document.getElementById('stat-hotel').textContent = listings.filter(p => p.type === 'hotel').length;
+  document.getElementById('stat-short').textContent = listings.filter(p => p.type === 'short_stay').length;
+  document.getElementById('stat-pending-list').textContent = listings.filter(p => p.status === 'pending').length;
 }
 
-// ── IMAGE PREVIEW ─────────────────────
-function previewImg(url) {
-  const img  = document.getElementById('img-preview-img');
-  const ph   = document.getElementById('img-placeholder');
-  if (url) {
-    img.src = url;
-    img.style.display = 'block';
-    ph.style.display  = 'none';
-    img.onerror = () => { img.style.display='none'; ph.style.display='flex'; };
-  } else {
-    img.style.display = 'none';
-    ph.style.display  = 'flex';
-  }
+async function approveListing(id) {
+  const { error } = await db.from('listings').update({ status: 'approved' }).eq('id', id);
+  if (error) { showToast('Approve failed: ' + error.message, true); return; }
+  const idx = listings.findIndex(p => p.id === id);
+  if (idx !== -1) listings[idx].status = 'approved';
+  renderTable(); updateStats();
+  showToast('✅ Listing approved!');
 }
 
-// ── SAVE ──────────────────────────────
 async function saveProperty() {
-  const name     = document.getElementById('f-name').value.trim();
-  const ptype    = document.getElementById('f-type').value;
-  const location = document.getElementById('f-location').value.trim();
-  const price    = document.getElementById('f-price').value.trim();
-  if (!name || !ptype || !location || !price) { showToast('Please fill required fields (*)', true); return; }
-
-  const prop = {
-    name,
-    property_type: ptype,   // FIX: correct column name
-    location,
-    city:        document.getElementById('f-city').value.trim() || location.split(',').pop().trim(),
-    country:     document.getElementById('f-country').value.trim() || 'Tanzania',
-    price:       Number(price),
-    image_url:   document.getElementById('f-image-url').value.trim() || null,
-    rating:      parseFloat(document.getElementById('f-rating').value)  || 0,
-    beds:        parseInt(document.getElementById('f-beds').value)       || 0,
-    baths:       parseInt(document.getElementById('f-baths').value)      || 0,
-    reviews:     parseInt(document.getElementById('f-reviews').value)    || 0,
-    wifi:        document.getElementById('f-wifi').checked,
-    featured:    document.getElementById('f-featured').checked,
-    badge:       document.getElementById('f-badge').value,
-    description: document.getElementById('f-desc').value.trim(),
-    color:       selectedColor,
-    status:      'active',
+  const id = document.getElementById('edit-id').value;
+  const name = document.getElementById('f-name').value.trim();
+  const type = document.getElementById('f-type').value;
+  const loc  = document.getElementById('f-location').value.trim();
+  const price = parseFloat(document.getElementById('f-price').value);
+  if (!name || !type || !loc || !price) { showToast('Please fill required fields (Name, Type, Location, Price).', true); return; }
+  const payload = {
+    name, type, location: loc, price,
+    status: document.getElementById('f-status').value || 'approved',
+    badge: document.getElementById('f-badge').value || 'none',
+    beds: parseInt(document.getElementById('f-beds').value) || null,
+    baths: parseInt(document.getElementById('f-baths').value) || null,
+    rating: parseFloat(document.getElementById('f-rating').value) || null,
+    reviews: parseInt(document.getElementById('f-reviews').value) || 0,
+    description: document.getElementById('f-desc').value.trim() || null,
+    image_url: document.getElementById('f-image').value.trim() || null,
+    color: selectedColor,
+    wifi: document.getElementById('f-wifi').checked,
+    parking: document.getElementById('f-parking').checked,
+    pool: document.getElementById('f-pool').checked,
+    ac: document.getElementById('f-ac').checked,
+    kitchen: document.getElementById('f-kitchen').checked,
+    breakfast: document.getElementById('f-breakfast').checked,
   };
-
   showSaving(true);
-  const editId = document.getElementById('edit-id').value;
-
-  if (editId) {
-    const { error } = await db.from('listings').update(prop).eq('id', editId);
-    showSaving(false);
-    if (error) { showToast('Update failed: ' + error.message, true); return; }
-    showToast('✅ Property updated!');
+  let error;
+  if (id) {
+    ({ error } = await db.from('listings').update(payload).eq('id', id));
   } else {
-    const { error } = await db.from('listings').insert(prop);
-    showSaving(false);
-    if (error) { showToast('Save failed: ' + error.message, true); return; }
-    showToast('✅ Property added!');
+    ({ error } = await db.from('listings').insert(payload));
   }
-  clearForm();
-  await loadListings();
+  showSaving(false);
+  if (error) { showToast('❌ ' + error.message, true); return; }
+  showToast(id ? '✅ Property updated!' : '✅ Property added!');
+  clearForm(); await loadListings();
 }
 
-// ── EDIT ──────────────────────────────
 function editProperty(id) {
   const p = listings.find(x => x.id === id);
   if (!p) return;
-  document.getElementById('edit-id').value       = p.id;
-  document.getElementById('f-name').value        = p.name || '';
-  document.getElementById('f-type').value        = p.property_type || p.type || '';
-  document.getElementById('f-location').value    = p.location || '';
-  document.getElementById('f-city').value        = p.city || '';
-  document.getElementById('f-country').value     = p.country || 'Tanzania';
-  document.getElementById('f-price').value       = p.price || '';
-  document.getElementById('f-image-url').value   = p.image_url || '';
-  document.getElementById('f-rating').value      = p.rating || '';
-  document.getElementById('f-beds').value        = p.beds || '';
-  document.getElementById('f-baths').value       = p.baths || '';
-  document.getElementById('f-reviews').value     = p.reviews || '';
-  document.getElementById('f-wifi').checked      = !!p.wifi;
-  document.getElementById('f-featured').checked  = !!p.featured;
-  document.getElementById('f-badge').value       = p.badge || 'none';
-  document.getElementById('f-desc').value        = p.description || '';
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('f-name').value = p.name || '';
+  document.getElementById('f-type').value = p.type || '';
+  document.getElementById('f-location').value = p.location || '';
+  document.getElementById('f-price').value = p.price || '';
+  document.getElementById('f-badge').value = p.badge || 'none';
+  document.getElementById('f-status').value = p.status || 'approved';
+  document.getElementById('f-beds').value = p.beds || '';
+  document.getElementById('f-baths').value = p.baths || '';
+  document.getElementById('f-rating').value = p.rating || '';
+  document.getElementById('f-reviews').value = p.reviews || '';
+  document.getElementById('f-desc').value = p.description || '';
+  document.getElementById('f-image').value = p.image_url || '';
+  document.getElementById('f-wifi').checked = !!p.wifi;
+  document.getElementById('f-parking').checked = !!p.parking;
+  document.getElementById('f-pool').checked = !!p.pool;
+  document.getElementById('f-ac').checked = !!p.ac;
+  document.getElementById('f-kitchen').checked = !!p.kitchen;
+  document.getElementById('f-breakfast').checked = !!p.breakfast;
   selectedColor = p.color || '#C88B55,#4A2010';
-  document.getElementById('f-color').value       = selectedColor;
+  document.getElementById('f-color').value = selectedColor;
   document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.color === selectedColor));
-  previewImg(p.image_url || '');
-  document.getElementById('form-title').textContent    = '✏️ Edit Property';
-  document.getElementById('form-sub').textContent      = 'Update property details below';
+  document.getElementById('form-title').textContent = '✏️ Edit Property';
+  document.getElementById('form-sub').textContent = 'Update the details below';
   document.getElementById('save-btn-text').textContent = 'Update Property';
-  document.getElementById('cancel-btn').style.display  = 'flex';
+  document.getElementById('cancel-btn').style.display = 'flex';
   document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── DELETE ────────────────────────────
 async function deleteProperty(id) {
   if (!confirm('Delete this property? This cannot be undone.')) return;
   showSaving(true);
   const { error } = await db.from('listings').delete().eq('id', id);
   showSaving(false);
-  if (error) { showToast('Delete failed: ' + error.message, true); return; }
+  if (error) { showToast('❌ Delete failed: ' + error.message, true); return; }
   showToast('Property deleted.');
   await loadListings();
 }
 
-// ── TOGGLE FEATURED ───────────────────
-async function toggleFeatured(id, featured) {
-  const { error } = await db.from('listings').update({ featured }).eq('id', id);
-  if (error) { showToast('Failed: ' + error.message, true); return; }
-  showToast(featured ? '⭐ Marked as featured!' : 'Removed from featured.');
-  await loadListings();
-}
-
-// ── CLEAR FORM ────────────────────────
 function clearForm() {
   document.getElementById('edit-id').value = '';
-  ['f-name','f-type','f-location','f-city','f-price','f-image-url','f-rating','f-beds','f-baths','f-reviews','f-desc']
-    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  document.getElementById('f-country').value   = 'Tanzania';
-  document.getElementById('f-wifi').checked    = true;
-  document.getElementById('f-featured').checked= false;
-  document.getElementById('f-badge').value     = 'none';
-  document.getElementById('f-color').value     = '#C88B55,#4A2010';
+  ['f-name','f-type','f-location','f-price','f-badge','f-beds','f-baths','f-rating','f-reviews','f-desc','f-image'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.tagName === 'SELECT' ? el.options[0]?.value : '';
+  });
+  document.getElementById('f-status').value = 'approved';
+  document.getElementById('f-wifi').checked = true;
+  ['f-parking','f-pool','f-ac','f-kitchen','f-breakfast'].forEach(id => { document.getElementById(id).checked = false; });
   selectedColor = '#C88B55,#4A2010';
+  document.getElementById('f-color').value = selectedColor;
   document.querySelectorAll('.swatch').forEach((s, i) => s.classList.toggle('active', i === 0));
-  previewImg('');
-  document.getElementById('form-title').textContent    = '➕ Add New Property';
-  document.getElementById('form-sub').textContent      = 'Fill in the details to add a listing';
+  document.getElementById('form-title').textContent = '➕ Add New Property';
+  document.getElementById('form-sub').textContent = 'Fill in the details to add a listing';
   document.getElementById('save-btn-text').textContent = 'Save Property';
-  document.getElementById('cancel-btn').style.display  = 'none';
+  document.getElementById('cancel-btn').style.display = 'none';
 }
 
-// ── TABS ──────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.getElementById('page-' + tab).classList.add('active');
-  if (tab === 'enquiries') loadEnquiries();
-}
-
-// ── ENQUIRIES ─────────────────────────
-let allEnquiries = [], enqFilter = 'all';
-
+/* ── ENQUIRIES ── */
 async function loadEnquiries() {
-  const grid = document.getElementById('enq-grid');
-  if (grid) grid.innerHTML = `<div class="enq-empty"><div style="width:28px;height:28px;border:3px solid var(--green-light);border-top-color:var(--green-mid);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .7rem"></div><p style="color:var(--text-light);font-size:.82rem">Loading enquiries…</p></div>`;
   const { data, error } = await db.from('enquiries').select('*').order('created_at', { ascending: false });
-  if (error) { showToast('Failed to load enquiries: ' + error.message, true); return; }
+  if (error) { showToast('Enquiries load failed: ' + error.message, true); return; }
   allEnquiries = data || [];
-  updateEnqStats();
-  renderEnquiries();
-  updatePendingBadge();
+  updateEnqStats(); updatePendingBadge(); renderEnquiries();
 }
 
 function updateEnqStats() {
-  document.getElementById('es-total').textContent     = allEnquiries.length;
-  document.getElementById('es-pending').textContent   = allEnquiries.filter(e => e.status==='pending').length;
-  document.getElementById('es-confirmed').textContent = allEnquiries.filter(e => e.status==='confirmed').length;
-  document.getElementById('es-declined').textContent  = allEnquiries.filter(e => e.status==='declined').length;
+  document.getElementById('es-total').textContent = allEnquiries.length;
+  document.getElementById('es-pending').textContent = allEnquiries.filter(e => e.status === 'pending').length;
+  document.getElementById('es-confirmed').textContent = allEnquiries.filter(e => e.status === 'confirmed').length;
+  document.getElementById('es-declined').textContent = allEnquiries.filter(e => e.status === 'declined').length;
 }
 
 function updatePendingBadge() {
-  const count = allEnquiries.filter(e => e.status==='pending').length;
+  const count = allEnquiries.filter(e => e.status === 'pending').length;
   const badge = document.getElementById('pending-badge');
-  badge.textContent = count; badge.style.display = count > 0 ? 'inline' : 'none';
+  if (count > 0) { badge.textContent = count; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
 }
 
 function filterEnq(f) {
@@ -814,69 +784,42 @@ function filterEnq(f) {
 
 function renderEnquiries() {
   const grid = document.getElementById('enq-grid');
-  const q    = (document.getElementById('enq-search')?.value || '').toLowerCase();
-  let items  = allEnquiries;
+  const q = (document.getElementById('enq-search')?.value || '').toLowerCase();
+  let items = allEnquiries;
   if (enqFilter !== 'all') items = items.filter(e => e.status === enqFilter);
-  if (q) items = items.filter(e =>
-    (e.listing_name || '').toLowerCase().includes(q) ||
-    (e.guest_name   || '').toLowerCase().includes(q) ||
-    (e.message      || '').toLowerCase().includes(q)
-  );
-  if (items.length === 0) {
-    grid.innerHTML = `<div class="enq-empty" style="grid-column:1/-1"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><h3>${allEnquiries.length===0?'No enquiries yet':'No results'}</h3><p>${allEnquiries.length===0?'Enquiries from guests will appear here.':'Try a different filter.'}</p></div>`;
+  if (q) items = items.filter(e => (e.listing_name||'').toLowerCase().includes(q) || (e.guest_name||'').toLowerCase().includes(q) || (e.message||'').toLowerCase().includes(q));
+  if (!items.length) {
+    grid.innerHTML = `<div class="enq-empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><h3>${allEnquiries.length===0?'No enquiries yet':'No results found'}</h3><p>${allEnquiries.length===0?'Booking enquiries will appear here.':'Try a different filter.'}</p></div>`;
     return;
   }
   grid.innerHTML = items.map(e => buildEnqCard(e)).join('');
 }
 
 function buildEnqCard(e) {
-  const guestName  = e.guest_name || 'Guest';
-  const initials   = guestName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2) || 'G';
-  const phone      = e.guest_phone || '';
-  const nights     = e.checkin && e.checkout ? Math.max(1, Math.round((new Date(e.checkout)-new Date(e.checkin))/86400000)) : null;
-  const statusMap  = { pending:'es-pending', confirmed:'es-confirmed', declined:'es-declined' };
-  const statusLbl  = { pending:'⏳ Pending', confirmed:'✅ Confirmed', declined:'✕ Declined' };
-  const created    = new Date(e.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  const guestName = e.guest_name || 'Guest';
+  const initials = guestName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) || 'G';
+  const phone = e.guest_phone || '';
+  const nights = e.checkin && e.checkout ? Math.max(1, Math.round((new Date(e.checkout)-new Date(e.checkin))/86400000)) : null;
+  const statusMap = { pending:'sc-pending', confirmed:'sc-confirmed', declined:'sc-declined' };
+  const statusLabel = { pending:'⏳ Pending', confirmed:'✅ Confirmed', declined:'✕ Declined' };
+  const created = new Date(e.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   const actionBtns = e.status === 'pending'
-    ? `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Confirm</button>
-       <button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
-    : e.status === 'confirmed'
-    ? `<button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
+    ? `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Confirm</button><button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
+    : e.status === 'confirmed' ? `<button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
     : `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Re-confirm</button>`;
-  const waMsg = encodeURIComponent(`Hi ${guestName}, your booking enquiry for *${e.listing_name||''}* (${e.checkin||''} → ${e.checkout||''}) has been ${e.status==='confirmed'?'✅ confirmed':'received'}. Thank you for choosing KaribuStay!`);
-  const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>` : '';
-
+  const waMsg = phone ? encodeURIComponent(`Hi ${guestName}, your enquiry for *${e.listing_name}* (${e.checkin} → ${e.checkout}) has been ${e.status === 'confirmed' ? '✅ confirmed' : 'received'}. Thank you for choosing KaribuStay!`) : '';
+  const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>WhatsApp</a>` : '';
   return `<div class="enq-card" id="enq-${e.id}">
     <div class="enq-card-top">
-      <div class="enq-card-head">
-        <div class="enq-prop">${esc(e.listing_name || 'Unknown Property')}</div>
-        <span class="enq-schip ${statusMap[e.status]||'es-pending'}">${statusLbl[e.status]||e.status}</span>
-      </div>
-      <div class="enq-guest">
-        <div class="enq-guest-av">${initials}</div>
-        <div>
-          <div style="font-weight:600;font-size:.8rem">${esc(guestName)}</div>
-          ${phone ? `<div style="font-size:.7rem;color:var(--text-light)">${esc(phone)}</div>` : ''}
-        </div>
-        <div style="margin-left:auto;font-size:.7rem;color:var(--text-light)">${created}</div>
-      </div>
+      <div class="enq-card-head"><div class="enq-prop">${esc(e.listing_name||'Unknown Property')}</div><span class="status-chip ${statusMap[e.status]||'sc-pending'}">${statusLabel[e.status]||e.status}</span></div>
+      <div class="enq-guest"><div class="enq-guest-av">${initials}</div><div><div style="font-weight:600;font-size:.8rem">${esc(guestName)}</div>${phone?`<div style="font-size:.7rem;color:var(--text-light)">${esc(phone)}</div>`:''}</div><div style="margin-left:auto;font-size:.7rem;color:var(--text-light)">${created}</div></div>
     </div>
     <div class="enq-card-body">
-      <div class="enq-row">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <strong>${e.checkin||'—'}</strong> → <strong>${e.checkout||'—'}</strong>
-        ${nights ? `<span style="background:var(--green-light);color:var(--green);padding:.1rem .45rem;border-radius:5px;font-size:.68rem;font-weight:600;margin-left:.3rem">${nights} night${nights>1?'s':''}</span>` : ''}
-      </div>
-      <div class="enq-row">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        <span>${e.guests||1} guest${(e.guests||1)>1?'s':''}</span>
-      </div>
-      ${e.message ? `<div class="enq-msg">"${esc(e.message)}"</div>` : ''}
+      <div class="enq-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><strong>${e.checkin||'—'}</strong> → <strong>${e.checkout||'—'}</strong>${nights?`<span style="background:var(--green-light);color:var(--green);padding:.1rem .45rem;border-radius:5px;font-size:.68rem;font-weight:600;margin-left:.3rem">${nights}n</span>`:''}</div>
+      <div class="enq-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>${e.guests||1} guest${(e.guests||1)>1?'s':''}</span></div>
+      ${e.message?`<div class="enq-msg">"${esc(e.message)}"</div>`:''}
     </div>
-    <div class="enq-card-foot">
-      ${actionBtns}
-      ${waBtn}
-    </div>
+    <div class="enq-card-foot">${actionBtns}${waBtn}</div>
   </div>`;
 }
 
@@ -884,35 +827,241 @@ async function updateEnqStatus(id, status) {
   const card = document.getElementById('enq-' + id);
   if (card) card.style.opacity = '.5';
   const { error } = await db.from('enquiries').update({ status }).eq('id', id);
-  if (error) { showToast('Update failed: ' + error.message, true); if(card) card.style.opacity='1'; return; }
+  if (error) { showToast('Update failed: ' + error.message, true); if (card) card.style.opacity = '1'; return; }
   const idx = allEnquiries.findIndex(e => e.id === id);
   if (idx !== -1) allEnquiries[idx].status = status;
-  updateEnqStats();
-  updatePendingBadge();
-  renderEnquiries();
-  showToast(status === 'confirmed' ? '✅ Booking confirmed!' : 'Status updated.');
+  updateEnqStats(); updatePendingBadge(); renderEnquiries();
+  showToast(status === 'confirmed' ? '✅ Booking confirmed!' : 'Enquiry declined.');
 }
 
-// ── HELPERS ───────────────────────────
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+/* ── BOOKINGS ── */
+async function loadBookings() {
+  document.getElementById('bookings-loading').style.display = 'block';
+  document.getElementById('bookings-table').style.display = 'none';
+  const { data, error } = await db.from('bookings').select('*, listings(name,location), profiles(full_name)').order('created_at', { ascending: false });
+  document.getElementById('bookings-loading').style.display = 'none';
+  if (error) { showToast('Bookings load failed: ' + error.message, true); return; }
+  allBookings = data || [];
+  const pending = allBookings.filter(b => b.booking_status === 'pending').length;
+  const badge = document.getElementById('bookings-badge');
+  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  renderBookings();
+}
+
+function filterBookings(f) {
+  bookFilter = f;
+  document.querySelectorAll('.book-filter').forEach(b => b.classList.toggle('active', b.dataset.bf === f));
+  renderBookings();
+}
+
+function renderBookings() {
+  const items = bookFilter === 'all' ? allBookings : allBookings.filter(b => b.booking_status === bookFilter);
+  const tbody = document.getElementById('bookings-body');
+  const table = document.getElementById('bookings-table');
+  table.style.display = 'table';
+  if (!items.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light)">No bookings found.</td></tr>`; return; }
+  tbody.innerHTML = items.map(b => {
+    const guestName = b.profiles?.full_name || 'Guest';
+    const property = b.listings?.name || 'Unknown Property';
+    return `<tr>
+      <td>${esc(guestName)}</td>
+      <td>${esc(property)}</td>
+      <td style="font-size:.75rem">${b.checkin||'—'} → ${b.checkout||'—'}</td>
+      <td>${b.nights||'—'}</td>
+      <td><strong>TZS ${Number(b.amount||0).toLocaleString()}</strong></td>
+      <td><span class="status-chip sc-${b.booking_status}">${b.booking_status}</span></td>
+      <td><span class="status-chip sc-${b.payment_status}">${b.payment_status}</span></td>
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        ${b.booking_status==='pending'?`<button class="btn btn-sm btn-approve" onclick="updateBookingStatus('${b.id}','confirmed')">Confirm</button>`:''}
+        ${b.booking_status==='confirmed'?`<button class="btn btn-sm" style="background:#EDE9FE;color:#5B21B6" onclick="updateBookingStatus('${b.id}','completed')">Complete</button>`:''}
+        ${['pending','confirmed'].includes(b.booking_status)?`<button class="btn btn-sm btn-del" onclick="updateBookingStatus('${b.id}','cancelled')">Cancel</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function updateBookingStatus(id, status) {
+  const { error } = await db.from('bookings').update({ booking_status: status }).eq('id', id);
+  if (error) { showToast('Update failed: ' + error.message, true); return; }
+  const idx = allBookings.findIndex(b => b.id === id);
+  if (idx !== -1) allBookings[idx].booking_status = status;
+  renderBookings();
+  showToast('Booking status updated to: ' + status);
+}
+
+/* ── PAYMENTS ── */
+async function loadPayments() {
+  document.getElementById('payments-loading').style.display = 'block';
+  document.getElementById('payments-table').style.display = 'none';
+  const { data, error } = await db.from('payments').select('*').order('created_at', { ascending: false });
+  document.getElementById('payments-loading').style.display = 'none';
+  if (error) { showToast('Payments load failed: ' + error.message, true); return; }
+  allPayments = data || [];
+  const total = allPayments.filter(p => p.status === 'paid').reduce((s, p) => s + (p.amount || 0), 0);
+  document.getElementById('total-revenue').textContent = 'TZS ' + total.toLocaleString();
+  const table = document.getElementById('payments-table');
+  table.style.display = 'table';
+  const tbody = document.getElementById('payments-body');
+  if (!allPayments.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-light)">No payments yet.</td></tr>`; return; }
+  tbody.innerHTML = allPayments.map(p => `<tr>
+    <td style="font-size:.75rem">${new Date(p.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</td>
+    <td style="font-size:.72rem;color:var(--text-light)">${p.booking_id?.slice(0,8)||'—'}</td>
+    <td><strong>TZS ${Number(p.amount||0).toLocaleString()}</strong></td>
+    <td><span style="text-transform:capitalize">${(p.provider||'').replace(/_/g,' ')}</span></td>
+    <td style="font-size:.72rem;color:var(--text-light)">${p.transaction_id||'—'}</td>
+    <td><span class="status-chip sc-${p.status}">${p.status}</span></td>
+    <td><div style="display:flex;gap:.4rem">
+      ${p.status==='pending'?`<button class="btn btn-sm btn-approve" onclick="updatePaymentStatus('${p.id}','paid')">Mark Paid</button>`:''}
+      ${p.status==='paid'?`<button class="btn btn-sm btn-del" onclick="updatePaymentStatus('${p.id}','refunded')">Refund</button>`:''}
+    </div></td>
+  </tr>`).join('');
+}
+
+async function updatePaymentStatus(id, status) {
+  const payload = { status };
+  if (status === 'paid') payload.paid_at = new Date().toISOString();
+  const { error } = await db.from('payments').update(payload).eq('id', id);
+  if (error) { showToast('Update failed: ' + error.message, true); return; }
+  showToast('Payment status updated.'); loadPayments();
+}
+
+/* ── REVIEWS ── */
+async function loadReviews() {
+  const { data, error } = await db.from('reviews').select('*, listings(name), profiles(full_name)').order('created_at', { ascending: false });
+  if (error) { showToast('Reviews load failed: ' + error.message, true); return; }
+  allReviews = data || [];
+  const pending = allReviews.filter(r => !r.approved).length;
+  const badge = document.getElementById('reviews-badge');
+  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
+  renderReviews();
+}
+
+function filterReviews(f) {
+  reviewFilter = f;
+  document.querySelectorAll('[data-rf]').forEach(b => b.classList.toggle('active', b.dataset.rf === f));
+  renderReviews();
+}
+
+function renderReviews() {
+  const grid = document.getElementById('reviews-grid');
+  let items = allReviews;
+  if (reviewFilter === 'pending') items = items.filter(r => !r.approved);
+  else if (reviewFilter === 'approved') items = items.filter(r => r.approved);
+  if (!items.length) {
+    grid.innerHTML = `<div class="enq-empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><h3>No reviews</h3></div>`;
+    return;
+  }
+  grid.innerHTML = items.map(r => `<div class="review-card">
+    <div class="review-stars">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</div>
+    <div class="review-comment">"${esc(r.comment||'No comment')}"</div>
+    <div class="review-meta">
+      <strong>${esc(r.profiles?.full_name||'Guest')}</strong> · ${esc(r.listings?.name||'Property')}<br/>
+      ${new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+      <span class="status-chip sc-${r.approved?'approved':'pending'}" style="margin-left:.5rem">${r.approved?'Approved':'Pending'}</span>
+    </div>
+    <div style="margin-top:.8rem;display:flex;gap:.5rem;flex-wrap:wrap">
+      ${!r.approved?`<button class="btn btn-sm btn-approve" onclick="updateReview('${r.id}',true)">✓ Approve</button>`:''}
+      ${r.approved?`<button class="btn btn-sm btn-del" onclick="updateReview('${r.id}',false)">Hide</button>`:''}
+      <button class="btn btn-sm btn-del" onclick="deleteReview('${r.id}')">Delete</button>
+    </div>
+  </div>`).join('');
+}
+
+async function updateReview(id, approved) {
+  const { error } = await db.from('reviews').update({ approved }).eq('id', id);
+  if (error) { showToast('Failed: ' + error.message, true); return; }
+  const idx = allReviews.findIndex(r => r.id === id);
+  if (idx !== -1) allReviews[idx].approved = approved;
+  loadReviews();
+  showToast(approved ? '✅ Review approved!' : 'Review hidden.');
+}
+
+async function deleteReview(id) {
+  if (!confirm('Delete this review permanently?')) return;
+  const { error } = await db.from('reviews').delete().eq('id', id);
+  if (error) { showToast('Delete failed: ' + error.message, true); return; }
+  allReviews = allReviews.filter(r => r.id !== id);
+  renderReviews();
+  showToast('Review deleted.');
+}
+
+/* ── ANALYTICS ── */
+async function loadAnalytics() {
+  const [listRes, userRes, bookRes, enqRes, payRes, revRes] = await Promise.all([
+    db.from('listings').select('*', { count: 'exact', head: true }),
+    db.from('profiles').select('*', { count: 'exact', head: true }),
+    db.from('bookings').select('amount, booking_status, created_at'),
+    db.from('enquiries').select('status'),
+    db.from('payments').select('amount, status, created_at'),
+    db.from('reviews').select('*', { count: 'exact', head: true }),
+  ]);
+  document.getElementById('m-listings').textContent = listRes.count || 0;
+  document.getElementById('m-users').textContent = userRes.count || 0;
+  document.getElementById('m-bookings').textContent = (bookRes.data||[]).length;
+  document.getElementById('m-reviews-count').textContent = revRes.count || 0;
+  const paid = (payRes.data||[]).filter(p => p.status === 'paid');
+  const revenue = paid.reduce((s, p) => s + (p.amount || 0), 0);
+  document.getElementById('m-revenue').textContent = revenue >= 1000000
+    ? 'TZS ' + (revenue/1000000).toFixed(1) + 'M'
+    : 'TZS ' + revenue.toLocaleString();
+  document.getElementById('m-pending').textContent = (enqRes.data||[]).filter(e => e.status === 'pending').length;
+  renderCharts(bookRes.data||[], payRes.data||[]);
+}
+
+function renderCharts(bookings, payments) {
+  const months = getLast6Months();
+  const bookCounts = months.map(m => bookings.filter(b => b.created_at?.startsWith(m)).length);
+  const payTotals = months.map(m => payments.filter(p => p.status === 'paid' && p.created_at?.startsWith(m)).reduce((s, p) => s + (p.amount || 0), 0));
+  const maxB = Math.max(...bookCounts, 1);
+  const maxP = Math.max(...payTotals, 1);
+  document.getElementById('bookings-chart').innerHTML = months.map((m, i) => `
+    <div class="bar-col">
+      <div class="bar-val">${bookCounts[i]}</div>
+      <div class="bar-fill" style="height:${(bookCounts[i]/maxB)*120}px"></div>
+      <div class="bar-lbl">${m.slice(5)}</div>
+    </div>`).join('');
+  document.getElementById('revenue-chart').innerHTML = months.map((m, i) => `
+    <div class="bar-col">
+      <div class="bar-val">${payTotals[i]>=1000000?(payTotals[i]/1000000).toFixed(1)+'M':payTotals[i]>=1000?Math.round(payTotals[i]/1000)+'K':'0'}</div>
+      <div class="bar-fill" style="height:${(payTotals[i]/maxP)*120}px;background:linear-gradient(180deg,var(--amber),#c04a10)"></div>
+      <div class="bar-lbl">${m.slice(5)}</div>
+    </div>`).join('');
+}
+
+function getLast6Months() {
+  const months = [];
+  const d = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+    months.push(x.toISOString().slice(0, 7));
+  }
+  return months;
+}
+
+/* ── HELPERS ── */
+function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showSaving(on) { document.getElementById('saving-overlay').style.display = on ? 'flex' : 'none'; }
 function showToast(msg, error=false) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast' + (error ? ' error' : '') + ' show';
+  t.textContent = msg;
+  t.className = 'toast' + (error ? ' error' : '') + ' show';
   setTimeout(() => t.className = 'toast' + (error ? ' error' : ''), 3500);
 }
 
-// Swatches
-document.getElementById('swatches').addEventListener('click', e => {
-  const s = e.target.closest('.swatch');
-  if (!s) return;
-  document.querySelectorAll('.swatch').forEach(x => x.classList.remove('active'));
-  s.classList.add('active');
-  selectedColor = s.dataset.color;
-  document.getElementById('f-color').value = selectedColor;
+document.querySelectorAll('.swatch').forEach(s => {
+  s.addEventListener('click', () => {
+    document.querySelectorAll('.swatch').forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
+    selectedColor = s.dataset.color;
+    document.getElementById('f-color').value = selectedColor;
+  });
 });
 
 init();
 </script>
 </body>
 </html>
+ADMINEOF
+echo "admin.html done"
+Output
