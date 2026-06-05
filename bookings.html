@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Bookings – KaribuStay</title>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --gm:#27A65D; --gd:#1A5C3A;
+  --g0:#030b06; --g1:#050e08; --g2:#0a1a0f; --g3:#0f2518;
+  --gb:rgba(255,255,255,0.08);
+  --w1:rgba(255,255,255,0.92); --w2:rgba(255,255,255,0.60);
+  --w3:rgba(255,255,255,0.30); --w4:rgba(255,255,255,0.10);
+  --am:#F48942; --ease:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--w1);min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:68px;background:rgba(3,11,6,.95);border-bottom:1px solid var(--gb);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.nl img{height:40px;width:auto;filter:brightness(0) invert(1)}
+.nav-back{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--w2);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--gm)}
+.nav-back svg{flex-shrink:0}
+
+/* PAGE */
+.page{max-width:860px;margin:0 auto;padding:3rem 5vw 5rem}
+.page-header{margin-bottom:2.5rem}
+.page-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gm);margin-bottom:.5rem}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--w1);line-height:1.2}
+.page-sub{font-size:.82rem;color:var(--w3);margin-top:.4rem}
+
+/* TABS */
+.tabs{display:flex;gap:.4rem;margin-bottom:2rem;border-bottom:1px solid var(--gb);padding-bottom:0}
+.tab{background:none;border:none;color:var(--w3);font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;padding:.6rem 1.1rem .8rem;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;margin-bottom:-1px}
+.tab:hover{color:var(--w1)}
+.tab.active{color:var(--gm);border-bottom-color:var(--gm)}
+.tab-count{font-size:.68rem;background:rgba(255,255,255,.08);border-radius:20px;padding:.1rem .45rem;margin-left:.3rem}
+.tab.active .tab-count{background:rgba(39,166,93,.15);color:var(--gm)}
+
+/* CARDS */
+.bk-list{display:flex;flex-direction:column;gap:1rem}
+.bk-card{background:var(--g2);border:1px solid var(--gb);border-radius:16px;overflow:hidden;transition:border-color .2s}
+.bk-card:hover{border-color:rgba(255,255,255,.14)}
+.bk-card-inner{display:grid;grid-template-columns:80px 1fr auto;gap:1.2rem;padding:1.2rem 1.4rem;align-items:start}
+@media(max-width:560px){.bk-card-inner{grid-template-columns:60px 1fr;}.bk-card-actions{grid-column:1/-1;padding:0 1.4rem 1.2rem;display:flex;gap:.6rem}}
+.bk-thumb{width:80px;height:80px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--g3)}
+@media(max-width:560px){.bk-thumb{width:60px;height:60px}}
+.bk-body{}
+.bk-prop-name{font-size:.95rem;font-weight:600;color:var(--w1);margin-bottom:.2rem;line-height:1.3}
+.bk-location{font-size:.74rem;color:var(--w3);display:flex;align-items:center;gap:.3rem;margin-bottom:.55rem}
+.bk-dates{font-size:.78rem;color:var(--w2);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem}
+.bk-dates svg{color:var(--gm);flex-shrink:0}
+.bk-meta{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.3rem}
+.bk-nights{font-size:.72rem;color:var(--w3)}
+.bk-amount{font-size:.82rem;font-weight:600;color:var(--gm)}
+.bk-id{font-size:.65rem;color:var(--w3);font-family:monospace}
+.status-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.25rem .7rem;border-radius:20px;white-space:nowrap}
+.s-pending{background:rgba(244,137,66,.12);color:#f4a442;border:1px solid rgba(244,137,66,.2)}
+.s-confirmed{background:rgba(39,166,93,.12);color:#27a65d;border:1px solid rgba(39,166,93,.2)}
+.s-completed{background:rgba(100,200,150,.1);color:#64c896;border:1px solid rgba(100,200,150,.15)}
+.s-cancelled{background:rgba(229,57,53,.1);color:#ef5350;border:1px solid rgba(229,57,53,.15)}
+.bk-card-actions{display:flex;flex-direction:column;align-items:flex-end;gap:.6rem;flex-shrink:0}
+@media(max-width:560px){.bk-card-actions{flex-direction:row;align-items:center}}
+.btn-cancel{font-size:.74rem;font-weight:500;color:var(--w3);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.42rem .9rem;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-cancel:hover{color:#ef5350;border-color:rgba(229,57,53,.3);background:rgba(229,57,53,.07)}
+.btn-view{font-size:.74rem;font-weight:500;color:var(--gm);background:rgba(39,166,93,.08);border:1px solid rgba(39,166,93,.18);border-radius:8px;padding:.42rem .9rem;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block}
+.btn-view:hover{background:rgba(39,166,93,.15)}
+
+/* EMPTY */
+.empty{text-align:center;padding:4rem 2rem}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.4}
+.empty h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--w2);margin-bottom:.5rem}
+.empty p{font-size:.82rem;color:var(--w3);margin-bottom:1.5rem}
+.empty a{display:inline-block;background:var(--gm);color:#fff;text-decoration:none;padding:.7rem 1.8rem;border-radius:50px;font-size:.84rem;font-weight:600;transition:all .2s}
+.empty a:hover{background:var(--gd)}
+
+/* LOADER */
+.skeleton{animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+.skel-card{background:var(--g2);border:1px solid var(--gb);border-radius:16px;padding:1.2rem 1.4rem;display:grid;grid-template-columns:80px 1fr;gap:1.2rem}
+.skel-thumb{width:80px;height:80px;border-radius:10px;background:var(--g3)}
+.skel-line{height:12px;border-radius:6px;background:var(--g3);margin-bottom:.7rem}
+
+/* CANCEL MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s}
+.mov.open{opacity:1;pointer-events:all}
+.mbox{background:linear-gradient(145deg,var(--g3),var(--g2));border:1px solid var(--gb);border-radius:20px;width:100%;max-width:420px;padding:2rem;animation:mIn .3s var(--ease) both}
+@keyframes mIn{from{opacity:0;transform:scale(.92) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mbox h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300;margin-bottom:.5rem}
+.mbox p{font-size:.82rem;color:var(--w2);line-height:1.6;margin-bottom:1.5rem}
+.mbox-prop{background:rgba(229,57,53,.07);border:1px solid rgba(229,57,53,.15);border-radius:10px;padding:.8rem 1rem;font-size:.8rem;color:var(--w2);margin-bottom:1.4rem;line-height:1.7}
+.mbox-btns{display:flex;gap:.7rem}
+.btn-confirm-cancel{flex:1;background:rgba(229,57,53,.15);color:#ef5350;border:1px solid rgba(229,57,53,.3);border-radius:10px;padding:.8rem;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-confirm-cancel:hover{background:rgba(229,57,53,.25)}
+.btn-keep{flex:1;background:rgba(255,255,255,.06);color:var(--w1);border:1px solid var(--gb);border-radius:10px;padding:.8rem;font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer;transition:all .2s}
+.btn-keep:hover{background:rgba(255,255,255,.1)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(5,14,8,.95);border:1px solid rgba(39,166,93,.25);backdrop-filter:blur(20px);color:var(--w1);padding:.85rem 1.8rem;border-radius:50px;font-size:.82rem;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transition:transform .4s var(--ease),opacity .4s;z-index:300;white-space:nowrap}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* AUTH GATE */
+.auth-gate{text-align:center;padding:5rem 2rem}
+.auth-gate h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:.6rem}
+.auth-gate p{font-size:.84rem;color:var(--w3);margin-bottom:1.8rem}
+.auth-gate a{display:inline-block;background:var(--gm);color:#fff;text-decoration:none;padding:.75rem 2rem;border-radius:50px;font-size:.85rem;font-weight:600}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nl"><img src="logo2.png" alt="KaribuStay"/></a>
+  <a href="index.html" class="nav-back">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Rudi nyumbani
+  </a>
+</nav>
+
+<div class="page">
+
+  <!-- AUTH GATE -->
+  <div class="auth-gate" id="auth-gate" style="display:none">
+    <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+    <h2>Ingia kwanza</h2>
+    <p>Unahitaji account kuona bookings zako</p>
+    <a href="index.html">Rudi na uingie</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content" style="display:none">
+    <div class="page-header">
+      <div class="page-tag">Akaunti yangu</div>
+      <h1 class="page-title">Bookings zangu</h1>
+      <p class="page-sub" id="page-sub">Inapakua...</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('upcoming')" id="tab-upcoming">
+        Zinakuja <span class="tab-count" id="cnt-upcoming">0</span>
+      </button>
+      <button class="tab" onclick="switchTab('past')" id="tab-past">
+        Zilizopita <span class="tab-count" id="cnt-past">0</span>
+      </button>
+      <button class="tab" onclick="switchTab('cancelled')" id="tab-cancelled">
+        Zilizofutwa <span class="tab-count" id="cnt-cancelled">0</span>
+      </button>
+    </div>
+
+    <div class="bk-list" id="bk-list">
+      <!-- skeleton -->
+      <div class="skel-card skeleton"><div class="skel-thumb"></div><div><div class="skel-line" style="width:55%"></div><div class="skel-line" style="width:35%"></div><div class="skel-line" style="width:45%"></div></div></div>
+      <div class="skel-card skeleton"><div class="skel-thumb"></div><div><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:40%"></div><div class="skel-line" style="width:50%"></div></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CANCEL CONFIRM MODAL -->
+<div class="mov" id="cancel-modal">
+  <div class="mbox">
+    <h3>Futa Booking?</h3>
+    <p>Huwezi kurudisha booking iliyofutwa. Hakikisha kabla ya kuendelea.</p>
+    <div class="mbox-prop" id="cancel-prop-info">—</div>
+    <div class="mbox-btns">
+      <button class="btn-keep" onclick="closeCancelModal()">← Acha</button>
+      <button class="btn-confirm-cancel" id="cancel-confirm-btn" onclick="confirmCancel()">Ndiyo, Futa</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allBookings = [], listings = {}, activeTab = 'upcoming', cancelTarget = null;
+
+// ── INIT ──────────────────────────────
+async function init(){
+  const { data: { user } } = await db.auth.getUser();
+  if(!user){
+    document.getElementById('auth-gate').style.display='block';
+    return;
+  }
+  document.getElementById('main-content').style.display='block';
+  await loadBookings(user.id);
+}
+
+// ── LOAD ──────────────────────────────
+async function loadBookings(userId){
+  const { data, error } = await db
+    .from('bookings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if(error){ showT('❌ Hitilafu: '+error.message); return; }
+  allBookings = data || [];
+
+  // Fetch listing names for all unique listing_ids
+  const ids = [...new Set(allBookings.map(b=>b.listing_id).filter(Boolean))];
+  if(ids.length){
+    const { data: ls } = await db.from('listings').select('id,name,location,slug').in('id', ids);
+    (ls||[]).forEach(l=>{ listings[l.id]=l; });
+  }
+
+  updateCounts();
+  renderTab();
+  const total = allBookings.length;
+  document.getElementById('page-sub').textContent = total
+    ? `Una booking ${total} zote`
+    : 'Bado hujafanya booking yoyote';
+}
+
+// ── COUNTS ────────────────────────────
+function updateCounts(){
+  const today = new Date().toISOString().split('T')[0];
+  const up  = allBookings.filter(b=>b.status!=='cancelled' && (b.checkout||'')>=today).length;
+  const past= allBookings.filter(b=>b.status!=='cancelled' && (b.checkout||'')<today).length;
+  const can = allBookings.filter(b=>b.status==='cancelled').length;
+  document.getElementById('cnt-upcoming').textContent = up;
+  document.getElementById('cnt-past').textContent    = past;
+  document.getElementById('cnt-cancelled').textContent= can;
+}
+
+// ── TABS ──────────────────────────────
+function switchTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.id==='tab-'+tab));
+  renderTab();
+}
+
+// ── RENDER ────────────────────────────
+function renderTab(){
+  const today = new Date().toISOString().split('T')[0];
+  let items;
+  if(activeTab==='upcoming')  items=allBookings.filter(b=>b.status!=='cancelled'&&(b.checkout||'')>=today);
+  else if(activeTab==='past') items=allBookings.filter(b=>b.status!=='cancelled'&&(b.checkout||'')<today);
+  else                         items=allBookings.filter(b=>b.status==='cancelled');
+
+  const list = document.getElementById('bk-list');
+
+  if(!items.length){
+    const msgs = {
+      upcoming:'Huna bookings zinazokuja.',
+      past:'Huna bookings zilizopita.',
+      cancelled:'Huna bookings zilizofutwa.'
+    };
+    list.innerHTML=`<div class="empty">
+      <div class="empty-icon">🏡</div>
+      <h3>${msgs[activeTab]}</h3>
+      <p>Tafuta nyumba nzuri za kukaa Tanzania.</p>
+      <a href="index.html">Tafuta Stays →</a>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(b=>mkCard(b)).join('');
+}
+
+function mkCard(b){
+  const l = listings[b.listing_id] || {};
+  const propName = l.name || 'Malazi';
+  const propLoc  = l.location || b.location || '—';
+  const nights   = calcNights(b.checkin, b.checkout);
+  const amount   = b.total_amount ? 'TZS '+Number(b.total_amount).toLocaleString() : '—';
+  const status   = b.status || 'pending';
+  const statusClass = { pending:'s-pending', confirmed:'s-confirmed', completed:'s-completed', cancelled:'s-cancelled' }[status] || 's-pending';
+  const statusLabel = { pending:'⏳ Inasubiri', confirmed:'✅ Imethibitishwa', completed:'🏁 Imekamilika', cancelled:'❌ Imefutwa' }[status] || status;
+  const canCancel = status!=='cancelled' && status!=='completed' && (b.checkout||'')>=new Date().toISOString().split('T')[0];
+  const shortId = b.id ? b.id.slice(0,8).toUpperCase() : '—';
+
+  return `<div class="bk-card" id="card-${b.id}">
+    <div class="bk-card-inner">
+      <div class="bk-thumb" style="background:linear-gradient(135deg,#1a4d2e,#27a65d)">
+        ${l.slug?`<img src="listings/${l.slug}/cover.jpg" alt="${esc(propName)}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" onerror="this.style.display='none'">`:''}
+      </div>
+      <div class="bk-body">
+        <div class="bk-prop-name">${esc(propName)}</div>
+        <div class="bk-location">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${esc(propLoc)}
+        </div>
+        <div class="bk-dates">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${fmtDate(b.checkin)} → ${fmtDate(b.checkout)}
+        </div>
+        <div class="bk-meta">
+          <span class="status-pill ${statusClass}">${statusLabel}</span>
+          ${nights?`<span class="bk-nights">🌙 ${nights} usiku</span>`:''}
+          <span class="bk-amount">${amount}</span>
+        </div>
+        <div class="bk-id" style="margin-top:.4rem">ID: #${shortId}</div>
+      </div>
+      <div class="bk-card-actions">
+        ${l.slug?`<a class="btn-view" href="property.html?id=${b.listing_id}">Tazama</a>`:''}
+        ${canCancel?`<button class="btn-cancel" onclick="openCancelModal('${b.id}')">Futa</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── CANCEL ────────────────────────────
+function openCancelModal(bookingId){
+  cancelTarget = allBookings.find(b=>b.id===bookingId);
+  if(!cancelTarget) return;
+  const l = listings[cancelTarget.listing_id] || {};
+  const nights = calcNights(cancelTarget.checkin, cancelTarget.checkout);
+  document.getElementById('cancel-prop-info').innerHTML =
+    `🏠 <b>${esc(l.name||'Malazi')}</b><br>📅 ${fmtDate(cancelTarget.checkin)} → ${fmtDate(cancelTarget.checkout)}`+
+    (nights?`<br>🌙 ${nights} usiku`:'')+
+    (cancelTarget.total_amount?`<br>💰 TZS ${Number(cancelTarget.total_amount).toLocaleString()}`:'');
+  document.getElementById('cancel-modal').classList.add('open');
+}
+
+function closeCancelModal(){
+  document.getElementById('cancel-modal').classList.remove('open');
+  cancelTarget=null;
+}
+
+async function confirmCancel(){
+  if(!cancelTarget) return;
+  const btn = document.getElementById('cancel-confirm-btn');
+  btn.disabled=true; btn.textContent='Inafuta...';
+
+  const { error } = await db
+    .from('bookings')
+    .update({ status:'cancelled' })
+    .eq('id', cancelTarget.id);
+
+  btn.disabled=false; btn.textContent='Ndiyo, Futa';
+  closeCancelModal();
+
+  if(error){ showT('❌ Hitilafu: '+error.message); return; }
+
+  // Update local state
+  const bk = allBookings.find(b=>b.id===cancelTarget.id);
+  if(bk) bk.status='cancelled';
+  cancelTarget=null;
+  updateCounts();
+  renderTab();
+  showT('✅ Booking imefutwa.');
+}
+
+// ── HELPERS ───────────────────────────
+function calcNights(ci, co){
+  if(!ci||!co) return 0;
+  return Math.max(0, Math.round((new Date(co)-new Date(ci))/(1000*60*60*24)));
+}
+function fmtDate(d){
+  if(!d) return '—';
+  return new Date(d+'T12:00:00').toLocaleDateString('sw-TZ',{day:'numeric',month:'short',year:'numeric'});
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showT(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),3500); }
+
+// Close modal on backdrop click
+document.getElementById('cancel-modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeCancelModal(); });
+
+init();
+</script>
+</body>
+</html>

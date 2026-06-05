@@ -714,49 +714,84 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 ═══════════════════════════════════════ */
 #auth-modal { z-index:3000; }
 .auth-box {
-  background:var(--dg,#1a1f1b);
+  background:linear-gradient(160deg,#0f2518,#0a1a0f);
   border:.5px solid rgba(255,255,255,.10);
-  border-radius:18px; padding:2.2rem 2rem;
-  width:100%; max-width:400px;
+  border-radius:22px; padding:2.4rem 2.2rem;
+  width:100%; max-width:420px;
   position:relative;
+  box-shadow:0 40px 100px rgba(0,0,0,.7), 0 0 0 1px rgba(39,166,93,.08), inset 0 1px 0 rgba(255,255,255,.06);
+  animation:authIn .4s cubic-bezier(0.22,1,0.36,1) both;
+  overflow:hidden;
 }
-.auth-logo { text-align:center; margin-bottom:1.4rem; }
-.auth-logo span { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:#f0ede6; letter-spacing:-.01em; }
+.auth-box::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:200px; height:200px; border-radius:50%;
+  background:radial-gradient(circle, rgba(39,166,93,.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+@keyframes authIn { from{opacity:0;transform:scale(.9) translateY(30px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.auth-logo { text-align:center; margin-bottom:1.6rem; }
+.auth-logo span { font-family:'Cormorant Garamond',serif; font-size:1.7rem; color:#f0ede6; letter-spacing:-.01em; }
 .auth-logo em { color:#27a65d; font-style:italic; }
-.auth-tabs { display:flex; border-bottom:.5px solid rgba(255,255,255,.10); margin-bottom:1.5rem; }
-.auth-tab { flex:1; background:none; border:none; color:rgba(255,255,255,.4); font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; padding:.6rem 0 .8rem; cursor:pointer; border-bottom:2px solid transparent; transition:color .2s, border-color .2s; }
-.auth-tab.active { color:#27a65d; border-bottom-color:#27a65d; }
-.auth-field { margin-bottom:1rem; }
-.auth-field label { display:block; font-size:.75rem; color:rgba(255,255,255,.5); margin-bottom:.4rem; font-family:'DM Sans',sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+.auth-logo-sub { font-size:.72rem; color:rgba(255,255,255,.3); margin-top:.2rem; font-family:'DM Sans',sans-serif; }
+.auth-tabs { display:flex; border-bottom:.5px solid rgba(255,255,255,.10); margin-bottom:1.6rem; position:relative; }
+.auth-tabs::after { content:''; position:absolute; bottom:-1px; left:0; width:50%; height:2px; background:linear-gradient(90deg,#27a65d,#4de88f); border-radius:2px; transition:transform .3s cubic-bezier(0.22,1,0.36,1); }
+.auth-tabs.on-signup::after { transform:translateX(100%); }
+.auth-tab { flex:1; background:none; border:none; color:rgba(255,255,255,.35); font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; padding:.6rem 0 .85rem; cursor:pointer; border-bottom:2px solid transparent; transition:color .25s; }
+.auth-tab.active { color:#f0ede6; }
+.auth-field { margin-bottom:1.1rem; position:relative; }
+.auth-field label { display:block; font-size:.68rem; color:rgba(255,255,255,.35); margin-bottom:.38rem; font-family:'DM Sans',sans-serif; letter-spacing:.08em; text-transform:uppercase; transition:color .2s; }
+.auth-field:focus-within label { color:#27a65d; }
 .auth-field input {
-  width:100%; background:rgba(255,255,255,.05); border:.5px solid rgba(255,255,255,.12);
-  border-radius:10px; padding:.7rem 1rem; color:#f0ede6; font-family:'DM Sans',sans-serif;
-  font-size:.9rem; outline:none; transition:border-color .2s;
+  width:100%; background:rgba(255,255,255,.04); border:.5px solid rgba(255,255,255,.10);
+  border-radius:11px; padding:.75rem 1rem; color:#f0ede6; font-family:'DM Sans',sans-serif;
+  font-size:.9rem; outline:none; transition:border-color .25s, background .25s, box-shadow .25s;
 }
-.auth-field input:focus { border-color:#27a65d; }
+.auth-field input:focus {
+  border-color:#27a65d;
+  background:rgba(39,166,93,.05);
+  box-shadow:0 0 0 3px rgba(39,166,93,.12);
+}
+.auth-field input::placeholder { color:rgba(255,255,255,.2); }
+/* slide-in animation for fields */
+#auth-login-form .auth-field,
+#auth-signup-form .auth-field { animation:fieldIn .35s cubic-bezier(0.22,1,0.36,1) both; }
+#auth-login-form .auth-field:nth-child(1) { animation-delay:.04s }
+#auth-login-form .auth-field:nth-child(2) { animation-delay:.09s }
+#auth-signup-form .auth-field:nth-child(1) { animation-delay:.04s }
+#auth-signup-form .auth-field:nth-child(2) { animation-delay:.09s }
+#auth-signup-form .auth-field:nth-child(3) { animation-delay:.14s }
+@keyframes fieldIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 .auth-btn {
-  width:100%; background:#27a65d; color:#fff; border:none; border-radius:10px;
-  padding:.78rem; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
-  cursor:pointer; margin-top:.5rem; transition:background .2s, transform .15s;
+  width:100%; background:linear-gradient(135deg,#1db954,#27a65d); color:#fff; border:none;
+  border-radius:11px; padding:.82rem; font-family:'DM Sans',sans-serif; font-size:.9rem;
+  font-weight:600; cursor:pointer; margin-top:.4rem;
+  transition:transform .2s, box-shadow .2s, filter .2s;
+  box-shadow:0 6px 24px rgba(39,166,93,.35);
+  position:relative; overflow:hidden;
 }
-.auth-btn:hover { background:#1e8a4a; transform:translateY(-1px); }
+.auth-btn::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.12),transparent); opacity:0; transition:opacity .2s; }
+.auth-btn:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(39,166,93,.45); filter:brightness(1.08); }
+.auth-btn:hover::after { opacity:1; }
 .auth-btn:active { transform:translateY(0); }
-.auth-divider { display:flex; align-items:center; gap:.8rem; margin:1rem 0; }
-.auth-divider hr { flex:1; border:none; border-top:.5px solid rgba(255,255,255,.1); }
-.auth-divider span { font-size:.75rem; color:rgba(255,255,255,.3); font-family:'DM Sans',sans-serif; }
+.auth-divider { display:flex; align-items:center; gap:.8rem; margin:1.1rem 0; }
+.auth-divider hr { flex:1; border:none; border-top:.5px solid rgba(255,255,255,.08); }
+.auth-divider span { font-size:.72rem; color:rgba(255,255,255,.25); font-family:'DM Sans',sans-serif; }
 .auth-google {
-  width:100%; background:rgba(255,255,255,.06); color:#f0ede6; border:.5px solid rgba(255,255,255,.12);
-  border-radius:10px; padding:.72rem; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:500;
-  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.6rem; transition:background .2s;
+  width:100%; background:rgba(255,255,255,.05); color:#f0ede6;
+  border:.5px solid rgba(255,255,255,.10); border-radius:11px; padding:.75rem;
+  font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:500;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.6rem;
+  transition:background .2s, border-color .2s, transform .2s;
 }
-.auth-google:hover { background:rgba(255,255,255,.11); }
-.auth-forgot { display:block; text-align:right; font-size:.75rem; color:rgba(255,255,255,.35); font-family:'DM Sans',sans-serif; margin-top:.3rem; cursor:pointer; }
+.auth-google:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2); transform:translateY(-1px); }
+.auth-forgot { display:block; text-align:right; font-size:.72rem; color:rgba(255,255,255,.3); font-family:'DM Sans',sans-serif; margin-top:.35rem; cursor:pointer; transition:color .2s; }
 .auth-forgot:hover { color:#27a65d; }
-.auth-close { position:absolute; top:1rem; right:1rem; background:none; border:none; color:rgba(255,255,255,.4); font-size:1.3rem; cursor:pointer; line-height:1; padding:.2rem .4rem; }
-.auth-close:hover { color:#fff; }
-.auth-msg { font-size:.8rem; font-family:'DM Sans',sans-serif; text-align:center; margin-top:.8rem; min-height:1.2rem; }
-.auth-msg.err { color:#f07070; }
-.auth-msg.ok  { color:#27a65d; }
+.auth-close { position:absolute; top:1.1rem; right:1.1rem; background:rgba(255,255,255,.07); border:none; color:rgba(255,255,255,.4); font-size:.85rem; cursor:pointer; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.auth-close:hover { background:rgba(229,57,53,.15); color:#ff5252; }
+.auth-msg { font-size:.8rem; font-family:'DM Sans',sans-serif; text-align:center; margin-top:.9rem; min-height:1.2rem; border-radius:8px; padding:.3rem; transition:all .3s; }
+.auth-msg.err { color:#f07070; background:rgba(240,112,112,.08); }
+.auth-msg.ok  { color:#27a65d; background:rgba(39,166,93,.08); }
 
 /* user avatar button in navbar */
 .user-nav-btn {
@@ -849,7 +884,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
     </a>
 
     <!-- login button — shown when logged out -->
-    <button id="login-nav-btn" onclick="openAuth('login')">Log in</button>
+    <button id="login-nav-btn" onclick="openAuth('login')">Log in / Sign up</button>
 
     <!-- user menu — shown when logged in -->
     <div class="user-nav-btn" id="user-nav-btn" onclick="toggleUserMenu(event)">
@@ -868,6 +903,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
         <a href="bookings.html">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           My bookings
+          <span id="nav-bk-badge" style="display:none;margin-left:auto;background:var(--gm);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .45rem;border-radius:20px;min-width:18px;text-align:center"></span>
         </a>
         <a href="#" onclick="openWishlist()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1185,9 +1221,12 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 <div class="mov" id="auth-modal" onclick="if(event.target===this)closeAuth()">
   <div class="auth-box">
     <button class="auth-close" onclick="closeAuth()">✕</button>
-    <div class="auth-logo"><span>Karibu<em>Stay</em></span></div>
+    <div class="auth-logo">
+      <span>Karibu<em>Stay</em></span>
+      <div class="auth-logo-sub">Ingia au tengeneza akaunti yako</div>
+    </div>
 
-    <div class="auth-tabs">
+    <div class="auth-tabs" id="auth-tabs">
       <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log in</button>
       <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign up</button>
     </div>
@@ -1226,29 +1265,101 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 </div>
 
 <div class="mov" id="bmodal" onclick="if(event.target===this)closeBk()">
-  <div class="mbox">
+  <div class="mbox" style="max-width:500px">
     <div class="mh">
-      <h2>Book This Property</h2>
-      <p>Your details will open directly in WhatsApp</p>
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.2rem">
+        <span id="bk-step-lbl" style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gm)">Hatua 1 / 3</span>
+        <div style="flex:1;height:3px;background:var(--gb);border-radius:2px;overflow:hidden">
+          <div id="bk-progress" style="height:100%;background:var(--gm);border-radius:2px;transition:width .35s;width:33%"></div>
+        </div>
+      </div>
+      <h2 id="bk-title" style="font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300">Thibitisha Tarehe</h2>
+      <p id="bk-subtitle" style="font-size:.73rem;color:var(--w3);margin-top:.15rem">Chagua tarehe na idadi ya wageni</p>
       <button class="mcls" onclick="closeBk()">✕</button>
     </div>
     <div class="mb">
       <div class="bk-info" id="bk-info"></div>
-      <div class="mrow">
-        <div class="mfg"><label>Check-in</label><input type="date" id="bk-in"/></div>
-        <div class="mfg"><label>Check-out</label><input type="date" id="bk-out"/></div>
+
+      <!-- STEP 1: Dates + guests -->
+      <div id="bk-s1">
+        <div class="mrow">
+          <div class="mfg"><label>Check-in</label><input type="date" id="bk-in"/></div>
+          <div class="mfg"><label>Check-out</label><input type="date" id="bk-out"/></div>
+        </div>
+        <div class="mfg"><label>Wageni / Guests</label>
+          <select id="bk-gs">
+            <option value="1">1 Mgeni</option><option value="2">2 Wageni</option>
+            <option value="3">3 Wageni</option><option value="4">4+ Wageni</option>
+          </select>
+        </div>
+        <div class="mfg"><label>Jina Lako / Your Name</label>
+          <input type="text" id="bk-name" placeholder="e.g. Amina Hassan"/>
+        </div>
+        <div class="mrow">
+          <div class="mfg"><label>Simu / Phone</label><input type="tel" id="bk-phone" placeholder="+255..."/></div>
+          <div class="mfg"><label>Email</label><input type="email" id="bk-email" placeholder="wewe@email.com"/></div>
+        </div>
+        <div id="bk-summary-box" style="display:none;background:rgba(39,166,93,.06);border:1px solid rgba(39,166,93,.18);border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;font-size:.78rem;color:var(--w2);line-height:1.7"></div>
+        <button class="mbtn" onclick="bkNext1()">Endelea → Chagua Malipo</button>
       </div>
-      <div class="mfg"><label>Guests</label>
-        <select id="bk-gs"><option value="1">1 Guest</option><option value="2">2 Guests</option><option value="3">3 Guests</option><option value="4">4+ Guests</option></select>
+
+      <!-- STEP 2: Payment method -->
+      <div id="bk-s2" style="display:none">
+        <p style="font-size:.8rem;color:var(--w3);margin-bottom:1rem">Chagua jinsi ya kulipa:</p>
+        <div style="display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.2rem">
+          <label style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s" id="pay-mpesa-lbl">
+            <input type="radio" name="pay-method" value="mpesa" id="pay-mpesa" style="accent-color:var(--gm)" onchange="selectPay('mpesa')">
+            <div>
+              <div style="font-size:.85rem;font-weight:600;color:var(--w1)">📱 M-Pesa</div>
+              <div style="font-size:.7rem;color:var(--w3)">Lipa haraka na simu yako</div>
+            </div>
+            <span id="pay-mpesa-badge" style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.2rem .6rem;border-radius:20px;display:none">✓ Chaguo</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s" id="pay-stripe-lbl">
+            <input type="radio" name="pay-method" value="stripe" id="pay-stripe" style="accent-color:var(--gm)" onchange="selectPay('stripe')">
+            <div>
+              <div style="font-size:.85rem;font-weight:600;color:var(--w1)">💳 Kadi / Stripe</div>
+              <div style="font-size:.7rem;color:var(--w3)">Visa, Mastercard, au kadi nyingine</div>
+            </div>
+            <span id="pay-stripe-badge" style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.2rem .6rem;border-radius:20px;display:none">✓ Chaguo</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s" id="pay-wa-lbl">
+            <input type="radio" name="pay-method" value="whatsapp" id="pay-wa" style="accent-color:var(--gm)" onchange="selectPay('whatsapp')">
+            <div>
+              <div style="font-size:.85rem;font-weight:600;color:var(--w1)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#25D366" style="vertical-align:middle;margin-right:3px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+              </div>
+              <div style="font-size:.7rem;color:var(--w3)">Wasiliana na KaribuStay moja kwa moja</div>
+            </div>
+            <span id="pay-wa-badge" style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.2rem .6rem;border-radius:20px;display:none">✓ Chaguo</span>
+          </label>
+        </div>
+        <div style="display:flex;gap:.7rem">
+          <button class="mbtn" style="background:rgba(255,255,255,.07);box-shadow:none;color:var(--w2);flex:0 0 auto;width:auto;padding:.9rem 1.3rem" onclick="bkBack(1)">← Rudi</button>
+          <button class="mbtn" style="flex:1" onclick="bkNext2()">Endelea → Thibitisha</button>
+        </div>
       </div>
-      <div class="mfg"><label>Message (optional)</label>
-        <textarea id="bk-msg" placeholder="Any special requests or questions?"></textarea>
+
+      <!-- STEP 3: Confirm / submit -->
+      <div id="bk-s3" style="display:none">
+        <div id="bk-confirm-summary" style="background:rgba(39,166,93,.06);border:1px solid rgba(39,166,93,.18);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.2rem;font-size:.8rem;color:var(--w2);line-height:2"></div>
+        <div id="bk-mpesa-form" style="display:none;margin-bottom:1rem">
+          <div class="mfg">
+            <label>Namba ya M-Pesa</label>
+            <input type="tel" id="bk-mpesa-num" placeholder="+255 7XX XXX XXX"/>
+          </div>
+          <p style="font-size:.7rem;color:var(--w3);margin-top:-.5rem;margin-bottom:.7rem">Utapata push notification kwenye simu yako</p>
+        </div>
+        <div style="display:flex;gap:.7rem">
+          <button class="mbtn" style="background:rgba(255,255,255,.07);box-shadow:none;color:var(--w2);flex:0 0 auto;width:auto;padding:.9rem 1.3rem" onclick="bkBack(2)">← Rudi</button>
+          <button class="mbtn" style="flex:1" id="bk-submit-btn" onclick="submitBooking()">
+            <span id="bk-submit-lbl">✓ Thibitisha Booking</span>
+          </button>
+        </div>
+        <p class="mn" style="margin-top:.7rem">Booking itahifadhiwa — utapata confirmation hivi karibuni</p>
       </div>
-      <button class="mbtn" onclick="sendWA()">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Send via WhatsApp
-      </button>
-      <p class="mn">Opens WhatsApp — no account required</p>
+
     </div>
   </div>
 </div>
@@ -1450,27 +1561,148 @@ function mkCard(p){
 }
 
 // ══ BOOKING ═══════════════════════════
+// ── BOOKING FLOW STATE ─────────────────
+let bkStep = 1, bkPayMethod = '';
+
 function openBk(id){
   const p=allL.find(x=>x.id===id); if(!p) return;
-  bkTarget=p;
-  const [c1,c2]=(p.color||'#C88B55,#4A2010').split(',');
-  document.getElementById('bk-info').innerHTML=`<div class="bk-th" style="background:linear-gradient(135deg,${c1},${c2})"></div><div><div class="bk-n">${esc(p.name)}</div><div class="bk-l">📍 ${esc(p.location)} · <strong style="color:var(--am)">TZS ${Number(p.price).toLocaleString()}/night</strong></div></div>`;
-  ['bk-in','bk-out','bk-msg'].forEach(id=>{const el=document.getElementById(id);if(el.tagName==='TEXTAREA'||el.type==='text')el.value=''; else if(el.type==='date') el.value='';});
+  bkTarget=p; bkStep=1; bkPayMethod='';
+  const [c1,c2]=(p.color||'#27a65d,#1a4d2e').split(',');
+  document.getElementById('bk-info').innerHTML=`<div class="bk-th" style="background:linear-gradient(135deg,${c1},${c2})"></div><div><div class="bk-n">${esc(p.name)}</div><div class="bk-l">📍 ${esc(p.location)} · <strong style="color:var(--gm)">TZS ${Number(p.price).toLocaleString()}/usiku</strong></div></div>`;
+  // Reset fields
+  ['bk-in','bk-out','bk-name','bk-phone','bk-email','bk-mpesa-num'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.value='';});
+  document.getElementById('bk-gs').value='1';
+  document.getElementById('bk-summary-box').style.display='none';
+  document.querySelectorAll('input[name="pay-method"]').forEach(r=>r.checked=false);
+  ['mpesa','stripe','wa'].forEach(m=>{ document.getElementById('pay-'+m+'-badge').style.display='none'; document.getElementById('pay-'+m+'-lbl').style.borderColor=''; });
+  bkGoStep(1);
   document.getElementById('bmodal').classList.add('open');
   document.body.style.overflow='hidden';
 }
+
 function closeBk(){ document.getElementById('bmodal').classList.remove('open'); document.body.style.overflow=''; }
 
-function sendWA(){
-  if(!bkTarget) return;
-  const ci=document.getElementById('bk-in').value||'—';
-  const co=document.getElementById('bk-out').value||'—';
-  const gs=document.getElementById('bk-gs').value||'1';
-  const ms=document.getElementById('bk-msg').value.trim();
-  const txt=`Hi KaribuStay! 👋\n\nNingependa kuhifadhi / I'd like to book:\n\n🏠 *${bkTarget.name}*\n📍 ${bkTarget.location}\n💰 TZS ${Number(bkTarget.price).toLocaleString()}/night\n\n📅 Check-in: ${ci}\n📅 Check-out: ${co}\n👥 Guests: ${gs}${ms?'\n\n💬 '+ms:''}\n\nTafadhali thibitisha / Please confirm availability. Asante! 🙏`;
-  window.open('https://wa.me/255745999918?text='+encodeURIComponent(txt),'_blank');
-  closeBk(); showT('✅ Opening WhatsApp...');
+function bkGoStep(n){
+  bkStep=n;
+  ['bk-s1','bk-s2','bk-s3'].forEach((id,i)=>{ document.getElementById(id).style.display=i+1===n?'':'none'; });
+  const titles=['Thibitisha Tarehe','Chagua Malipo','Hakikisha & Lipa'];
+  const subs=['Chagua tarehe na idadi ya wageni','Chagua jinsi ya kulipa','Kagua maelezo yako kabla ya kutuma'];
+  document.getElementById('bk-title').textContent=titles[n-1];
+  document.getElementById('bk-subtitle').textContent=subs[n-1];
+  document.getElementById('bk-step-lbl').textContent=`Hatua ${n} / 3`;
+  document.getElementById('bk-progress').style.width=(n/3*100)+'%';
 }
+
+function bkBack(toStep){ bkGoStep(toStep); }
+
+function bkNights(){
+  const ci=document.getElementById('bk-in').value;
+  const co=document.getElementById('bk-out').value;
+  if(!ci||!co) return 0;
+  return Math.max(0,Math.round((new Date(co)-new Date(ci))/(1000*60*60*24)));
+}
+
+function bkNext1(){
+  const ci=document.getElementById('bk-in').value;
+  const co=document.getElementById('bk-out').value;
+  const nm=document.getElementById('bk-name').value.trim();
+  const ph=document.getElementById('bk-phone').value.trim();
+  if(!ci||!co){ showT('⚠️ Chagua tarehe za check-in na check-out'); return; }
+  if(new Date(co)<=new Date(ci)){ showT('⚠️ Check-out lazima iwe baada ya check-in'); return; }
+  if(!nm){ showT('⚠️ Weka jina lako'); return; }
+  if(!ph){ showT('⚠️ Weka namba ya simu'); return; }
+  const nights=bkNights();
+  const total=nights*Number(bkTarget.price);
+  // Show summary
+  const sb=document.getElementById('bk-summary-box');
+  sb.style.display='block';
+  sb.innerHTML=`📅 <b>${ci}</b> → <b>${co}</b> (usiku ${nights})<br>👥 Wageni: ${document.getElementById('bk-gs').value}<br>💰 Jumla: <b style="color:var(--gm)">TZS ${total.toLocaleString()}</b>`;
+  // Pre-fill confirm summary
+  document.getElementById('bk-confirm-summary').innerHTML=
+    `🏠 <b>${esc(bkTarget.name)}</b><br>📍 ${esc(bkTarget.location)}<br>📅 Check-in: <b>${ci}</b><br>📅 Check-out: <b>${co}</b><br>🌙 Usiku: <b>${nights}</b> × TZS ${Number(bkTarget.price).toLocaleString()}<br>👥 Wageni: ${document.getElementById('bk-gs').value}<br>💳 Malipo: <b id="bk-pay-method-lbl">—</b><br>💰 Jumla: <b style="color:var(--gm);font-size:1rem">TZS ${total.toLocaleString()}</b>`;
+  bkGoStep(2);
+}
+
+function selectPay(method){
+  bkPayMethod=method;
+  ['mpesa','stripe','wa'].forEach(m=>{
+    const lbl=document.getElementById('pay-'+m+'-lbl');
+    const badge=document.getElementById('pay-'+m+'-badge');
+    if(m===method){ lbl.style.borderColor='rgba(39,166,93,.5)'; badge.style.display='inline'; }
+    else { lbl.style.borderColor=''; badge.style.display='none'; }
+  });
+}
+
+function bkNext2(){
+  if(!bkPayMethod){ showT('⚠️ Chagua njia ya malipo'); return; }
+  const labels={'mpesa':'📱 M-Pesa','stripe':'💳 Kadi / Stripe','whatsapp':'WhatsApp'};
+  const lbl=document.getElementById('bk-pay-method-lbl');
+  if(lbl) lbl.textContent=labels[bkPayMethod]||bkPayMethod;
+  document.getElementById('bk-mpesa-form').style.display=bkPayMethod==='mpesa'?'block':'none';
+  const btn=document.getElementById('bk-submit-lbl');
+  if(bkPayMethod==='whatsapp') btn.textContent='📲 Fungua WhatsApp';
+  else if(bkPayMethod==='mpesa') btn.textContent='📱 Lipa na M-Pesa';
+  else btn.textContent='💳 Lipa na Kadi';
+  bkGoStep(3);
+}
+
+async function submitBooking(){
+  if(!bkTarget) return;
+  const ci=document.getElementById('bk-in').value;
+  const co=document.getElementById('bk-out').value;
+  const gs=document.getElementById('bk-gs').value;
+  const nm=document.getElementById('bk-name').value.trim();
+  const ph=document.getElementById('bk-phone').value.trim();
+  const em=document.getElementById('bk-email').value.trim();
+  const nights=bkNights();
+  const total=nights*Number(bkTarget.price);
+
+  // WhatsApp path — no DB save needed
+  if(bkPayMethod==='whatsapp'){
+    const txt=`Hi KaribuStay! 👋\n\nNingependa kuhifadhi / I'd like to book:\n\n🏠 *${bkTarget.name}*\n📍 ${bkTarget.location}\n💰 TZS ${Number(bkTarget.price).toLocaleString()}/usiku\n\n📅 Check-in: ${ci}\n📅 Check-out: ${co}\n🌙 Usiku: ${nights}\n👥 Wageni: ${gs}\n💰 Jumla: TZS ${total.toLocaleString()}\n\n👤 ${nm} | 📞 ${ph}${em?'\n📧 '+em:''}\n\nTafadhali thibitisha availability. Asante! 🙏`;
+    window.open('https://wa.me/255745999918?text='+encodeURIComponent(txt),'_blank');
+    closeBk(); showT('✅ WhatsApp imefunguliwa!'); return;
+  }
+
+  // M-Pesa / Stripe — save to Supabase first
+  const btn=document.getElementById('bk-submit-btn');
+  btn.disabled=true;
+  document.getElementById('bk-submit-lbl').textContent='Inahifadhi...';
+
+  const { data: { user } } = await db.auth.getUser();
+
+  const bookingData = {
+    listing_id: bkTarget.id,
+    guest_name: nm,
+    guest_phone: ph,
+    guest_email: em||null,
+    checkin: ci,
+    checkout: co,
+    total_amount: total,
+    status: 'pending',
+    created_at: new Date().toISOString(),
+  };
+  if(user) bookingData.user_id = user.id;
+
+  const { error } = await db.from('bookings').insert(bookingData);
+
+  btn.disabled=false;
+
+  if(error){
+    document.getElementById('bk-submit-lbl').textContent=bkPayMethod==='mpesa'?'📱 Lipa na M-Pesa':'💳 Lipa na Kadi';
+    showT('❌ Hitilafu: '+error.message); return;
+  }
+
+  closeBk();
+  if(bkPayMethod==='mpesa'){
+    showT('✅ Booking imehifadhiwa! Utapata maelekezo ya M-Pesa hivi karibuni.');
+  } else {
+    showT('✅ Booking imehifadhiwa! Utaelekezwa kwa Stripe hivi karibuni.');
+  }
+}
+
+// Keep sendWA as fallback
+function sendWA(){ openBk(bkTarget?.id); }
 
 function goP(id){ window.location.href='property.html?id='+id; }
 
@@ -1501,11 +1733,26 @@ function closeAuth() {
   document.getElementById('auth-msg').className = 'auth-msg';
 }
 function switchAuthTab(tab) {
-  document.getElementById('auth-login-form').style.display = tab==='login' ? 'block' : 'none';
-  document.getElementById('auth-signup-form').style.display = tab==='signup' ? 'block' : 'none';
-  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  const loginForm  = document.getElementById('auth-login-form');
+  const signupForm = document.getElementById('auth-signup-form');
+  const tabsEl     = document.getElementById('auth-tabs');
+
+  // slide indicator
+  tabsEl.classList.toggle('on-signup', tab==='signup');
+
+  // swap forms with slide animation
+  const outForm = tab==='login' ? signupForm : loginForm;
+  const inForm  = tab==='login' ? loginForm  : signupForm;
+  outForm.style.display='none';
+  inForm.style.display='block';
+  // re-trigger field animations
+  inForm.querySelectorAll('.auth-field').forEach(f=>{ f.style.animation='none'; void f.offsetWidth; f.style.animation=''; });
+
+  document.getElementById('tab-login').classList.toggle('active',  tab==='login');
   document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
   document.getElementById('auth-msg').textContent = '';
+  // focus first input
+  setTimeout(()=>{ const fi=inForm.querySelector('input'); if(fi) fi.focus(); }, 80);
 }
 function setAuthMsg(msg, isErr=true) {
   const el = document.getElementById('auth-msg');
@@ -1615,12 +1862,29 @@ function updateNavAuth(user) {
 // central handler called whenever auth state is known
 async function onAuthStateChange(user) {
   updateNavAuth(user);
-  if (!user) return;
+  if (!user) {
+    // hide badge on logout
+    const badge = document.getElementById('nav-bk-badge');
+    if(badge){ badge.style.display='none'; badge.textContent=''; }
+    return;
+  }
   // check admin
   const { data } = await db.from('admin_profiles').select('role').eq('user_id', user.id).maybeSingle();
   if (data?.role) {
     document.getElementById('admin-nav-btn').style.display = 'flex';
     document.getElementById('dd-admin-link').style.display = 'flex';
+  }
+  // booking badge — count upcoming bookings
+  const today = new Date().toISOString().split('T')[0];
+  const { count } = await db.from('bookings')
+    .select('id', { count:'exact', head:true })
+    .eq('user_id', user.id)
+    .neq('status', 'cancelled')
+    .gte('checkout', today);
+  const badge = document.getElementById('nav-bk-badge');
+  if(badge && count > 0){
+    badge.textContent = count > 9 ? '9+' : count;
+    badge.style.display = 'inline-block';
   }
 }
 
