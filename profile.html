@@ -1,0 +1,795 @@
+tml
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Profile – KaribuStay</title>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --ink:#030b06; --ivory:#f5f0e8; --ivory2:#ede7d9;
+  --gm:#27A65D; --gd:#1A5C3A;
+  --g0:#030b06; --g1:#050e08; --g2:#0a1a0f; --g3:#0f2518;
+  --am:#F48942;
+  --gb:rgba(255,255,255,0.08);
+  --glass:rgba(255,255,255,0.05);
+  --glass2:rgba(255,255,255,0.10);
+  --w1:rgba(255,255,255,0.92); --w2:rgba(255,255,255,0.60);
+  --w3:rgba(255,255,255,0.30); --w4:rgba(255,255,255,0.10);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --radius:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--ivory);line-height:1.5;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ── NAVBAR ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:0 5vw;height:76px;
+  display:flex;align-items:center;gap:2rem;
+  background:rgba(3,11,6,0.92);
+  backdrop-filter:blur(28px) saturate(1.4);
+  box-shadow:0 1px 0 var(--gb),0 8px 40px rgba(0,0,0,.5);
+}
+.nl{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
+.nl img{height:44px;filter:brightness(0) invert(1);transition:transform .3s}
+.nl:hover img{transform:scale(1.05)}
+.nlinks{display:flex;list-style:none;flex:1}
+.nlinks a{color:var(--w2);font-size:.78rem;padding:.5rem .9rem;border-radius:8px;transition:color .2s;position:relative}
+.nlinks a:hover{color:var(--w1)}
+.nr{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
+#login-nav-btn{
+  background:var(--glass2);border:1px solid var(--gb);
+  color:var(--w1);padding:.48rem 1.1rem;border-radius:50px;
+  font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+#login-nav-btn:hover{background:rgba(255,255,255,.15)}
+
+/* User nav */
+.user-nav-btn{
+  display:none;align-items:center;gap:.55rem;
+  background:var(--glass);border:1px solid var(--gb);
+  border-radius:50px;padding:.38rem .9rem .38rem .45rem;
+  cursor:pointer;transition:background .2s,border-color .2s;position:relative;
+}
+.user-nav-btn:hover{background:var(--glass2);border-color:rgba(255,255,255,.15)}
+.user-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gm),var(--gd));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0;
+}
+.user-nav-btn>span{font-size:.78rem;color:var(--w1)}
+.user-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;min-width:220px;
+  background:#0d1f13;border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.7);
+  padding:.5rem;overflow:hidden;
+  opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:opacity .2s var(--ease),transform .2s var(--ease);z-index:600;
+}
+.user-nav-btn.open .user-dropdown{opacity:1;pointer-events:all;transform:translateY(0)}
+.user-dropdown-header{padding:.6rem .8rem .7rem;border-bottom:1px solid var(--gb);margin-bottom:.35rem}
+.user-dropdown-email{font-size:.72rem;color:var(--w3);margin-top:.15rem}
+.user-dropdown a,.user-dropdown button{
+  display:flex;align-items:center;gap:.65rem;
+  width:100%;padding:.58rem .8rem;border-radius:10px;
+  font-size:.78rem;color:var(--w2);background:none;border:none;
+  cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;
+  transition:background .15s,color .15s;text-align:left;
+}
+.user-dropdown a:hover,.user-dropdown button:hover{background:var(--glass);color:var(--w1)}
+.user-dropdown a.active-page{background:rgba(39,166,93,.12);color:var(--gm)}
+.user-dropdown hr{border:none;border-top:1px solid var(--gb);margin:.35rem 0}
+.dd-danger{color:rgba(244,100,100,.7)!important}
+.dd-danger:hover{background:rgba(244,100,100,.1)!important;color:rgba(244,100,100,1)!important}
+
+/* ── PAGE LAYOUT ── */
+.page-wrap{
+  min-height:100vh;padding-top:76px;
+  background:linear-gradient(180deg,var(--g1) 0%,var(--g0) 100%);
+}
+
+/* ── PROFILE HEADER ── */
+.profile-header{
+  position:relative;overflow:hidden;
+  padding:4rem 5vw 3rem;
+  background:linear-gradient(135deg,var(--g2) 0%,var(--g1) 100%);
+  border-bottom:1px solid var(--gb);
+}
+.profile-header::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 80% at 10% 50%,rgba(39,166,93,.08),transparent);
+}
+.ph-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;gap:2rem;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.ph-avatar-wrap{position:relative;flex-shrink:0}
+.ph-avatar{
+  width:96px;height:96px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gm),var(--gd));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;font-weight:700;color:#fff;
+  border:3px solid rgba(39,166,93,.3);
+  overflow:hidden;flex-shrink:0;
+}
+.ph-avatar img{width:100%;height:100%;object-fit:cover}
+.ph-avatar-edit{
+  position:absolute;bottom:2px;right:2px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--gm);border:2px solid var(--g1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform .2s;
+}
+.ph-avatar-edit:hover{transform:scale(1.1)}
+.ph-avatar-edit svg{color:#fff}
+.ph-info{flex:1;min-width:0}
+.ph-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.6rem,3vw,2.2rem);font-weight:300;
+  color:var(--ivory);line-height:1.1;
+}
+.ph-email{font-size:.82rem;color:var(--w3);margin-top:.3rem}
+.ph-joined{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.7rem;color:var(--w3);margin-top:.5rem;
+  background:var(--glass);border:1px solid var(--gb);
+  padding:.22rem .7rem;border-radius:20px;
+}
+.ph-stats{
+  display:flex;gap:2rem;flex-wrap:wrap;margin-left:auto;
+}
+.ph-stat{text-align:center}
+.ph-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:300;color:var(--ivory);line-height:1;
+}
+.ph-stat-num .c{color:var(--gm)}
+.ph-stat-lbl{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--w3);margin-top:.2rem}
+
+/* ── TAB NAV ── */
+.tab-nav{
+  border-bottom:1px solid var(--gb);
+  background:var(--g1);
+  padding:0 5vw;
+  position:sticky;top:76px;z-index:400;
+  display:flex;gap:0;overflow-x:auto;
+  scrollbar-width:none;
+}
+.tab-nav::-webkit-scrollbar{display:none}
+.tnav-btn{
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;
+  color:var(--w3);padding:1.1rem 1.4rem;
+  border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:.45rem;
+}
+.tnav-btn:hover{color:var(--w1)}
+.tnav-btn.active{color:var(--gm);border-bottom-color:var(--gm)}
+
+/* ── CONTENT AREA ── */
+.content{max-width:1100px;margin:0 auto;padding:2.5rem 5vw 5rem}
+
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── SECTION CARD ── */
+.scard{
+  background:var(--glass);border:1px solid var(--gb);
+  border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;
+}
+.scard-title{
+  font-size:.7rem;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--gm);
+  margin-bottom:1.4rem;display:flex;align-items:center;gap:.5rem;
+}
+.scard-title::before{content:'';width:16px;height:1.5px;background:var(--gm);border-radius:2px}
+
+/* ── FORM FIELDS ── */
+.fg{margin-bottom:1.1rem}
+.fg label{display:block;font-size:.72rem;font-weight:500;color:var(--w3);margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{
+  width:100%;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:.75rem 1rem;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;
+  color:var(--w1);outline:none;transition:border-color .2s,background .2s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:rgba(39,166,93,.5);background:rgba(39,166,93,.05);
+}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--w4)}
+.fg textarea{resize:vertical;min-height:90px}
+.fg select option{background:var(--g2);color:var(--w1)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.frow{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn-primary{
+  background:linear-gradient(135deg,var(--gd),var(--gm));
+  color:#fff;border:none;padding:.75rem 2rem;border-radius:50px;
+  font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:600;
+  cursor:pointer;transition:filter .2s,transform .2s;
+  box-shadow:0 4px 20px rgba(39,166,93,.3);
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-primary:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ghost{
+  background:var(--glass);border:1px solid var(--gb);
+  color:var(--w2);padding:.72rem 1.5rem;border-radius:50px;
+  font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;
+  cursor:pointer;transition:background .2s,border-color .2s,color .2s;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-ghost:hover{background:var(--glass2);color:var(--w1)}
+.btn-danger{
+  background:rgba(220,50,50,.1);border:1px solid rgba(220,50,50,.25);
+  color:rgba(255,120,120,.9);padding:.72rem 1.5rem;border-radius:50px;
+  font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer;
+  transition:background .2s;display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-danger:hover{background:rgba(220,50,50,.18)}
+
+/* ── BOOKING CARDS ── */
+.bk-list{display:flex;flex-direction:column;gap:1rem}
+.bk-card{
+  background:rgba(255,255,255,.03);border:1px solid var(--gb);
+  border-radius:14px;padding:1.1rem 1.3rem;
+  display:flex;align-items:flex-start;gap:1.2rem;flex-wrap:wrap;
+  transition:border-color .2s;
+}
+.bk-card:hover{border-color:rgba(39,166,93,.2)}
+.bk-thumb{
+  width:72px;height:60px;border-radius:10px;
+  background:linear-gradient(135deg,var(--g3),var(--g2));
+  flex-shrink:0;overflow:hidden;
+}
+.bk-thumb img{width:100%;height:100%;object-fit:cover}
+.bk-body{flex:1;min-width:160px}
+.bk-name{font-size:.92rem;font-weight:500;color:var(--w1);margin-bottom:.2rem}
+.bk-loc{font-size:.72rem;color:var(--w3);margin-bottom:.45rem}
+.bk-dates{font-size:.75rem;color:var(--w2);display:flex;align-items:center;gap:.4rem}
+.bk-meta{display:flex;align-items:center;gap:.8rem;margin-top:.5rem;flex-wrap:wrap}
+.bk-status{
+  font-size:.65rem;font-weight:600;padding:.2rem .65rem;border-radius:20px;letter-spacing:.04em;
+}
+.s-pending{background:rgba(244,137,66,.15);color:var(--am)}
+.s-confirmed{background:rgba(39,166,93,.15);color:var(--gm)}
+.s-cancelled{background:rgba(255,255,255,.08);color:var(--w3)}
+.s-completed{background:rgba(39,100,200,.12);color:#7ab4f7}
+.bk-amount{font-size:.78rem;color:var(--w2)}
+.bk-actions{display:flex;gap:.5rem;align-items:center;margin-left:auto;flex-shrink:0}
+.bk-act-btn{
+  font-size:.72rem;padding:.35rem .85rem;border-radius:20px;
+  cursor:pointer;border:1px solid;font-family:'DM Sans',sans-serif;
+  transition:background .2s;
+}
+.bk-act-view{background:rgba(39,166,93,.1);border-color:rgba(39,166,93,.3);color:var(--gm)}
+.bk-act-view:hover{background:rgba(39,166,93,.2)}
+.bk-act-cancel{background:rgba(255,100,100,.07);border-color:rgba(255,100,100,.2);color:rgba(255,130,130,.8)}
+.bk-act-cancel:hover{background:rgba(255,100,100,.15)}
+
+/* ── EMPTY STATE ── */
+.empty{
+  text-align:center;padding:3.5rem 1rem;
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+}
+.empty svg{opacity:.2}
+.empty h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--ivory)}
+.empty p{font-size:.82rem;color:var(--w3);max-width:320px}
+.empty a{color:var(--gm);text-decoration:underline}
+
+/* ── PASSWORD SECTION ── */
+.pwd-hint{font-size:.72rem;color:var(--w3);margin-top:.3rem}
+.pwd-strength{height:3px;border-radius:2px;margin-top:.5rem;transition:all .3s;background:var(--gb)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--g2);border:1px solid var(--gb);
+  color:var(--w1);padding:.75rem 1.4rem;border-radius:50px;
+  font-size:.82rem;white-space:nowrap;z-index:9000;
+  opacity:0;pointer-events:none;transition:all .35s var(--ease);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── LOADING SKELETON ── */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton{
+  background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 37%,rgba(255,255,255,.04) 63%);
+  background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:8px;
+}
+.sk-line{height:14px;margin-bottom:10px}
+.sk-block{height:70px}
+
+/* ── MSG ── */
+.msg{font-size:.8rem;padding:.65rem .9rem;border-radius:8px;margin-top:.8rem}
+.msg-err{background:rgba(220,50,50,.1);color:rgba(255,120,120,.9);border:1px solid rgba(220,50,50,.2)}
+.msg-ok{background:rgba(39,166,93,.1);color:rgba(100,220,130,.9);border:1px solid rgba(39,166,93,.2)}
+
+/* ── DANGER ZONE ── */
+.danger-zone{border-color:rgba(220,50,50,.15)}
+.danger-zone .scard-title{color:rgba(220,100,100,.8)}
+.danger-zone .scard-title::before{background:rgba(220,100,100,.8)}
+
+/* Responsive */
+@media(max-width:700px){
+  .ph-stats{display:none}
+  .ph-inner{gap:1.2rem}
+  .ph-avatar{width:72px;height:72px;font-size:1.6rem}
+  .bk-actions{width:100%;margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nl"><img src="logo2.png" alt="KaribuStay"/></a>
+  <ul class="nlinks">
+    <li><a href="index.html?type=apartment">Stays</a></li>
+    <li><a href="index.html?type=hotel">Hotels</a></li>
+    <li><a href="index.html?type=short_stay">Short Stays</a></li>
+    <li><a href="about.html">About Us</a></li>
+  </ul>
+  <div class="nr">
+    <button id="login-nav-btn" onclick="window.location.href='index.html'">Log in</button>
+    <div class="user-nav-btn" id="user-nav-btn" onclick="toggleUserMenu(event)">
+      <div class="user-avatar" id="user-avatar-initials">?</div>
+      <span id="user-nav-name">Account</span>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="user-dropdown-header">
+          <div style="font-size:.84rem;color:rgba(255,255,255,.8);font-weight:500" id="dd-name">—</div>
+          <div class="user-dropdown-email" id="dd-email">—</div>
+        </div>
+        <a href="profile.html" class="active-page">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          My profile
+        </a>
+        <a href="bookings.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          My bookings
+        </a>
+        <hr/>
+        <button class="dd-danger" onclick="doLogout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log out
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- PROFILE HEADER -->
+  <div class="profile-header">
+    <div class="ph-inner">
+      <div class="ph-avatar-wrap">
+        <div class="ph-avatar" id="ph-avatar">
+          <span id="ph-initials">?</span>
+          <img id="ph-avatar-img" src="" alt="" style="display:none"/>
+        </div>
+        <label class="ph-avatar-edit" title="Change photo" for="avatar-file-input">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </label>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
+      </div>
+      <div class="ph-info">
+        <div class="ph-name" id="ph-name">Loading…</div>
+        <div class="ph-email" id="ph-email"></div>
+        <div class="ph-joined" id="ph-joined">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="ph-joined-txt">—</span>
+        </div>
+      </div>
+      <div class="ph-stats">
+        <div class="ph-stat">
+          <div class="ph-stat-num" id="stat-bookings"><span class="c">—</span></div>
+          <div class="ph-stat-lbl">Bookings</div>
+        </div>
+        <div class="ph-stat">
+          <div class="ph-stat-num" id="stat-upcoming"><span class="c">—</span></div>
+          <div class="ph-stat-lbl">Upcoming</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB NAV -->
+  <div class="tab-nav">
+    <button class="tnav-btn active" onclick="switchTab('bookings',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      My Bookings
+    </button>
+    <button class="tnav-btn" onclick="switchTab('account',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account Details
+    </button>
+    <button class="tnav-btn" onclick="switchTab('security',this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Security
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── TAB: BOOKINGS ── -->
+    <div class="tab-pane active" id="tab-bookings">
+      <div id="bk-loading">
+        <div class="scard">
+          <div class="skeleton sk-block" style="margin-bottom:.8rem"></div>
+          <div class="skeleton sk-block" style="margin-bottom:.8rem"></div>
+          <div class="skeleton sk-block"></div>
+        </div>
+      </div>
+      <div id="bk-content" style="display:none"></div>
+    </div>
+
+    <!-- ── TAB: ACCOUNT ── -->
+    <div class="tab-pane" id="tab-account">
+      <div class="scard">
+        <div class="scard-title">Personal information</div>
+        <div class="frow">
+          <div class="fg"><label>Full Name</label><input type="text" id="pf-name" placeholder="Jina lako"/></div>
+          <div class="fg"><label>Phone</label><input type="tel" id="pf-phone" placeholder="+255 7XX XXX XXX"/></div>
+        </div>
+        <div class="fg"><label>Email address</label><input type="email" id="pf-email" placeholder="wewe@email.com" disabled style="opacity:.5;cursor:not-allowed"/></div>
+        <div class="fg"><label>Bio (optional)</label><textarea id="pf-bio" placeholder="Mwambie wageni wengine kidogo kuhusu wewe…"></textarea></div>
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.5rem">
+          <button class="btn-primary" onclick="saveProfile()" id="save-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Save changes
+          </button>
+          <div class="msg" id="profile-msg" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: SECURITY ── -->
+    <div class="tab-pane" id="tab-security">
+      <div class="scard">
+        <div class="scard-title">Change password</div>
+        <p style="font-size:.82rem;color:var(--w3);margin-bottom:1.4rem">Weka nenosiri jipya — lazima liwe na herufi 8 au zaidi.</p>
+        <div class="fg">
+          <label>New password</label>
+          <input type="password" id="sec-pass" placeholder="Min 8 characters" oninput="checkPwdStrength(this.value)"/>
+          <div class="pwd-strength" id="pwd-bar"></div>
+          <div class="pwd-hint" id="pwd-hint"></div>
+        </div>
+        <div class="fg">
+          <label>Confirm new password</label>
+          <input type="password" id="sec-pass2" placeholder="Repeat password"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.5rem">
+          <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Update password
+          </button>
+          <div class="msg" id="pwd-msg" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="scard" style="margin-top:1.5rem">
+        <div class="scard-title">Login methods</div>
+        <div id="auth-providers" style="font-size:.84rem;color:var(--w2)">Loading…</div>
+      </div>
+
+      <div class="scard danger-zone" style="margin-top:1.5rem">
+        <div class="scard-title">Danger zone</div>
+        <p style="font-size:.82rem;color:var(--w3);margin-bottom:1.2rem">Kufuta akaunti yako kutaondoa data yote yako — haiwezi kurudishwa.</p>
+        <button class="btn-danger" onclick="confirmDeleteAccount()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Delete my account
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /page-wrap -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ SUPABASE ═══════════════════════
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+});
+
+let currentUser = null;
+
+// ══ HELPERS ════════════════════════
+function showT(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),3200); }
+function showMsg(id, msg, isErr=true){
+  const el=document.getElementById(id);
+  el.textContent=msg; el.className='msg '+(isErr?'msg-err':'msg-ok');
+  el.style.display='block';
+  if(!isErr) setTimeout(()=>{ el.style.display='none'; },4000);
+}
+
+// ══ NAV ════════════════════════════
+function toggleUserMenu(e){
+  e.stopPropagation();
+  document.getElementById('user-nav-btn').classList.toggle('open');
+}
+document.addEventListener('click',()=>document.getElementById('user-nav-btn')?.classList.remove('open'));
+
+function updateNavAuth(user){
+  const lb=document.getElementById('login-nav-btn');
+  const ub=document.getElementById('user-nav-btn');
+  if(!user){ lb.style.display='block'; ub.style.display='none'; return; }
+  lb.style.display='none'; ub.style.display='flex';
+  const name=user.user_metadata?.full_name||user.user_metadata?.name||user.email.split('@')[0];
+  const ini=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('user-avatar-initials').textContent=ini;
+  document.getElementById('user-nav-name').textContent=name.split(' ')[0];
+  document.getElementById('dd-name').textContent=name;
+  document.getElementById('dd-email').textContent=user.email;
+}
+
+async function doLogout(){
+  await db.auth.signOut();
+  window.location.href='index.html';
+}
+
+// ══ TAB SWITCH ═════════════════════
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ INIT ═══════════════════════════
+(async function init(){
+  const { data:{ session } } = await db.auth.getSession();
+  if(!session){ window.location.href='index.html'; return; }
+  currentUser = session.user;
+  updateNavAuth(currentUser);
+  renderHeader(currentUser);
+  await Promise.all([ loadProfile(), loadBookings() ]);
+
+  db.auth.onAuthStateChange((event, session)=>{
+    if(event==='SIGNED_OUT') window.location.href='index.html';
+  });
+})();
+
+// ══ RENDER HEADER ══════════════════
+function renderHeader(user){
+  const name = user.user_metadata?.full_name||user.user_metadata?.name||user.email.split('@')[0];
+  document.getElementById('ph-name').textContent = name;
+  document.getElementById('ph-email').textContent = user.email;
+  const joined = new Date(user.created_at);
+  document.getElementById('ph-joined-txt').textContent = 'Joined '+joined.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const ini = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('ph-initials').textContent = ini;
+  if(user.user_metadata?.avatar_url||user.user_metadata?.picture){
+    const img=document.getElementById('ph-avatar-img');
+    img.src=user.user_metadata.avatar_url||user.user_metadata.picture;
+    img.style.display='block';
+    document.getElementById('ph-initials').style.display='none';
+  }
+  // security tab — login providers
+  const isGoogle = user.app_metadata?.providers?.includes('google');
+  document.getElementById('auth-providers').innerHTML =
+    `<div style="display:flex;flex-direction:column;gap:.7rem">` +
+    `<div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--gb);border-radius:10px">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+       <span>Email / password</span>
+       <span style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.15rem .6rem;border-radius:20px">Connected</span>
+     </div>` +
+    (isGoogle ? `<div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--gb);border-radius:10px">
+       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+       <span>Google</span>
+       <span style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.15rem .6rem;border-radius:20px">Connected</span>
+     </div>` : '') +
+    `</div>`;
+}
+
+// ══ LOAD PROFILE ═══════════════════
+async function loadProfile(){
+  const { data } = await db.from('profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
+  if(data){
+    document.getElementById('pf-name').value = data.full_name || '';
+    document.getElementById('pf-phone').value = data.phone || '';
+    document.getElementById('pf-bio').value = data.bio || '';
+  }
+  document.getElementById('pf-email').value = currentUser.email;
+}
+
+// ══ SAVE PROFILE ═══════════════════
+async function saveProfile(){
+  const btn = document.getElementById('save-btn');
+  btn.disabled=true; btn.textContent='Saving…';
+  const name  = document.getElementById('pf-name').value.trim();
+  const phone = document.getElementById('pf-phone').value.trim();
+  const bio   = document.getElementById('pf-bio').value.trim();
+  if(!name){ showMsg('profile-msg','Weka jina lako.'); btn.disabled=false; btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save changes'; return; }
+  const { error } = await db.from('profiles').upsert({
+    user_id: currentUser.id, full_name: name, phone, bio,
+    email: currentUser.email, updated_at: new Date().toISOString()
+  },{ onConflict:'user_id' });
+  // also update auth metadata so navbar initials refresh
+  await db.auth.updateUser({ data: { full_name: name } });
+  btn.disabled=false;
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save changes';
+  if(error){ showMsg('profile-msg', error.message); }
+  else { showMsg('profile-msg','Profile updated!', false); document.getElementById('ph-name').textContent=name; showT('✅ Profile saved'); }
+}
+
+// ══ UPLOAD AVATAR ══════════════════
+async function uploadAvatar(input){
+  const file = input.files[0]; if(!file) return;
+  if(file.size > 2*1024*1024){ showT('❌ Picha kubwa sana (max 2MB)'); return; }
+  showT('Uploading…');
+  const ext = file.name.split('.').pop();
+  const path = `avatars/${currentUser.id}.${ext}`;
+  const { error: upErr } = await db.storage.from('avatars').upload(path, file, { upsert:true });
+  if(upErr){ showT('❌ Upload failed: '+upErr.message); return; }
+  const { data: { publicUrl } } = db.storage.from('avatars').getPublicUrl(path);
+  await db.auth.updateUser({ data:{ avatar_url: publicUrl } });
+  await db.from('profiles').upsert({ user_id:currentUser.id, avatar_url:publicUrl },{ onConflict:'user_id' });
+  const img=document.getElementById('ph-avatar-img');
+  img.src=publicUrl+'?t='+Date.now(); img.style.display='block';
+  document.getElementById('ph-initials').style.display='none';
+  showT('✅ Avatar updated!');
+}
+
+// ══ LOAD BOOKINGS ══════════════════
+async function loadBookings(){
+  document.getElementById('bk-loading').style.display='block';
+  document.getElementById('bk-content').style.display='none';
+  const { data, error } = await db.from('bookings')
+    .select('*, listings(name,location,image_url,color)')
+    .eq('user_id', currentUser.id)
+    .order('created_at',{ascending:false});
+
+  document.getElementById('bk-loading').style.display='none';
+  document.getElementById('bk-content').style.display='block';
+
+  if(error || !data || !data.length){
+    document.getElementById('bk-content').innerHTML = `
+      <div class="empty">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <h3>No bookings yet</h3>
+        <p>Unapomaliza kutumia booking yako ya kwanza, itaonekana hapa.</p>
+        <a href="index.html">Browse stays →</a>
+      </div>`;
+    document.getElementById('stat-bookings').innerHTML='<span class="c">0</span>';
+    document.getElementById('stat-upcoming').innerHTML='<span class="c">0</span>';
+    return;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = data.filter(b=>b.checkout>=today && b.status!=='cancelled');
+  document.getElementById('stat-bookings').innerHTML=`<span class="c">${data.length}</span>`;
+  document.getElementById('stat-upcoming').innerHTML=`<span class="c">${upcoming.length}</span>`;
+
+  // Group: upcoming first, then past
+  const groups = [
+    { label:'Upcoming & Active', items: data.filter(b=>b.checkout>=today && b.status!=='cancelled') },
+    { label:'Past',              items: data.filter(b=>b.checkout<today || b.status==='cancelled') },
+  ].filter(g=>g.items.length);
+
+  document.getElementById('bk-content').innerHTML = groups.map(g=>`
+    <div class="scard">
+      <div class="scard-title">${g.label}</div>
+      <div class="bk-list">
+        ${g.items.map(b=>mkBkCard(b)).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function mkBkCard(b){
+  const p = b.listings||{};
+  const [c1,c2]=(p.color||'#27a65d,#1a4d2e').split(',');
+  const thumb = p.image_url
+    ? `<img src="${p.image_url}" alt="${p.name||''}"/>`
+    : `<div style="width:100%;height:100%;background:linear-gradient(135deg,${c1},${c2})"></div>`;
+  const statusCls = {pending:'s-pending',confirmed:'s-confirmed',cancelled:'s-cancelled',completed:'s-completed'}[b.status]||'s-pending';
+  const statusLbl = {pending:'Pending',confirmed:'Confirmed',cancelled:'Cancelled',completed:'Completed'}[b.status]||b.status;
+  const canCancel = b.status==='pending'||b.status==='confirmed';
+  const today = new Date().toISOString().split('T')[0];
+  const isPast = b.checkout < today;
+  return `
+    <div class="bk-card" id="bkc-${b.id}">
+      <div class="bk-thumb">${thumb}</div>
+      <div class="bk-body">
+        <div class="bk-name">${p.name||'Property'}</div>
+        <div class="bk-loc">${p.location||''}</div>
+        <div class="bk-dates">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${b.checkin} → ${b.checkout}
+        </div>
+        <div class="bk-meta">
+          <span class="bk-status ${statusCls}">${statusLbl}</span>
+          <span class="bk-amount">TZS ${Number(b.total_amount||0).toLocaleString()}</span>
+        </div>
+      </div>
+      <div class="bk-actions">
+        <a href="property.html?id=${b.listing_id}" class="bk-act-btn bk-act-view">View</a>
+        ${canCancel && !isPast ? `<button class="bk-act-btn bk-act-cancel" onclick="cancelBooking('${b.id}')">Cancel</button>` : ''}
+      </div>
+    </div>`;
+}
+
+async function cancelBooking(id){
+  if(!confirm('Confirm cancellation?')) return;
+  const { error } = await db.from('bookings').update({ status:'cancelled' }).eq('id',id).eq('user_id',currentUser.id);
+  if(error){ showT('❌ '+error.message); return; }
+  showT('Booking cancelled.');
+  loadBookings();
+}
+
+// ══ PASSWORD STRENGTH ══════════════
+function checkPwdStrength(v){
+  const bar=document.getElementById('pwd-bar');
+  const hint=document.getElementById('pwd-hint');
+  if(!v){ bar.style.background='var(--gb)'; bar.style.width='0'; hint.textContent=''; return; }
+  let score=0;
+  if(v.length>=8) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const labels=['Too short','Weak','Fair','Good','Strong'];
+  const colors=['#e53935','#ff7043','#ffb300','#43a047','#27A65D'];
+  const widths=['20%','40%','60%','80%','100%'];
+  bar.style.background=colors[score]; bar.style.width=widths[score];
+  hint.textContent=labels[score]; hint.style.color=colors[score];
+}
+
+// ══ CHANGE PASSWORD ════════════════
+async function changePassword(){
+  const p1=document.getElementById('sec-pass').value;
+  const p2=document.getElementById('sec-pass2').value;
+  if(p1.length<8){ showMsg('pwd-msg','Nenosiri lazima liwe na herufi 8 au zaidi.'); return; }
+  if(p1!==p2){ showMsg('pwd-msg','Nenosiri hazifanani.'); return; }
+  const btn=document.getElementById('pwd-btn');
+  btn.disabled=true; btn.textContent='Updating…';
+  const { error } = await db.auth.updateUser({ password: p1 });
+  btn.disabled=false;
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Update password';
+  if(error){ showMsg('pwd-msg', error.message); }
+  else {
+    showMsg('pwd-msg','Password updated!', false);
+    document.getElementById('sec-pass').value='';
+    document.getElementById('sec-pass2').value='';
+    document.getElementById('pwd-bar').style.background='var(--gb)';
+    document.getElementById('pwd-hint').textContent='';
+    showT('✅ Password updated');
+  }
+}
+
+// ══ DELETE ACCOUNT ═════════════════
+async function confirmDeleteAccount(){
+  const confirmed = prompt('Type DELETE to confirm account deletion:');
+  if(confirmed !== 'DELETE') return;
+  showT('Deleting account…');
+  // Delete profile row first, then sign out (RLS + Edge Function needed for full deletion)
+  await db.from('profiles').delete().eq('user_id', currentUser.id);
+  await db.auth.signOut();
+  showT('Account deleted. Goodbye!');
+  setTimeout(()=>window.location.href='index.html', 1500);
+}
+</script>
+</body>
+</html>
