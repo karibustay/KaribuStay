@@ -1371,7 +1371,13 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
 const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession:     true,   // keep session in localStorage
+    autoRefreshToken:   true,   // auto-renew before expiry
+    detectSessionInUrl: true,   // parse #access_token from OAuth redirect
+  }
+});
 
 let allL = [], activeF = 'all', bkTarget = null;
 
@@ -1803,10 +1809,13 @@ async function doSignup() {
 
 // --- google
 async function doGoogle() {
-  await db.auth.signInWithOAuth({
+  // Use clean origin+path — no query params or hash fragments
+  const redirectTo = window.location.origin + window.location.pathname;
+  const { error } = await db.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: { redirectTo }
   });
+  if (error) { setAuthMsg('Google sign-in failed: ' + error.message); }
 }
 
 // --- forgot password
@@ -1861,12 +1870,28 @@ function updateNavAuth(user) {
 
 // central handler called whenever auth state is known
 async function onAuthStateChange(user) {
+  // Always update navbar first — no waiting on async calls
   updateNavAuth(user);
+
   if (!user) {
-    // hide badge on logout
     const badge = document.getElementById('nav-bk-badge');
-    if(badge){ badge.style.display='none'; badge.textContent=''; }
+    if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
     return;
+  }
+
+  // Upsert profile row — covers both email signup AND Google OAuth
+  // (Google users never hit doSignup, so we create their profile here)
+  const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+  try {
+    await db.from('profiles').upsert({
+      user_id:    user.id,
+      email:      user.email,
+      full_name:  name,
+      avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id', ignoreDuplicates: false });
+  } catch(e) {
+    console.warn('[onAuthStateChange] profile upsert failed:', e);
   }
   // check admin
   const { data } = await db.from('admin_profiles').select('role').eq('user_id', user.id).maybeSingle();
@@ -1888,12 +1913,35 @@ async function onAuthStateChange(user) {
   }
 }
 
-// --- init: restore session on page load
+// --- init: restore session + handle OAuth callback
 (async function initAuth() {
-  const { data: { session } } = await db.auth.getSession();
-  onAuthStateChange(session?.user || null);
-  db.auth.onAuthStateChange((_event, session) => {
-    onAuthStateChange(session?.user || null);
+
+  // Step 1: Let Supabase exchange the #access_token in the URL
+  // detectSessionInUrl:true handles this automatically, but we
+  // still call getSession() to get the resolved session object.
+  const { data: { session }, error } = await db.auth.getSession();
+  if (error) console.error('[initAuth] getSession error:', error);
+  console.log('[initAuth] session on load:', session);
+
+  // Step 2: Clean the URL — remove #access_token fragment so it
+  // doesn't appear on refresh or when user copies the link.
+  if (window.location.hash && window.location.hash.includes('access_token')) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
+  // Step 3: Apply initial auth state
+  await onAuthStateChange(session?.user || null);
+
+  // Step 4: Listen for all future auth changes (login, logout, token refresh, OAuth)
+  db.auth.onAuthStateChange(async (event, session) => {
+    console.log('[onAuthStateChange] event:', event, '| user:', session?.user?.email);
+
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+      await onAuthStateChange(session?.user || null);
+    }
+    if (event === 'SIGNED_OUT') {
+      await onAuthStateChange(null);
+    }
   });
 })();
 
