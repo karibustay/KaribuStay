@@ -1777,7 +1777,7 @@ async function doLogin() {
   btn.textContent = 'Log in'; btn.disabled = false;
   if (error) { setAuthMsg(error.message); return; }
   closeAuth();
-  onAuthStateChange(data.user);
+  // Session is handled by the onAuthStateChange listener (SIGNED_IN event)
 }
 
 // --- signup
@@ -1933,24 +1933,32 @@ async function onAuthStateChange(user) {
   await onAuthStateChange(session?.user || null);
 
   // Step 4: Listen for all future auth changes (login, logout, token refresh, OAuth)
+  // INITIAL_SESSION fires on every page load (including after OAuth redirect) — must handle it.
   db.auth.onAuthStateChange(async (event, session) => {
     console.log('[onAuthStateChange] event:', event, '| user:', session?.user?.email);
 
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+    if (
+      event === 'INITIAL_SESSION'  ||   // ← OAuth callback + normal refresh
+      event === 'SIGNED_IN'        ||
+      event === 'TOKEN_REFRESHED'  ||
+      event === 'USER_UPDATED'
+    ) {
       await onAuthStateChange(session?.user || null);
     }
     if (event === 'SIGNED_OUT') {
       await onAuthStateChange(null);
     }
   });
+
+  // Step 5: Load listings only after auth is resolved so booking
+  // flow can immediately read the current user without a race.
+  loadL();
 })();
 
 function openWishlist() {
   showT('Saved places coming soon!');
   document.getElementById('user-nav-btn').classList.remove('open');
 }
-
-loadL();
 
 // ══ SEARCH ENTER KEY ══════════════════
 document.getElementById('hero-search').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
