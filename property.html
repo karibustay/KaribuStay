@@ -183,7 +183,57 @@ footer{background:var(--gray-bg);border-top:1px solid var(--gray-border);padding
 .bk-pname{font-size:.86rem;font-weight:700;color:var(--text)}
 .bk-ploc{font-size:.72rem;color:var(--text-light);margin-top:.1rem}
 @keyframes kspin{to{transform:rotate(360deg)}}
+
+/* ── AVAILABILITY CALENDAR ────────────────── */
+.avail-section{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--gray-border)}
+.avail-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.avail-nav{display:flex;align-items:center;gap:.8rem}
+.avail-nav button{background:none;border:.5px solid var(--gray-border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text-main);display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:background .2s}
+.avail-nav button:hover{background:var(--gray-bg)}
+.avail-month-label{font-size:.88rem;font-weight:600;min-width:130px;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:.68rem;font-weight:600;color:var(--text-light);padding:.3rem 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-day{text-align:center;padding:.45rem .2rem;font-size:.78rem;border-radius:6px;cursor:pointer;transition:background .2s,color .2s;position:relative;color:var(--text-main)}
+.cal-day.empty{pointer-events:none}
+.cal-day.past{color:var(--text-light);pointer-events:none;text-decoration:line-through;opacity:.4}
+.cal-day.booked{background:#fde8e8;color:#c0392b;pointer-events:none;font-weight:500}
+.cal-day.booked::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#c0392b}
+.cal-day.available:hover{background:var(--gm,#27a65d);color:#fff}
+.cal-day.selected{background:var(--gm,#27a65d);color:#fff;font-weight:600}
+.cal-day.in-range{background:rgba(39,166,93,.12)}
+.avail-legend{display:flex;align-items:center;gap:1.2rem;margin-top:.8rem;flex-wrap:wrap}
+.avail-legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--text-light)}
+.avail-legend-dot{width:10px;height:10px;border-radius:3px}
+
+
+/* ── WRITE A REVIEW ───────────────────────── */
+.review-form-wrap{margin-top:1.5rem;padding:1.2rem;background:var(--gray-bg);border-radius:10px;border:.5px solid var(--gray-border)}
+.review-form-title{font-size:.88rem;font-weight:600;margin-bottom:1rem}
+.star-picker{display:flex;gap:.3rem;margin-bottom:.8rem}
+.star-picker span{font-size:1.4rem;cursor:pointer;color:#ccc;transition:color .15s;line-height:1}
+.star-picker span.lit{color:#f0a500}
+.review-textarea{width:100%;min-height:80px;border:.5px solid var(--gray-border);border-radius:8px;padding:.7rem .9rem;font-size:.84rem;font-family:'DM Sans',sans-serif;resize:vertical;background:var(--bg-main);color:var(--text-main);outline:none;transition:border-color .2s}
+.review-textarea:focus{border-color:var(--gm,#27a65d)}
+.review-submit-btn{margin-top:.6rem;background:var(--gm,#27a65d);color:#fff;border:none;border-radius:8px;padding:.6rem 1.4rem;font-size:.84rem;font-weight:600;cursor:pointer;transition:background .2s}
+.review-submit-btn:hover{background:#1e8a4a}
+.review-submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
 @media(max-width:960px){.prop-layout{grid-template-columns:1fr}.sidebar{position:static}.similar-grid{grid-template-columns:1fr 1fr}.gallery{grid-template-rows:220px 140px}}
+
+/* ── LIGHTBOX ─────────────────────────────── */
+.lightbox-ov{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.lightbox-ov.open{opacity:1;pointer-events:all}
+.lb-img{max-width:90vw;max-height:82vh;border-radius:8px;object-fit:contain;display:block}
+.lb-close{position:absolute;top:1.2rem;right:1.4rem;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;line-height:1;opacity:.7;transition:opacity .2s}
+.lb-close:hover{opacity:1}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.2);color:#fff;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;font-size:1.1rem}
+.lb-arrow:hover{background:rgba(255,255,255,.2)}
+.lb-prev{left:1rem}.lb-next{right:1rem}
+.lb-counter{position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:.8rem;font-family:'DM Sans',sans-serif}
+.gal-show-all{position:absolute;bottom:.8rem;right:.8rem;background:rgba(255,255,255,.92);color:#1a1a1a;border:none;border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:.4rem;transition:background .2s;white-space:nowrap}
+.gal-show-all:hover{background:#fff}
+.gal-main{position:relative;cursor:pointer}
+.gal-sm{cursor:pointer}
 @media(max-width:640px){.gallery{grid-template-columns:1fr;grid-template-rows:220px}.gal-sm{display:none}.gal-main{border-radius:10px}.amenities-grid{grid-template-columns:1fr 1fr}.similar-grid{grid-template-columns:1fr}.nav-links{display:none}}
 </style>
 </head>
@@ -293,9 +343,46 @@ footer{background:var(--gray-bg);border-top:1px solid var(--gray-border);padding
         <div class="amenities-grid" id="amenities-grid"></div>
       </div>
       <!-- REVIEWS -->
+
+        <!-- ══ AVAILABILITY CALENDAR ══════════════════════ -->
+        <div class="avail-section" id="avail-section" style="display:none">
+          <div class="avail-hdr">
+            <div class="sec-hdr" style="margin:0">Availability</div>
+            <div class="avail-nav">
+              <button onclick="calNav(-1)">&#8249;</button>
+              <span class="avail-month-label" id="cal-month-label"></span>
+              <button onclick="calNav(1)">&#8250;</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="avail-legend">
+            <div class="avail-legend-item"><div class="avail-legend-dot" style="background:var(--gm,#27a65d)"></div>Available</div>
+            <div class="avail-legend-item"><div class="avail-legend-dot" style="background:#fde8e8;border:.5px solid #c0392b"></div>Booked</div>
+            <div class="avail-legend-item"><div class="avail-legend-dot" style="background:#eee;opacity:.4"></div>Past</div>
+          </div>
+        </div>
+
       <div class="reviews-section">
         <div class="sec-hdr">Guest Reviews <span id="reviews-count-label" style="font-size:.75rem;font-weight:400;color:var(--text-light)"></span></div>
         <div id="reviews-list"></div>
+
+        <!-- ══ WRITE A REVIEW ══════════════════════════════ -->
+        <div id="write-review-wrap" style="display:none">
+          <div class="review-form-wrap">
+            <div class="review-form-title">Leave a Review</div>
+            <div class="star-picker" id="star-picker">
+              <span onclick="setReviewStar(1)">★</span>
+              <span onclick="setReviewStar(2)">★</span>
+              <span onclick="setReviewStar(3)">★</span>
+              <span onclick="setReviewStar(4)">★</span>
+              <span onclick="setReviewStar(5)">★</span>
+            </div>
+            <textarea class="review-textarea" id="review-comment" placeholder="Share your experience…" maxlength="600"></textarea>
+            <button class="review-submit-btn" id="review-submit-btn" onclick="submitReview()">Submit Review</button>
+            <div style="font-size:.76rem;color:var(--text-light);margin-top:.5rem" id="review-msg"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -394,6 +481,16 @@ footer{background:var(--gray-bg);border-top:1px solid var(--gray-border);padding
 </div>
 
 <!-- BOOKING MODAL -->
+
+<!-- ══ LIGHTBOX ══════════════════════════════════════════ -->
+<div class="lightbox-ov" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-arrow lb-prev" onclick="lbNav(-1)" id="lb-prev">&#8249;</button>
+  <img class="lb-img" id="lb-img" src="" alt=""/>
+  <button class="lb-arrow lb-next" onclick="lbNav(1)" id="lb-next">&#8250;</button>
+  <div class="lb-counter" id="lb-counter"></div>
+</div>
+
 <div class="modal-ov" id="booking-modal" onclick="if(event.target===this)closeBooking()">
   <div class="mbox wide">
     <div class="mhdr"><h2>Send Booking Enquiry</h2><p>We'll confirm availability within a few hours</p><button class="mclose" onclick="closeBooking()">✕</button></div>
@@ -444,7 +541,7 @@ async function init() {
 
 async function onSignedIn(user) {
   currentUser = user;
-  const { data: prof } = await db.from('profiles').select('full_name').eq('id', user.id).single();
+  const { data: prof } = await db.from('profiles').select('full_name').eq('user_id', user.id).maybeSingle();
   const name = prof?.full_name || user.email.split('@')[0];
   const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) || '?';
   document.getElementById('btn-open-auth').style.display = 'none';
@@ -455,6 +552,7 @@ async function onSignedIn(user) {
 }
 
 function onSignedOut() {
+  document.getElementById("write-review-wrap").style.display = "none";
   currentUser = null; isFav = false;
   document.getElementById('btn-open-auth').style.display = 'block';
   document.getElementById('profile-wrap').style.display = 'none';
@@ -468,9 +566,12 @@ async function loadProperty() {
   document.getElementById('state-loading').style.display = 'none';
   document.getElementById('prop-content').style.display = 'block';
   renderProperty(data);
+  lbImages = buildImageList(data);
   await loadReviews(data.id);
   await loadSimilar(data.type, data.id);
-  if (currentUser) await checkFav();
+  await loadAvailability(data.id);
+  if (currentUser) { await checkFav(); maybeShowReviewForm(); }
+  maybeShowReviewForm();
 }
 
 function renderProperty(p) {
@@ -490,9 +591,13 @@ function renderProperty(p) {
     : `<svg class="gal-img" viewBox="0 0 700 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ga${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs><rect width="700" height="460" fill="url(#ga${gid})"/><text x="350" y="230" text-anchor="middle" fill="rgba(255,255,255,.2)" font-family="Georgia,serif" font-size="18" letter-spacing="6">${esc(typeLabel.toUpperCase())}</text></svg>`;
   document.getElementById('gallery-wrap').innerHTML = `
     <div class="gallery">
-      <div class="gal-main">${mainImg}<div class="gal-ov"></div>${p.badge && p.badge!=='none'?`<div class="gal-badge gb-${p.badge}">${p.badge==='popular'?'● Popular':'✦ New'}</div>`:''}</div>
-      <div class="gal-sm"><svg class="gal-img" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gab${gid}" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${esc(c2)}"/><stop offset="100%" stop-color="${esc(c1)}80"/></linearGradient></defs><rect width="360" height="280" fill="url(#gab${gid})"/><rect x="20" y="20" width="320" height="240" rx="6" fill="rgba(255,255,255,.06)"/></svg><div class="gal-ov"></div></div>
-      <div class="gal-sm"><svg class="gal-img" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="${esc(c1)}88"/><rect width="360" height="180" fill="rgba(0,0,0,.3)"/><circle cx="180" cy="90" r="60" fill="rgba(255,255,255,.06)"/></svg><div class="gal-ov"></div></div>
+      <div class="gal-main" onclick="openLightbox(0)">${mainImg}<div class="gal-ov"></div>${p.badge && p.badge!=='none'?`<div class="gal-badge gb-${p.badge}">${p.badge==='popular'?'● Popular':'✦ New'}</div>`:''}</div>
+      <div class="gal-sm" onclick="openLightbox(1)"><svg class="gal-img" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gab${gid}" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${esc(c2)}"/><stop offset="100%" stop-color="${esc(c1)}80"/></linearGradient></defs><rect width="360" height="280" fill="url(#gab${gid})"/><rect x="20" y="20" width="320" height="240" rx="6" fill="rgba(255,255,255,.06)"/></svg><div class="gal-ov"></div></div>
+      <div class="gal-sm" onclick="openLightbox(2)"><svg class="gal-img" viewBox="0 0 360 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="${esc(c1)}88"/><rect width="360" height="180" fill="rgba(0,0,0,.3)"/><circle cx="180" cy="90" r="60" fill="rgba(255,255,255,.06)"/></svg><div class="gal-ov"></div></div>
+      <button class="gal-show-all" onclick="openLightbox(0)" title="Show all photos">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Show all photos
+      </button>
     </div>`;
 
   // Details
@@ -545,7 +650,7 @@ function renderProperty(p) {
 }
 
 async function loadReviews(listingId) {
-  const { data } = await db.from('reviews').select('*, profiles(full_name)').eq('listing_id', listingId).eq('approved', true).order('created_at', { ascending: false }).limit(10);
+  const { data } = await db.from('reviews').select('*').eq('listing_id', listingId).eq('approved', true).order('created_at', { ascending: false }).limit(10);
   const reviews = data || [];
   document.getElementById('reviews-count-label').textContent = reviews.length ? `(${reviews.length})` : '';
   if (!reviews.length) {
@@ -553,7 +658,7 @@ async function loadReviews(listingId) {
     return;
   }
   document.getElementById('reviews-list').innerHTML = reviews.map(r => {
-    const name = r.profiles?.full_name || 'Guest';
+    const name = r.reviewer_name || r.guest_name || r.full_name || 'Guest';
     const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) || 'G';
     return `<div class="review-item">
       <div class="ri-head">
@@ -587,7 +692,7 @@ async function loadSimilar(type, excludeId) {
 /* FAVOURITES */
 async function checkFav() {
   if (!currentUser || !property) return;
-  const { data } = await db.from('favourites').select('id').eq('user_id', currentUser.id).eq('listing_id', property.id).single();
+  const { data } = await db.from('favourites').select('id').eq('user_id', currentUser.id).eq('listing_id', property.id).maybeSingle();
   isFav = !!data;
   updateFavBtn();
 }
@@ -779,6 +884,196 @@ function showToast(msg, err=false) {
 function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 init();
+
+/* ══════════════════════════════════════════════════════
+   LIGHTBOX
+══════════════════════════════════════════════════════ */
+let lbImages = [];
+let lbIndex  = 0;
+
+function buildImageList(p) {
+  const imgs = [];
+  if (p.image_url)   imgs.push(p.image_url);
+  if (p.image_url_2) imgs.push(p.image_url_2);
+  if (p.image_url_3) imgs.push(p.image_url_3);
+  if (p.image_url_4) imgs.push(p.image_url_4);
+  if (p.image_url_5) imgs.push(p.image_url_5);
+  // support array column
+  if (Array.isArray(p.images)) imgs.push(...p.images.filter(Boolean));
+  return [...new Set(imgs)]; // deduplicate
+}
+
+function openLightbox(idx) {
+  if (!lbImages.length) return;
+  lbIndex = Math.max(0, Math.min(idx, lbImages.length - 1));
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
+  renderLightbox();
+}
+
+function renderLightbox() {
+  document.getElementById('lb-img').src = lbImages[lbIndex];
+  document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + lbImages.length;
+  document.getElementById('lb-prev').style.display = lbImages.length > 1 ? 'flex' : 'none';
+  document.getElementById('lb-next').style.display = lbImages.length > 1 ? 'flex' : 'none';
+}
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+/* ══════════════════════════════════════════════════════
+   AVAILABILITY CALENDAR
+══════════════════════════════════════════════════════ */
+let calYear  = 0;
+let calMonth = 0;
+let bookedRanges = []; // [{start:'2025-06-01', end:'2025-06-05'}, ...]
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+async function loadAvailability(listingId) {
+  const { data } = await db.from('bookings')
+    .select('checkin, checkout, booking_status')
+    .eq('listing_id', listingId)
+    .in('booking_status', ['confirmed', 'pending']);
+  bookedRanges = (data || []).map(b => ({ start: b.checkin, end: b.checkout }));
+  const now = new Date();
+  calYear  = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCal();
+  document.getElementById('avail-section').style.display = 'block';
+}
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0;  calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCal();
+}
+
+function isBooked(dateStr) {
+  return bookedRanges.some(r => dateStr >= r.start && dateStr < r.end);
+}
+
+function renderCal() {
+  document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date().toISOString().split('T')[0];
+  const checkin  = document.getElementById('bc-in')?.value  || '';
+  const checkout = document.getElementById('bc-out')?.value || '';
+
+  let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  // Empty cells before 1st
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const pad  = String(d).padStart(2, '0');
+    const mpad = String(calMonth + 1).padStart(2, '0');
+    const dateStr = calYear + '-' + mpad + '-' + pad;
+    let cls = 'cal-day';
+    if (dateStr < today) {
+      cls += ' past';
+    } else if (isBooked(dateStr)) {
+      cls += ' booked';
+    } else {
+      cls += ' available';
+      if (dateStr === checkin || dateStr === checkout) cls += ' selected';
+      else if (checkin && checkout && dateStr > checkin && dateStr < checkout) cls += ' in-range';
+    }
+    html += `<div class="${cls}" onclick="calPickDate('${dateStr}')">${d}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function calPickDate(dateStr) {
+  const inEl  = document.getElementById('bc-in');
+  const outEl = document.getElementById('bc-out');
+  if (!inEl || !outEl) return;
+  if (!inEl.value || (inEl.value && outEl.value)) {
+    inEl.value = dateStr; outEl.value = '';
+  } else if (dateStr > inEl.value) {
+    outEl.value = dateStr;
+  } else {
+    inEl.value = dateStr; outEl.value = '';
+  }
+  calcTotal();
+  renderCal();
+}
+
+/* ══════════════════════════════════════════════════════
+   WRITE A REVIEW
+══════════════════════════════════════════════════════ */
+let reviewStars = 0;
+
+function setReviewStar(n) {
+  reviewStars = n;
+  document.querySelectorAll('#star-picker span').forEach((s, i) => {
+    s.classList.toggle('lit', i < n);
+  });
+}
+
+async function checkCanReview(userId, listingId) {
+  // User can review if they have a completed/confirmed booking for this property
+  const { data } = await db.from('bookings')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('listing_id', listingId)
+    .in('booking_status', ['confirmed', 'completed'])
+    .maybeSingle();
+  return !!data;
+}
+
+async function submitReview() {
+  if (!currentUser) { openModal('login'); return; }
+  if (!reviewStars) { document.getElementById('review-msg').textContent = 'Please select a star rating.'; return; }
+  const comment = document.getElementById('review-comment').value.trim();
+  if (!comment)  { document.getElementById('review-msg').textContent = 'Please write a comment.'; return; }
+
+  const btn = document.getElementById('review-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const { error } = await db.from('reviews').insert({
+    listing_id: property.id,
+    user_id:    currentUser.id,
+    rating:     reviewStars,
+    comment:    comment,
+    approved:   false, // admin approves
+    created_at: new Date().toISOString()
+  });
+
+  btn.disabled = false; btn.textContent = 'Submit Review';
+  if (error) {
+    document.getElementById('review-msg').textContent = 'Error: ' + error.message;
+    return;
+  }
+  document.getElementById('review-comment').value = '';
+  setReviewStar(0);
+  document.getElementById('review-msg').textContent = '✅ Review submitted! It will appear after admin approval.';
+  document.getElementById('review-msg').style.color = 'var(--gm, #27a65d)';
+}
+
+// Show review form if user is logged in (always allow — admin can moderate)
+function maybeShowReviewForm() {
+  if (currentUser) {
+    document.getElementById('write-review-wrap').style.display = 'block';
+  }
+}
+
 </script>
 </body>
 </html>

@@ -421,6 +421,44 @@ body::before {
 .fbtn:hover { background:rgba(39,166,93,0.1); border-color:rgba(39,166,93,0.3); color:var(--w1); }
 .fbtn.active { background:rgba(39,166,93,0.15); border-color:rgba(39,166,93,0.4); color:var(--gm); }
 
+/* ── Advanced filters ── */
+.adv-filters {
+  display:flex; gap:.75rem; flex-wrap:wrap; align-items:center;
+  margin-bottom:2rem; padding:1rem 1.2rem;
+  background:rgba(255,255,255,.03); border:.5px solid rgba(255,255,255,.07);
+  border-radius:14px;
+}
+.af-group { display:flex; flex-direction:column; gap:.3rem; min-width:160px; flex:1; }
+.af-label { font-size:11px; font-weight:500; color:var(--w3); text-transform:uppercase; letter-spacing:.05em; }
+.af-select {
+  background:rgba(255,255,255,.06); border:.5px solid rgba(255,255,255,.12);
+  color:var(--w1); border-radius:8px; padding:.45rem .75rem;
+  font-size:.82rem; font-family:inherit; cursor:pointer; outline:none;
+  transition:border-color .2s;
+}
+.af-select:focus { border-color:rgba(39,166,93,.4); }
+.af-select option { background:#1a2a1e; color:var(--w1); }
+.price-row { display:flex; justify-content:space-between; font-size:.75rem; color:var(--w3); margin-top:.2rem; }
+.price-slider {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:4px; border-radius:2px; outline:none; cursor:pointer;
+  background: linear-gradient(to right, var(--gm) 0%, var(--gm) 60%, rgba(255,255,255,.15) 60%);
+}
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+  background:var(--gm); cursor:pointer; border:2px solid var(--bg-dark);
+  box-shadow:0 0 0 3px rgba(39,166,93,.25);
+}
+.price-slider::-moz-range-thumb {
+  width:16px; height:16px; border-radius:50%;
+  background:var(--gm); cursor:pointer; border:2px solid var(--bg-dark);
+}
+.af-clear { font-size:.78rem; color:var(--w3); background:none; border:none; cursor:pointer; padding:.3rem .6rem; border-radius:6px; transition:color .2s, background .2s; white-space:nowrap; align-self:flex-end; }
+.af-clear:hover { color:var(--gm); background:rgba(39,166,93,.08); }
+@media(max-width:600px){ .adv-filters { gap:.6rem; } .af-group { min-width:calc(50% - .4rem); } }
+.af-sort { display:flex; align-items:center; gap:.5rem; margin-left:auto; }
+@media(max-width:600px){ .af-sort { margin-left:0; width:100%; } .af-sort .af-select { flex:1; } }
+
 /* ═══════════════════════════════════════
    LISTINGS GRID
 ═══════════════════════════════════════ */
@@ -672,6 +710,98 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 @keyframes kspin { to { transform:rotate(360deg); } }
 
 /* ═══════════════════════════════════════
+   AUTH MODAL & USER MENU
+═══════════════════════════════════════ */
+#auth-modal { z-index:3000; }
+.auth-box {
+  background:var(--dg,#1a1f1b);
+  border:.5px solid rgba(255,255,255,.10);
+  border-radius:18px; padding:2.2rem 2rem;
+  width:100%; max-width:400px;
+  position:relative;
+}
+.auth-logo { text-align:center; margin-bottom:1.4rem; }
+.auth-logo span { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:#f0ede6; letter-spacing:-.01em; }
+.auth-logo em { color:#27a65d; font-style:italic; }
+.auth-tabs { display:flex; border-bottom:.5px solid rgba(255,255,255,.10); margin-bottom:1.5rem; }
+.auth-tab { flex:1; background:none; border:none; color:rgba(255,255,255,.4); font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; padding:.6rem 0 .8rem; cursor:pointer; border-bottom:2px solid transparent; transition:color .2s, border-color .2s; }
+.auth-tab.active { color:#27a65d; border-bottom-color:#27a65d; }
+.auth-field { margin-bottom:1rem; }
+.auth-field label { display:block; font-size:.75rem; color:rgba(255,255,255,.5); margin-bottom:.4rem; font-family:'DM Sans',sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+.auth-field input {
+  width:100%; background:rgba(255,255,255,.05); border:.5px solid rgba(255,255,255,.12);
+  border-radius:10px; padding:.7rem 1rem; color:#f0ede6; font-family:'DM Sans',sans-serif;
+  font-size:.9rem; outline:none; transition:border-color .2s;
+}
+.auth-field input:focus { border-color:#27a65d; }
+.auth-btn {
+  width:100%; background:#27a65d; color:#fff; border:none; border-radius:10px;
+  padding:.78rem; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+  cursor:pointer; margin-top:.5rem; transition:background .2s, transform .15s;
+}
+.auth-btn:hover { background:#1e8a4a; transform:translateY(-1px); }
+.auth-btn:active { transform:translateY(0); }
+.auth-divider { display:flex; align-items:center; gap:.8rem; margin:1rem 0; }
+.auth-divider hr { flex:1; border:none; border-top:.5px solid rgba(255,255,255,.1); }
+.auth-divider span { font-size:.75rem; color:rgba(255,255,255,.3); font-family:'DM Sans',sans-serif; }
+.auth-google {
+  width:100%; background:rgba(255,255,255,.06); color:#f0ede6; border:.5px solid rgba(255,255,255,.12);
+  border-radius:10px; padding:.72rem; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:500;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.6rem; transition:background .2s;
+}
+.auth-google:hover { background:rgba(255,255,255,.11); }
+.auth-forgot { display:block; text-align:right; font-size:.75rem; color:rgba(255,255,255,.35); font-family:'DM Sans',sans-serif; margin-top:.3rem; cursor:pointer; }
+.auth-forgot:hover { color:#27a65d; }
+.auth-close { position:absolute; top:1rem; right:1rem; background:none; border:none; color:rgba(255,255,255,.4); font-size:1.3rem; cursor:pointer; line-height:1; padding:.2rem .4rem; }
+.auth-close:hover { color:#fff; }
+.auth-msg { font-size:.8rem; font-family:'DM Sans',sans-serif; text-align:center; margin-top:.8rem; min-height:1.2rem; }
+.auth-msg.err { color:#f07070; }
+.auth-msg.ok  { color:#27a65d; }
+
+/* user avatar button in navbar */
+.user-nav-btn {
+  display:none; align-items:center; gap:.5rem;
+  background:rgba(39,166,93,.12); border:.5px solid rgba(39,166,93,.3);
+  color:#e8f5ed; padding:.4rem .85rem .4rem .5rem; border-radius:50px;
+  font-family:'DM Sans',sans-serif; font-size:.8rem; font-weight:500;
+  cursor:pointer; position:relative; transition:background .2s;
+}
+.user-nav-btn:hover { background:rgba(39,166,93,.22); }
+.user-avatar {
+  width:26px; height:26px; border-radius:50%; background:#27a65d;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.7rem; font-weight:700; color:#fff; flex-shrink:0;
+}
+#login-nav-btn {
+  background:none; border:.5px solid rgba(255,255,255,.2); color:rgba(255,255,255,.8);
+  padding:.42rem .9rem; border-radius:50px; font-family:'DM Sans',sans-serif;
+  font-size:.8rem; font-weight:500; cursor:pointer; transition:border-color .2s, color .2s;
+}
+#login-nav-btn:hover { border-color:rgba(255,255,255,.5); color:#fff; }
+
+/* dropdown menu */
+.user-dropdown {
+  display:none; position:absolute; top:calc(100% + 8px); right:0;
+  background:#1a1f1b; border:.5px solid rgba(255,255,255,.12);
+  border-radius:12px; min-width:190px; overflow:hidden;
+  box-shadow:0 16px 40px rgba(0,0,0,.5); z-index:500;
+}
+.user-nav-btn.open .user-dropdown { display:block; }
+.user-dropdown-header { padding:.9rem 1rem .6rem; border-bottom:.5px solid rgba(255,255,255,.08); }
+.user-dropdown-email { font-size:.75rem; color:rgba(255,255,255,.4); font-family:'DM Sans',sans-serif; word-break:break-all; }
+.user-dropdown a, .user-dropdown button {
+  display:flex; align-items:center; gap:.6rem; width:100%;
+  padding:.65rem 1rem; font-family:'DM Sans',sans-serif; font-size:.84rem;
+  color:rgba(255,255,255,.7); text-decoration:none; background:none; border:none;
+  cursor:pointer; transition:background .15s, color .15s; text-align:left;
+}
+.user-dropdown a:hover, .user-dropdown button:hover { background:rgba(255,255,255,.06); color:#fff; }
+.user-dropdown .dd-danger { color:rgba(240,100,100,.8); }
+.user-dropdown .dd-danger:hover { background:rgba(240,100,100,.08); color:#f06464; }
+.user-dropdown hr { border:none; border-top:.5px solid rgba(255,255,255,.08); margin:0; }
+
+
+/* ═══════════════════════════════════════
    ADMIN NAV BUTTON
 ═══════════════════════════════════════ */
 #admin-nav-btn {
@@ -717,6 +847,44 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
+
+    <!-- login button — shown when logged out -->
+    <button id="login-nav-btn" onclick="openAuth('login')">Log in</button>
+
+    <!-- user menu — shown when logged in -->
+    <div class="user-nav-btn" id="user-nav-btn" onclick="toggleUserMenu(event)">
+      <div class="user-avatar" id="user-avatar-initials">?</div>
+      <span id="user-nav-name">Account</span>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="user-dropdown-header">
+          <div style="font-size:.84rem;color:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;font-weight:500" id="dd-name">—</div>
+          <div class="user-dropdown-email" id="dd-email">—</div>
+        </div>
+        <a href="profile.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          My profile
+        </a>
+        <a href="bookings.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          My bookings
+        </a>
+        <a href="#" onclick="openWishlist()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Saved places
+        </a>
+        <hr/>
+        <a href="admin.html" id="dd-admin-link" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin panel
+        </a>
+        <button class="dd-danger" onclick="doLogout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log out
+        </button>
+      </div>
+    </div>
+
     <a href="admin.html" id="admin-nav-btn" title="Admin Panel">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Admin
@@ -735,7 +903,6 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
   <div class="orb o1"></div>
   <div class="orb o2"></div>
 
-  
   <div class="hero-content">
     <div class="hero-eyebrow">
       <span class="eyebrow-dot"></span>
@@ -867,6 +1034,42 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
     <button class="fbtn" data-filter="hotel" onclick="setFilter('hotel')">Hotels</button>
     <button class="fbtn" data-filter="short_stay" onclick="setFilter('short_stay')">Short Stays</button>
   </div>
+
+  <!-- Advanced filters -->
+  <div class="adv-filters rv" id="adv-filters">
+    <div class="af-group">
+      <span class="af-label">📍 Eneo / Location</span>
+      <select class="af-select" id="af-location" onchange="applyAdvFilters()">
+        <option value="">Maeneo yote</option>
+        <option value="dar">Dar es Salaam</option>
+        <option value="zanzibar">Zanzibar</option>
+        <option value="arusha">Arusha</option>
+        <option value="mwanza">Mwanza</option>
+        <option value="moshi">Moshi</option>
+      </select>
+    </div>
+    <div class="af-group">
+      <span class="af-label">💰 Bei ya juu / Max Price</span>
+      <input type="range" class="price-slider" id="af-price"
+        min="0" max="500000" step="10000" value="500000"
+        oninput="updatePriceLabel(this.value); applyAdvFilters()">
+      <div class="price-row">
+        <span>TZS 0</span>
+        <span id="af-price-lbl" style="color:var(--gm);font-weight:500">Yote</span>
+      </div>
+    </div>
+    <div class="af-sort">
+      <span class="af-label" style="white-space:nowrap">↕ Panga</span>
+      <select class="af-select" id="af-sort" onchange="applyAdvFilters()">
+        <option value="newest">Mpya kwanza</option>
+        <option value="price_asc">Bei: chini → juu</option>
+        <option value="price_desc">Bei: juu → chini</option>
+        <option value="rating">Rating: bora kwanza</option>
+      </select>
+    </div>
+    <button class="af-clear" onclick="clearAdvFilters()" title="Futa filters">✕ Futa</button>
+  </div>
+
   <div class="listings" id="lgrid">
     <div class="lem" style="grid-column:1/-1">
       <div style="width:38px;height:38px;border:3px solid rgba(39,166,93,.15);border-top-color:var(--gm);border-radius:50%;animation:kspin .7s linear infinite;margin:0 auto .8rem"></div>
@@ -977,6 +1180,51 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 <div class="ftag"><p>Karibu Tanzania, Karibu Nyumbani. <span>♡</span></p></div>
 
 <!-- BOOKING MODAL -->
+
+<!-- ══ AUTH MODAL ════════════════════════════════════════ -->
+<div class="mov" id="auth-modal" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo"><span>Karibu<em>Stay</em></span></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log in</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign up</button>
+    </div>
+
+    <!-- login form -->
+    <div id="auth-login-form">
+      <div class="auth-field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <span class="auth-forgot" onclick="doForgot()">Forgot password?</span>
+      </div>
+      <button class="auth-btn" onclick="doLogin()">Log in</button>
+      <div class="auth-divider"><hr/><span>or</span><hr/></div>
+      <button class="auth-google" onclick="doGoogle()">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- signup form -->
+    <div id="auth-signup-form" style="display:none">
+      <div class="auth-field"><label>Full name</label><input type="text" id="su-name" placeholder="Amina Mwangi" autocomplete="name"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"/></div>
+      <button class="auth-btn" onclick="doSignup()">Create account</button>
+      <div class="auth-divider"><hr/><span>or</span><hr/></div>
+      <button class="auth-google" onclick="doGoogle()">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+
+    <div class="auth-msg" id="auth-msg"></div>
+  </div>
+</div>
+
 <div class="mov" id="bmodal" onclick="if(event.target===this)closeBk()">
   <div class="mbox">
     <div class="mh">
@@ -1111,11 +1359,46 @@ function doSearch(){
   if(q){ activeF='all'; document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all')); renderL(q); document.getElementById('listings-section').scrollIntoView({behavior:'smooth'}); }
 }
 
+function applyAdvFilters(){
+  const q = document.getElementById('hero-search').value.toLowerCase().trim();
+  renderL(q);
+}
+
+function updatePriceLabel(val){
+  const lbl = document.getElementById('af-price-lbl');
+  const slider = document.getElementById('af-price');
+  const pct = (val/500000)*100;
+  slider.style.background = `linear-gradient(to right,var(--gm) 0%,var(--gm) ${pct}%,rgba(255,255,255,.15) ${pct}%)`;
+  lbl.textContent = parseInt(val)>=500000 ? 'Yote' : 'hadi TZS '+Number(val).toLocaleString();
+}
+
+function clearAdvFilters(){
+  document.getElementById('af-location').value='';
+  document.getElementById('af-sort').value='newest';
+  const slider=document.getElementById('af-price');
+  slider.value=500000;
+  updatePriceLabel(500000);
+  applyAdvFilters();
+}
+
 function renderL(q=''){
   const grid = document.getElementById('lgrid');
   let items = allL;
   if(activeF!=='all') items=items.filter(p=>p.type===activeF);
   if(q) items=items.filter(p=>p.name.toLowerCase().includes(q)||p.location.toLowerCase().includes(q));
+
+  // Advanced filters
+  const locVal = document.getElementById('af-location')?.value || '';
+  const maxPrice = parseInt(document.getElementById('af-price')?.value || '500000');
+  if(locVal) items=items.filter(p=>(p.location||'').toLowerCase().includes(locVal));
+  if(maxPrice < 500000) items=items.filter(p=>Number(p.price)<=maxPrice);
+
+  // Sort
+  const sortVal = document.getElementById('af-sort')?.value || 'newest';
+  if(sortVal==='price_asc')  items=[...items].sort((a,b)=>Number(a.price)-Number(b.price));
+  else if(sortVal==='price_desc') items=[...items].sort((a,b)=>Number(b.price)-Number(a.price));
+  else if(sortVal==='rating') items=[...items].sort((a,b)=>(Number(b.rating)||0)-(Number(a.rating)||0));
+  // 'newest' = default order from Supabase (created_at desc), no sort needed
   document.getElementById('lcount').textContent = items.length?`(${items.length})`:'';
   if(!items.length){ grid.innerHTML=`<div class="lem" style="grid-column:1/-1"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><h3 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.4rem;margin:.6rem 0 .4rem">${allL.length===0?'No listings yet':'No results found'}</h3><p style="font-size:.8rem">${allL.length===0?'Add properties via the Admin Panel.':'Try a different filter.'}</p></div>`; return; }
   grid.innerHTML = items.map(p=>mkCard(p)).join('');
@@ -1201,28 +1484,159 @@ if(urlT){ activeF=urlT; document.querySelectorAll('.fbtn').forEach(b=>b.classLis
 document.querySelectorAll('.nav-tab').forEach(a=>a.classList.toggle('active',a.dataset.type===activeF));
 
 
-// ══ ADMIN NAV DETECTION ══════════════
-(async function checkAdminNav() {
-  try {
-    const { data: { session } } = await db.auth.getSession();
-    if (!session) return; // not logged in — hide button (already hidden)
 
-    const { data, error } = await db
-      .from('admin_profiles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .maybeSingle();
+// ══ AUTH SYSTEM ══════════════════════════════════════════════
 
-    if (!error && data && data.role) {
-      // User is an admin — show the button
-      const btn = document.getElementById('admin-nav-btn');
-      btn.style.display = 'flex';
-      btn.title = 'Admin Panel (' + data.role.replace(/_/g,' ') + ')';
-    }
-  } catch(e) {
-    // Silently ignore — not an admin or not logged in
+// --- modal helpers
+function openAuth(tab='login') {
+  switchAuthTab(tab);
+  document.getElementById('auth-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById(tab==='login'?'li-email':'su-name').focus(), 150);
+}
+function closeAuth() {
+  document.getElementById('auth-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('auth-msg').textContent = '';
+  document.getElementById('auth-msg').className = 'auth-msg';
+}
+function switchAuthTab(tab) {
+  document.getElementById('auth-login-form').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('auth-signup-form').style.display = tab==='signup' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  document.getElementById('auth-msg').textContent = '';
+}
+function setAuthMsg(msg, isErr=true) {
+  const el = document.getElementById('auth-msg');
+  el.textContent = msg;
+  el.className = 'auth-msg ' + (isErr ? 'err' : 'ok');
+}
+
+// --- login
+async function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  if (!email || !pass) { setAuthMsg('Fill in all fields.'); return; }
+  const btn = document.querySelector('#auth-login-form .auth-btn');
+  btn.textContent = 'Logging in…'; btn.disabled = true;
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Log in'; btn.disabled = false;
+  if (error) { setAuthMsg(error.message); return; }
+  closeAuth();
+  onAuthStateChange(data.user);
+}
+
+// --- signup
+async function doSignup() {
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  if (!name || !email || !pass) { setAuthMsg('Fill in all fields.'); return; }
+  if (pass.length < 6) { setAuthMsg('Password must be at least 6 characters.'); return; }
+  const btn = document.querySelector('#auth-signup-form .auth-btn');
+  btn.textContent = 'Creating…'; btn.disabled = true;
+  const { data, error } = await db.auth.signUp({
+    email, password: pass,
+    options: { data: { full_name: name } }
+  });
+  btn.textContent = 'Create account'; btn.disabled = false;
+  if (error) { setAuthMsg(error.message); return; }
+  // upsert profile row
+  if (data.user) {
+    await db.from('profiles').upsert({
+      id: data.user.id,
+      user_id: data.user.id,
+      full_name: name,
+      email: email
+    }, { onConflict: 'user_id' });
   }
+  setAuthMsg('Account created! Check your email to confirm.', false);
+}
+
+// --- google
+async function doGoogle() {
+  await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+}
+
+// --- forgot password
+async function doForgot() {
+  const email = document.getElementById('li-email').value.trim();
+  if (!email) { setAuthMsg('Enter your email first.'); return; }
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/reset.html'
+  });
+  if (error) { setAuthMsg(error.message); return; }
+  setAuthMsg('Reset link sent! Check your email.', false);
+}
+
+// --- logout
+async function doLogout() {
+  await db.auth.signOut();
+  updateNavAuth(null);
+  showT('Logged out. See you soon!');
+  document.getElementById('user-nav-btn').classList.remove('open');
+}
+
+// --- user menu toggle
+function toggleUserMenu(e) {
+  e.stopPropagation();
+  document.getElementById('user-nav-btn').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('user-nav-btn')?.classList.remove('open');
+});
+
+// --- update navbar UI based on auth state
+function updateNavAuth(user) {
+  const loginBtn  = document.getElementById('login-nav-btn');
+  const userBtn   = document.getElementById('user-nav-btn');
+  const adminBtn  = document.getElementById('admin-nav-btn');
+  if (!user) {
+    loginBtn.style.display  = 'block';
+    userBtn.style.display   = 'none';
+    adminBtn.style.display  = 'none';
+    return;
+  }
+  // logged in
+  loginBtn.style.display = 'none';
+  userBtn.style.display  = 'flex';
+  const name  = user.user_metadata?.full_name || user.email.split('@')[0];
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('user-avatar-initials').textContent = initials;
+  document.getElementById('user-nav-name').textContent = name.split(' ')[0];
+  document.getElementById('dd-name').textContent  = name;
+  document.getElementById('dd-email').textContent = user.email;
+}
+
+// central handler called whenever auth state is known
+async function onAuthStateChange(user) {
+  updateNavAuth(user);
+  if (!user) return;
+  // check admin
+  const { data } = await db.from('admin_profiles').select('role').eq('user_id', user.id).maybeSingle();
+  if (data?.role) {
+    document.getElementById('admin-nav-btn').style.display = 'flex';
+    document.getElementById('dd-admin-link').style.display = 'flex';
+  }
+}
+
+// --- init: restore session on page load
+(async function initAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  onAuthStateChange(session?.user || null);
+  db.auth.onAuthStateChange((_event, session) => {
+    onAuthStateChange(session?.user || null);
+  });
 })();
+
+function openWishlist() {
+  showT('Saved places coming soon!');
+  document.getElementById('user-nav-btn').classList.remove('open');
+}
 
 loadL();
 
