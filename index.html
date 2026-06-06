@@ -1961,13 +1961,24 @@ async function submitBooking(){
   };
   if(user) bookingData.user_id = user.id;
 
-  const { error } = await db.from('bookings').insert(bookingData);
+  const { data: newBooking, error } = await db.from('bookings').insert(bookingData).select().single();
 
   btn.disabled=false;
 
   if(error){
     document.getElementById('bk-submit-lbl').textContent=bkPayMethod==='mpesa'?'📱 Lipa na M-Pesa':'💳 Lipa na Kadi';
     showT('❌ Hitilafu: '+error.message); return;
+  }
+
+  // Send confirmation email (non-blocking)
+  if(em){
+    db.functions.invoke('send-booking-email', {
+      body: {
+        type: 'confirmation',
+        booking: { ...bookingData, id: newBooking?.id, guests: gs },
+        listing: { name: bkTarget.name, location: bkTarget.location },
+      }
+    }).catch(()=>{}); // silent fail — don't block UX
   }
 
   closeBk();

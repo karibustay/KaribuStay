@@ -347,6 +347,18 @@ async function confirmCancel(){
 
   if(error){ showT('❌ Hitilafu: '+error.message); return; }
 
+  // Send cancellation email (non-blocking)
+  if(cancelTarget.guest_email){
+    const l = listings[cancelTarget.listing_id] || {};
+    db.functions.invoke('send-booking-email', {
+      body: {
+        type: 'cancellation',
+        booking: cancelTarget,
+        listing: { name: l.name, location: l.location },
+      }
+    }).catch(()=>{});
+  }
+
   // Update local state
   const bk = allBookings.find(b=>b.id===cancelTarget.id);
   if(bk) bk.status='cancelled';
