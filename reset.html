@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reset Password – KaribuStay</title>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#030b06;--g0:#030b06;--g1:#050e08;--g2:#0a1a0f;--g3:#0f2518;
+  --gm:#27A65D;--gd:#1A5C3A;
+  --gb:rgba(255,255,255,0.08);
+  --w1:rgba(255,255,255,0.92);--w2:rgba(255,255,255,0.60);
+  --w3:rgba(255,255,255,0.30);--w4:rgba(255,255,255,0.08);
+  --am:#F48942;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--g0);color:var(--w1);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:1.5rem;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 20%,rgba(39,166,93,.07),transparent),
+    radial-gradient(ellipse 60% 80% at 80% 80%,rgba(39,166,93,.05),transparent);
+}
+
+/* ── LOGO ── */
+.logo-wrap{margin-bottom:2.5rem;text-align:center}
+.logo-wrap img{height:48px;filter:brightness(0) invert(1);opacity:.9}
+
+/* ── CARD ── */
+.card{
+  width:100%;max-width:400px;
+  background:linear-gradient(160deg,var(--g3),var(--g2));
+  border:.5px solid rgba(255,255,255,.10);
+  border-radius:22px;padding:2.4rem 2.2rem;
+  position:relative;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 0 1px rgba(39,166,93,.08),inset 0 1px 0 rgba(255,255,255,.06);
+  animation:cardIn .45s var(--ease) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:none}}
+.card::before{
+  content:'';position:absolute;top:-70px;right:-70px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(39,166,93,.1),transparent 70%);
+  pointer-events:none;
+}
+
+.card-logo{
+  text-align:center;margin-bottom:1.8rem;
+}
+.card-logo span{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;color:#f0ede6;letter-spacing:-.01em;
+}
+.card-logo em{color:var(--gm);font-style:italic}
+.card-logo-sub{font-size:.72rem;color:var(--w3);margin-top:.2rem}
+
+/* ── STATES ── */
+.state{display:none;animation:fadeIn .3s var(--ease)}
+.state.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.state-icon{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 1.2rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-spin{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 1.2rem;
+  border:3px solid rgba(39,166,93,.2);border-top-color:var(--gm);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.icon-ok{background:rgba(39,166,93,.15)}
+.icon-err{background:rgba(220,50,50,.12)}
+.state-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.45rem;font-weight:300;
+  color:#f0ede6;text-align:center;margin-bottom:.5rem;
+}
+.state-sub{font-size:.82rem;color:var(--w3);text-align:center;line-height:1.6;margin-bottom:1.5rem}
+
+/* ── FORM ── */
+.field{margin-bottom:1.1rem;position:relative}
+.field label{
+  display:block;font-size:.68rem;color:var(--w3);
+  margin-bottom:.38rem;letter-spacing:.08em;text-transform:uppercase;
+  transition:color .2s;
+}
+.field:focus-within label{color:var(--gm)}
+.field input{
+  width:100%;background:rgba(255,255,255,.04);
+  border:.5px solid rgba(255,255,255,.10);
+  border-radius:11px;padding:.75rem 1rem;
+  color:#f0ede6;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;outline:none;
+  transition:border-color .25s,background .25s,box-shadow .25s;
+}
+.field input:focus{
+  border-color:var(--gm);
+  background:rgba(39,166,93,.05);
+  box-shadow:0 0 0 3px rgba(39,166,93,.12);
+}
+.field input::placeholder{color:rgba(255,255,255,.2)}
+
+/* Password strength bar */
+.pwd-bar{height:3px;border-radius:2px;background:var(--gb);margin-top:.45rem;transition:background .3s,width .3s}
+.pwd-hint{font-size:.72rem;margin-top:.3rem;transition:color .3s}
+
+/* ── BUTTON ── */
+.btn{
+  width:100%;background:linear-gradient(135deg,#1db954,var(--gm));
+  color:#fff;border:none;border-radius:11px;
+  padding:.82rem;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;cursor:pointer;margin-top:.4rem;
+  transition:transform .2s,box-shadow .2s,filter .2s;
+  box-shadow:0 6px 24px rgba(39,166,93,.35);
+  position:relative;overflow:hidden;
+}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);opacity:0;transition:opacity .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(39,166,93,.45);filter:brightness(1.08)}
+.btn:hover::after{opacity:1}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+.btn-ghost{
+  width:100%;background:rgba(255,255,255,.05);
+  color:var(--w2);border:.5px solid rgba(255,255,255,.10);
+  border-radius:11px;padding:.78rem;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;
+  cursor:pointer;transition:background .2s,border-color .2s;margin-top:.7rem;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+
+/* ── MSG ── */
+.msg{
+  font-size:.8rem;text-align:center;margin-top:.9rem;
+  min-height:1.2rem;border-radius:8px;padding:.35rem .5rem;
+  transition:all .3s;
+}
+.msg.err{color:#f07070;background:rgba(240,112,112,.08)}
+.msg.ok{color:var(--gm);background:rgba(39,166,93,.08)}
+
+/* ── BACK LINK ── */
+.back{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.78rem;color:var(--w3);text-decoration:none;
+  margin-top:1.5rem;justify-content:center;
+  transition:color .2s;
+}
+.back:hover{color:var(--w1)}
+</style>
+</head>
+<body>
+
+<div class="logo-wrap">
+  <a href="index.html"><img src="logo2.png" alt="KaribuStay"/></a>
+</div>
+
+<div class="card">
+  <div class="card-logo">
+    <span>Karibu<em>Stay</em></span>
+    <div class="card-logo-sub">Badilisha nenosiri lako</div>
+  </div>
+
+  <!-- STATE: checking token (default while JS runs) -->
+  <div class="state active" id="s-checking">
+    <div class="icon-spin"></div>
+    <div class="state-title">Inathibitisha…</div>
+    <div class="state-sub">Tafadhali subiri kidogo.</div>
+  </div>
+
+  <!-- STATE: set new password form -->
+  <div class="state" id="s-form">
+    <div class="field">
+      <label>Nenosiri jipya</label>
+      <input type="password" id="new-pass" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+      <div class="pwd-bar" id="pwd-bar"></div>
+      <div class="pwd-hint" id="pwd-hint"></div>
+    </div>
+    <div class="field">
+      <label>Thibitisha nenosiri</label>
+      <input type="password" id="new-pass2" placeholder="Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitReset()"/>
+    </div>
+    <button class="btn" id="reset-btn" onclick="submitReset()">
+      Weka nenosiri jipya
+    </button>
+    <div class="msg" id="reset-msg"></div>
+  </div>
+
+  <!-- STATE: success -->
+  <div class="state" id="s-success">
+    <div class="state-icon icon-ok">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gm)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="state-title">Imefanikiwa!</div>
+    <div class="state-sub">Nenosiri lako limebadilishwa. Unaweza kuingia sasa.</div>
+    <button class="btn" onclick="window.location.href='index.html'">Rudi nyumbani</button>
+  </div>
+
+  <!-- STATE: error (bad/expired token) -->
+  <div class="state" id="s-error">
+    <div class="state-icon icon-err">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(220,80,80,.9)" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <div class="state-title">Kiungo kimekwisha</div>
+    <div class="state-sub" id="err-sub">Kiungo cha reset kimekwisha muda wake au kimetumiwa tayari. Omba kiungo kipya.</div>
+    <button class="btn" onclick="window.location.href='index.html'">Omba upya</button>
+    <button class="btn-ghost" onclick="window.location.href='index.html'">Rudi nyumbani</button>
+  </div>
+
+</div>
+
+<a class="back" href="index.html">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  Rudi KaribuStay
+</a>
+
+<script>
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession:     true,
+    autoRefreshToken:   true,
+    detectSessionInUrl: true,   // ← this exchanges the recovery token from the URL hash
+  }
+});
+
+function showState(id) {
+  document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setMsg(msg, isErr=true) {
+  const el = document.getElementById('reset-msg');
+  el.textContent = msg;
+  el.className = 'msg ' + (isErr ? 'err' : 'ok');
+}
+
+// ── PASSWORD STRENGTH ──────────────────────────────────────────
+function checkStrength(v) {
+  const bar  = document.getElementById('pwd-bar');
+  const hint = document.getElementById('pwd-hint');
+  if (!v) { bar.style.background='var(--gb)'; hint.textContent=''; return; }
+  let score = 0;
+  if (v.length >= 8)         score++;
+  if (/[A-Z]/.test(v))      score++;
+  if (/[0-9]/.test(v))      score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const colors  = ['#e53935','#ff7043','#ffb300','#43a047','#27A65D'];
+  const labels  = ['Fupi sana','Dhaifu','Wastani','Nzuri','Nguvu sana'];
+  const widths  = ['20%','40%','60%','80%','100%'];
+  bar.style.background  = colors[score];
+  bar.style.width       = widths[score];
+  hint.textContent      = labels[score];
+  hint.style.color      = colors[score];
+}
+
+// ── SUBMIT NEW PASSWORD ────────────────────────────────────────
+async function submitReset() {
+  const p1 = document.getElementById('new-pass').value;
+  const p2 = document.getElementById('new-pass2').value;
+
+  if (p1.length < 8) { setMsg('Nenosiri lazima liwe na herufi 8 au zaidi.'); return; }
+  if (p1 !== p2)     { setMsg('Manenosiri hayafanani — angalia tena.'); return; }
+
+  const btn = document.getElementById('reset-btn');
+  btn.disabled = true;
+  btn.textContent = 'Inabadilisha…';
+
+  const { error } = await db.auth.updateUser({ password: p1 });
+
+  btn.disabled = false;
+  btn.textContent = 'Weka nenosiri jipya';
+
+  if (error) {
+    setMsg(error.message);
+    return;
+  }
+
+  // Sign out so user logs in fresh with new password
+  await db.auth.signOut();
+  showState('s-success');
+}
+
+// ── INIT — detect recovery session from URL ────────────────────
+(async function init() {
+  // Supabase detectSessionInUrl:true will automatically exchange
+  // the #access_token + type=recovery from the email link into a
+  // live session. We then listen for PASSWORD_RECOVERY event.
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      // Valid recovery token — show the form
+      showState('s-form');
+      document.getElementById('new-pass').focus();
+    } else if (event === 'SIGNED_IN' && session) {
+      // Already had a session — also safe to show form
+      // (handles edge case where INITIAL_SESSION fires before PASSWORD_RECOVERY)
+      const hash = window.location.hash;
+      if (hash.includes('type=recovery')) {
+        showState('s-form');
+        document.getElementById('new-pass').focus();
+      }
+    }
+  });
+
+  // Fallback: if no recovery event fires within 3s, show error
+  // (expired/invalid/already-used token)
+  setTimeout(() => {
+    const current = document.querySelector('.state.active');
+    if (current && current.id === 's-checking') {
+      showState('s-error');
+    }
+  }, 3000);
+})();
+</script>
+</body>
+</html>
