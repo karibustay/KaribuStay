@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KaribuStay – Feel at home, anywhere.</title>
+<title>KaribuStay – Feel at home, anywhere in Tanzania.</title>
+<meta name="description" content="Find and book beautiful apartments, hotels and short stays across Tanzania — Dar es Salaam, Zanzibar, Arusha and beyond. Verified listings, instant booking."/>
+<meta name="keywords" content="Tanzania accommodation, Dar es Salaam apartments, Zanzibar hotels, short stay Tanzania, KaribuStay"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://karibustay.co.tz/"/>
+<meta property="og:title" content="KaribuStay – Feel at home, anywhere in Tanzania."/>
+<meta property="og:description" content="Book verified apartments, hotels and short stays across Tanzania. Instant booking, trusted hosts."/>
+<meta property="og:image" content="https://karibustay.co.tz/og-cover.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="KaribuStay – Feel at home, anywhere in Tanzania."/>
+<meta name="twitter:description" content="Book verified apartments, hotels and short stays across Tanzania."/>
+<meta name="twitter:image" content="https://karibustay.co.tz/og-cover.jpg"/>
+<link rel="canonical" href="https://karibustay.co.tz/"/>
 <link rel="icon" type="image/png" href="logo3.png"/>
 <link rel="apple-touch-icon" href="logo3.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -456,6 +468,12 @@ body::before {
 .af-clear { font-size:.78rem; color:var(--w3); background:none; border:none; cursor:pointer; padding:.3rem .6rem; border-radius:6px; transition:color .2s, background .2s; white-space:nowrap; align-self:flex-end; }
 .af-clear:hover { color:var(--gm); background:rgba(39,166,93,.08); }
 @media(max-width:600px){ .adv-filters { gap:.6rem; } .af-group { min-width:calc(50% - .4rem); } }
+.af-amenities { display:flex; flex-direction:column; gap:.3rem; min-width:180px; }
+.af-checks { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.1rem; }
+.af-check { display:flex; align-items:center; gap:.35rem; cursor:pointer; }
+.af-check input { display:none; }
+.af-chip { font-size:.72rem; font-weight:500; padding:.28rem .7rem; border-radius:20px; border:.5px solid rgba(255,255,255,.12); color:var(--w3); background:rgba(255,255,255,.04); transition:all .2s; cursor:pointer; user-select:none; }
+.af-check input:checked + .af-chip { background:rgba(39,166,93,.15); border-color:rgba(39,166,93,.4); color:var(--gm); }
 .af-sort { display:flex; align-items:center; gap:.5rem; margin-left:auto; }
 @media(max-width:600px){ .af-sort { margin-left:0; width:100%; } .af-sort .af-select { flex:1; } }
 
@@ -708,7 +726,6 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
   .cta-btns { flex-direction:column; align-items:center; }
 }
 @keyframes kspin { to { transform:rotate(360deg); } }
-@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.8} }
 
 /* ═══════════════════════════════════════
    AUTH MODAL & USER MENU
@@ -1010,6 +1027,9 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
+
+    <!-- currency toggle -->
+    <select id="currency-toggle" onchange="setCurrency(this.value)" style="background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.12);color:var(--w2);border-radius:8px;padding:.32rem .6rem;font-family:'DM Sans',sans-serif;font-size:.75rem;cursor:pointer;outline:none;transition:border-color .2s" title="Currency"><option value="TZS">🇹🇿 TZS</option><option value="USD">🇺🇸 USD</option><option value="KES">🇰🇪 KES</option></select>
 
     <!-- login button — shown when logged out -->
     <button id="login-nav-btn" onclick="openAuth('login')">Log in / Sign up</button>
@@ -1315,6 +1335,16 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
         <option value="rating">Rating: bora kwanza</option>
       </select>
     </div>
+    <div class="af-amenities">
+      <span class="af-label">🏠 Huduma</span>
+      <div class="af-checks">
+        <label class="af-check"><input type="checkbox" id="am-wifi" onchange="applyAdvFilters()"><span class="af-chip">📶 WiFi</span></label>
+        <label class="af-check"><input type="checkbox" id="am-pool" onchange="applyAdvFilters()"><span class="af-chip">🏊 Pool</span></label>
+        <label class="af-check"><input type="checkbox" id="am-parking" onchange="applyAdvFilters()"><span class="af-chip">🚗 Parking</span></label>
+        <label class="af-check"><input type="checkbox" id="am-ac" onchange="applyAdvFilters()"><span class="af-chip">❄️ AC</span></label>
+        <label class="af-check"><input type="checkbox" id="am-gym" onchange="applyAdvFilters()"><span class="af-chip">💪 Gym</span></label>
+      </div>
+    </div>
     <button class="af-clear" onclick="clearAdvFilters()" title="Futa filters">✕ Futa</button>
   </div>
 
@@ -1345,11 +1375,22 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 <section class="sec sec-dark rv">
   <div class="stag">Guest Reviews</div>
   <div class="sh"><h2 class="section-title">What our <em>guests say</em></h2></div>
-  <div class="tgrid" id="tgrid">
-    <!-- loaded dynamically -->
-    <div class="tcard rv" style="opacity:.4;animation:pulse 1.5s infinite"><div style="height:60px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:.8rem"></div><div style="height:40px;background:rgba(255,255,255,.05);border-radius:8px"></div></div>
-    <div class="tcard rv" style="opacity:.4;animation:pulse 1.5s .2s infinite"><div style="height:60px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:.8rem"></div><div style="height:40px;background:rgba(255,255,255,.05);border-radius:8px"></div></div>
-    <div class="tcard rv" style="opacity:.4;animation:pulse 1.5s .4s infinite"><div style="height:60px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:.8rem"></div><div style="height:40px;background:rgba(255,255,255,.05);border-radius:8px"></div></div>
+  <div class="tgrid">
+    <div class="tcard rv" style="transition-delay:.1s">
+      <div class="tstars">★★★★★</div>
+      <p class="tq">Booking was so easy — sent a WhatsApp message and got confirmed within minutes. The apartment was exactly as described. Will definitely come back!</p>
+      <div class="tauthor"><div class="tav ta1">AM</div><div><div class="tname">Amina Mwangi</div><div class="tloc">Nairobi, Kenya</div></div></div>
+    </div>
+    <div class="tcard rv" style="transition-delay:.2s">
+      <div class="tstars">★★★★★</div>
+      <p class="tq">KaribuStay is the real deal. Found a beautiful place in Masaki at a price I couldn't find anywhere else. The team responds instantly on WhatsApp.</p>
+      <div class="tauthor"><div class="tav ta2">JO</div><div><div class="tname">James Ochieng</div><div class="tloc">Kampala, Uganda</div></div></div>
+    </div>
+    <div class="tcard rv" style="transition-delay:.3s">
+      <div class="tstars">★★★★★</div>
+      <p class="tq">Nimepata nyumba nzuri sana kupitia KaribuStay. Bei ni nzuri na huduma ni ya haraka. Ninapendekeza kwa kila mtu anayetaka kukaa Dar es Salaam.</p>
+      <div class="tauthor"><div class="tav ta3">FK</div><div><div class="tname">Fatuma Kisanga</div><div class="tloc">Mwanza, Tanzania</div></div></div>
+    </div>
   </div>
 </section>
 
@@ -1582,6 +1623,26 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
 
 let allL = [], activeF = 'all', bkTarget = null;
 
+// ── CURRENCY ─────────────────────────
+const RATES = { TZS:1, USD:1/2550, KES:1/19.5 };
+const SYMBOLS = { TZS:'TZS', USD:'$', KES:'KES' };
+let activeCurrency = localStorage.getItem('ks_currency')||'TZS';
+
+function setCurrency(c){
+  activeCurrency=c;
+  localStorage.setItem('ks_currency',c);
+  document.getElementById('currency-toggle').value=c;
+  renderL();
+}
+function fmtPrice(tzs){
+  const rate=RATES[activeCurrency]||1;
+  const sym=SYMBOLS[activeCurrency]||'TZS';
+  const val=tzs*rate;
+  if(activeCurrency==='TZS') return `TZS ${Math.round(val).toLocaleString()}`;
+  if(activeCurrency==='USD') return `$${val.toFixed(0)}`;
+  return `KES ${Math.round(val).toLocaleString()}`;
+}
+
 // ══ LOADER ══════════════════════════════
 (function(){
   const bar = document.getElementById('lbar');
@@ -1658,102 +1719,11 @@ document.querySelectorAll('.cat').forEach(c => {
 });
 
 // ══ SUPABASE LISTINGS ════════════════
-const PAGE_SIZE = 12;
-let currentPage = 0, hasMore = false;
-
 async function loadL() {
   document.getElementById('lgrid').innerHTML = `<div class="lem" style="grid-column:1/-1"><div style="width:38px;height:38px;border:3px solid rgba(39,166,93,.15);border-top-color:var(--gm);border-radius:50%;animation:kspin .7s linear infinite;margin:0 auto .8rem"></div><p style="font-size:.84rem">Loading listings...</p></div>`;
-  currentPage = 0;
-  const {data,error} = await db.from('listings').select('*').order('created_at',{ascending:false}).range(0, PAGE_SIZE);
+  const {data,error} = await db.from('listings').select('*').order('created_at',{ascending:false});
   allL = error?[]:(data||[]);
-  hasMore = (data||[]).length === PAGE_SIZE + 1;
-  if(hasMore) allL = allL.slice(0, PAGE_SIZE);
   renderL();
-  // load wishlist state
-  const { data:{user} } = await db.auth.getUser();
-  if(user) loadWishlist(user.id);
-}
-
-async function loadMore() {
-  currentPage++;
-  const from = currentPage * PAGE_SIZE;
-  const {data} = await db.from('listings').select('*').order('created_at',{ascending:false}).range(from, from + PAGE_SIZE);
-  const newItems = data||[];
-  hasMore = newItems.length === PAGE_SIZE + 1;
-  allL = [...allL, ...(hasMore ? newItems.slice(0,-1) : newItems)];
-  renderL();
-  const { data:{user} } = await db.auth.getUser();
-  if(user) loadWishlist(user.id);
-}
-
-// ══ WISHLIST ══════════════════════════
-let myWishlist = new Set();
-
-async function loadWishlist(userId) {
-  const { data } = await db.from('favorites')
-    .select('listing_id')
-    .eq('user_id', userId);
-  myWishlist = new Set((data||[]).map(r=>r.listing_id));
-  // update all visible heart buttons
-  myWishlist.forEach(id => {
-    const btn = document.getElementById('heart-'+id);
-    if(btn) btn.classList.add('liked');
-  });
-}
-
-async function toggleWish(listingId, btn) {
-  const { data:{ user } } = await db.auth.getUser();
-  if(!user){ openAuth('login'); return; }
-  const liked = myWishlist.has(listingId);
-  if(liked){
-    await db.from('favorites').delete().eq('user_id', user.id).eq('listing_id', listingId);
-    myWishlist.delete(listingId);
-    btn.classList.remove('liked');
-    showT('💔 Imeondolewa kwenye wishlist');
-  } else {
-    await db.from('favorites').insert({ user_id: user.id, listing_id: listingId });
-    myWishlist.add(listingId);
-    btn.classList.add('liked');
-    // heart pop animation
-    btn.style.transform='scale(1.4)';
-    setTimeout(()=>btn.style.transform='',250);
-    showT('❤️ Imehifadhiwa kwenye wishlist!');
-  }
-}
-
-// ══ REAL REVIEWS (index testimonials) ═
-async function loadIndexReviews() {
-  const { data } = await db.from('reviews')
-    .select('*, listings(name)')
-    .order('created_at', { ascending: false })
-    .limit(6);
-  const grid = document.getElementById('tgrid');
-  if(!grid) return;
-  const reviews = data||[];
-  if(!reviews.length){
-    // fallback to 3 placeholder cards
-    grid.innerHTML=`
-      <div class="tcard rv" style="transition-delay:.1s"><div class="tstars">★★★★★</div><p class="tq">Booking was so easy and the apartment was exactly as described. Will definitely come back!</p><div class="tauthor"><div class="tav ta1">AM</div><div><div class="tname">Amina Mwangi</div><div class="tloc">Nairobi, Kenya</div></div></div></div>
-      <div class="tcard rv" style="transition-delay:.2s"><div class="tstars">★★★★★</div><p class="tq">KaribuStay is the real deal. Found a beautiful place in Masaki at a price I couldn't find anywhere else.</p><div class="tauthor"><div class="tav ta2">JO</div><div><div class="tname">James Ochieng</div><div class="tloc">Kampala, Uganda</div></div></div></div>
-      <div class="tcard rv" style="transition-delay:.3s"><div class="tstars">★★★★★</div><p class="tq">Nimepata nyumba nzuri sana kupitia KaribuStay. Bei ni nzuri na huduma ni ya haraka.</p><div class="tauthor"><div class="tav ta3">FK</div><div><div class="tname">Fatuma Kisanga</div><div class="tloc">Mwanza, Tanzania</div></div></div></div>`;
-    return;
-  }
-  const colors=['#27a65d','#185fa5','#854f0b','#6b3fa0','#c0392b','#1a7a4a'];
-  grid.innerHTML = reviews.map((r,i)=>{
-    const stars='★'.repeat(Math.min(5,Math.max(1,Math.round(r.rating||5))))+'☆'.repeat(5-Math.min(5,Math.max(1,Math.round(r.rating||5))));
-    const initials=(r.reviewer_name||r.guest_name||'G').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const color=colors[i%colors.length];
-    const propName=r.listings?.name||'';
-    return `<div class="tcard rv" style="transition-delay:${i*.1}s">
-      <div class="tstars">${stars}</div>
-      <p class="tq">${esc(r.comment||r.review||r.body||'Great stay!')}</p>
-      ${propName?`<div style="font-size:.7rem;color:var(--gm);margin-bottom:.5rem;margin-top:-.3rem">📍 ${esc(propName)}</div>`:''}
-      <div class="tauthor">
-        <div class="tav" style="background:linear-gradient(135deg,${color},${color}99)">${initials}</div>
-        <div><div class="tname">${esc(r.reviewer_name||r.guest_name||'Guest')}</div><div class="tloc">${esc(r.reviewer_location||r.location||'Tanzania')}</div></div>
-      </div>
-    </div>`;
-  }).join('');
 }
 
 function setFilter(type){
@@ -1784,6 +1754,9 @@ function updatePriceLabel(val){
 function clearAdvFilters(){
   document.getElementById('af-location').value='';
   document.getElementById('af-sort').value='newest';
+  ['am-wifi','am-pool','am-parking','am-ac','am-gym'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.checked=false;
+  });
   const slider=document.getElementById('af-price');
   slider.value=500000;
   updatePriceLabel(500000);
@@ -1801,6 +1774,12 @@ function renderL(q=''){
   const maxPrice = parseInt(document.getElementById('af-price')?.value || '500000');
   if(locVal) items=items.filter(p=>(p.location||'').toLowerCase().includes(locVal));
   if(maxPrice < 500000) items=items.filter(p=>Number(p.price)<=maxPrice);
+  // amenity filters
+  if(document.getElementById('am-wifi')?.checked)    items=items.filter(p=>p.wifi);
+  if(document.getElementById('am-pool')?.checked)    items=items.filter(p=>p.pool);
+  if(document.getElementById('am-parking')?.checked) items=items.filter(p=>p.parking);
+  if(document.getElementById('am-ac')?.checked)      items=items.filter(p=>p.ac||p.air_conditioning);
+  if(document.getElementById('am-gym')?.checked)     items=items.filter(p=>p.gym);
 
   // Sort
   const sortVal = document.getElementById('af-sort')?.value || 'newest';
@@ -1823,16 +1802,6 @@ function renderL(q=''){
     });
     c.addEventListener('mouseleave',()=>c.style.transform='');
   });
-  // load more button
-  const existing = document.getElementById('load-more-wrap');
-  if(existing) existing.remove();
-  if(hasMore){
-    const wrap = document.createElement('div');
-    wrap.id='load-more-wrap';
-    wrap.style.cssText='grid-column:1/-1;text-align:center;padding:1.5rem 0';
-    wrap.innerHTML=`<button onclick="loadMore()" style="background:rgba(39,166,93,.1);border:1px solid rgba(39,166,93,.25);color:var(--gm);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;padding:.75rem 2.2rem;border-radius:50px;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(39,166,93,.2)'" onmouseout="this.style.background='rgba(39,166,93,.1)'">Onyesha zaidi ↓</button>`;
-    grid.appendChild(wrap);
-  }
 }
 
 function mkCard(p){
@@ -1849,7 +1818,7 @@ function mkCard(p){
       ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="pimg-bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<svg class="pimg-bg" viewBox="0 0 380 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs><rect width="380" height="190" fill="url(#${uid})"/><rect x="0" y="105" width="380" height="85" fill="rgba(3,11,6,.55)"/><rect x="16" y="18" width="348" height="156" rx="5" fill="rgba(255,255,255,.05)"/><text x="190" y="72" text-anchor="middle" fill="rgba(255,255,255,.18)" font-family="Georgia,serif" font-size="11" letter-spacing="3">${esc(p.type.toUpperCase().replace('_',' '))}</text></svg>`}
       <div class="pimg-ov"></div>
       ${badge}
-      <button class="pheart" id="heart-${p.id}" onclick="event.stopPropagation();toggleWish('${p.id}',this)">
+      <button class="pheart" onclick="event.stopPropagation();this.classList.toggle('liked')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       </button>
     </div>
@@ -1858,7 +1827,7 @@ function mkCard(p){
       <div class="ploc"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(p.location)}</div>
       <div class="pams">${ams}</div>
       <div class="pfoot">
-        <div class="pprice"><span class="amt">TZS ${Number(p.price).toLocaleString()}</span><span class="unit"> /night</span></div>
+        <div class="pprice"><span class="amt">${fmtPrice(Number(p.price))}</span><span class="unit"> /night</span></div>
         <div class="pr-row">
           <div class="prate"><span class="star">★</span>${p.rating||'—'}<span class="rev">(${p.reviews||0})</span></div>
           <button class="book-btn" onclick="event.stopPropagation();openBk('${p.id}')">Book</button>
@@ -2270,6 +2239,7 @@ async function onAuthStateChange(user) {
   // flow can immediately read the current user without a race.
   loadL();
   loadIndexReviews();
+  document.getElementById("currency-toggle").value = activeCurrency;
 })();
 
 function openWishlist() {
