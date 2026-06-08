@@ -1645,26 +1645,6 @@ async function toggleWish(listingId, btn){
 const PAGE_SIZE = 12;
 let hasMore = false;
 
-// ── CURRENCY ─────────────────────────
-const RATES = { TZS:1, USD:1/2550, KES:1/19.5 };
-const SYMBOLS = { TZS:'TZS', USD:'$', KES:'KES' };
-let activeCurrency = localStorage.getItem('ks_currency')||'TZS';
-
-function setCurrency(c){
-  activeCurrency=c;
-  localStorage.setItem('ks_currency',c);
-  document.getElementById('currency-toggle').value=c;
-  renderL();
-}
-function fmtPrice(tzs){
-  const rate=RATES[activeCurrency]||1;
-  const sym=SYMBOLS[activeCurrency]||'TZS';
-  const val=tzs*rate;
-  if(activeCurrency==='TZS') return `TZS ${Math.round(val).toLocaleString()}`;
-  if(activeCurrency==='USD') return `$${val.toFixed(0)}`;
-  return `KES ${Math.round(val).toLocaleString()}`;
-}
-
 // ══ LOADER ══════════════════════════════
 (function(){
   const bar = document.getElementById('lbar');
