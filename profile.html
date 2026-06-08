@@ -6,12 +6,6 @@ tml
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>My Profile – KaribuStay</title>
-<meta name="description" content="Manage your KaribuStay profile, bookings and saved listings."/>
-<meta property="og:title" content="My Profile – KaribuStay"/>
-<meta property="og:description" content="Manage your KaribuStay profile, bookings and saved listings."/>
-<meta property="og:image" content="https://karibustay.co.tz/og-cover.jpg"/>
-<meta property="og:url" content="https://karibustay.co.tz/profile.html"/>
-<meta name="twitter:card" content="summary_large_image"/>
 <link rel="icon" type="image/png" href="logo3.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -472,23 +466,25 @@ img{display:block;max-width:100%}
       <div class="scard">
         <div class="scard-title">Change password</div>
         <p style="font-size:.82rem;color:var(--w3);margin-bottom:1.4rem">Weka nenosiri jipya — lazima liwe na herufi 8 au zaidi.</p>
+        <form onsubmit="event.preventDefault();changePassword()" autocomplete="on">
         <div class="fg">
           <label>New password</label>
-          <input type="password" id="sec-pass" placeholder="Min 8 characters" oninput="checkPwdStrength(this.value)"/>
+          <input type="password" id="sec-pass" name="new-password" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkPwdStrength(this.value)"/>
           <div class="pwd-strength" id="pwd-bar"></div>
           <div class="pwd-hint" id="pwd-hint"></div>
         </div>
         <div class="fg">
           <label>Confirm new password</label>
-          <input type="password" id="sec-pass2" placeholder="Repeat password"/>
+          <input type="password" id="sec-pass2" name="confirm-password" placeholder="Repeat password" autocomplete="new-password"/>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.5rem">
-          <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
+          <button type="submit" class="btn-primary" id="pwd-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             Update password
           </button>
           <div class="msg" id="pwd-msg" style="display:none"></div>
         </div>
+        </form>
       </div>
 
       <div class="scard" style="margin-top:1.5rem">
@@ -612,11 +608,20 @@ function renderHeader(user){
 
 // ══ LOAD PROFILE ═══════════════════
 async function loadProfile(){
-  const { data } = await db.from('profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
+  const { data, error } = await db.from('profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
+  if(error) console.warn('profiles fetch:', error.message);
   if(data){
-    document.getElementById('pf-name').value = data.full_name || '';
+    document.getElementById('pf-name').value  = data.full_name || data.name || '';
     document.getElementById('pf-phone').value = data.phone || '';
-    document.getElementById('pf-bio').value = data.bio || '';
+    document.getElementById('pf-bio').value   = data.bio || '';
+    // load saved avatar
+    if(data.avatar_url){
+      const img = document.getElementById('ph-avatar-img');
+      img.src = data.avatar_url + '?t=' + Date.now();
+      img.style.display = 'block';
+      const ini = document.getElementById('ph-initials');
+      if(ini) ini.style.display = 'none';
+    }
   }
   document.getElementById('pf-email').value = currentUser.email;
 }
@@ -645,18 +650,42 @@ async function saveProfile(){
 async function uploadAvatar(input){
   const file = input.files[0]; if(!file) return;
   if(file.size > 2*1024*1024){ showT('❌ Picha kubwa sana (max 2MB)'); return; }
-  showT('Uploading…');
-  const ext = file.name.split('.').pop();
-  const path = `avatars/${currentUser.id}.${ext}`;
-  const { error: upErr } = await db.storage.from('avatars').upload(path, file, { upsert:true });
-  if(upErr){ showT('❌ Upload failed: '+upErr.message); return; }
+
+  // Show preview immediately before upload
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('ph-avatar-img');
+    img.src = e.target.result; img.style.display='block';
+    const ini = document.getElementById('ph-initials');
+    if(ini) ini.style.display='none';
+  };
+  reader.readAsDataURL(file);
+  showT('⏳ Inapakia picha…');
+
+  // FIX: path is just userId.ext — bucket name 'avatars' is NOT repeated in path
+  const ext  = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+  const path = `${currentUser.id}.${ext}`;
+
+  const { error: upErr } = await db.storage.from('avatars').upload(path, file, {
+    upsert: true,
+    contentType: file.type || 'image/jpeg',
+  });
+
+  if(upErr){ showT('❌ Upload failed: ' + upErr.message); console.error('Avatar upload:', upErr); return; }
+
   const { data: { publicUrl } } = db.storage.from('avatars').getPublicUrl(path);
+
+  // Update auth metadata + profiles table
   await db.auth.updateUser({ data:{ avatar_url: publicUrl } });
-  await db.from('profiles').upsert({ user_id:currentUser.id, avatar_url:publicUrl },{ onConflict:'user_id' });
-  const img=document.getElementById('ph-avatar-img');
-  img.src=publicUrl+'?t='+Date.now(); img.style.display='block';
-  document.getElementById('ph-initials').style.display='none';
-  showT('✅ Avatar updated!');
+  const { error: dbErr } = await db.from('profiles').upsert(
+    { user_id: currentUser.id, avatar_url: publicUrl },
+    { onConflict: 'user_id' }
+  );
+  if(dbErr) console.warn('profiles upsert:', dbErr.message);
+
+  // Refresh displayed avatar with cache-bust
+  document.getElementById('ph-avatar-img').src = publicUrl + '?t=' + Date.now();
+  showT('✅ Picha imesasishwa!');
 }
 
 // ══ LOAD BOOKINGS ══════════════════
