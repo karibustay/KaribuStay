@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Jiunge kama Host – KaribuStay</title>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --gm:#27A65D;--gd:#1A5C3A;--g0:#030b06;--g2:#0a1a0f;--g3:#0f2518;
+  --gb:rgba(255,255,255,.08);--w1:rgba(255,255,255,.92);
+  --w2:rgba(255,255,255,.60);--w3:rgba(255,255,255,.30);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--w1);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:1.5rem;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 20%,rgba(39,166,93,.08),transparent),
+    radial-gradient(ellipse 60% 80% at 80% 80%,rgba(39,166,93,.05),transparent);
+}
+.logo-wrap{margin-bottom:2rem;text-align:center}
+.logo-wrap img{height:44px;filter:brightness(0) invert(1);opacity:.9}
+
+.card{
+  width:100%;max-width:440px;
+  background:linear-gradient(160deg,var(--g3),var(--g2));
+  border:.5px solid rgba(255,255,255,.1);border-radius:22px;
+  padding:2.4rem 2.2rem;position:relative;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 0 1px rgba(39,166,93,.08),inset 0 1px 0 rgba(255,255,255,.06);
+  animation:cardIn .45s var(--ease) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:none}}
+.card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(39,166,93,.1),transparent 70%);pointer-events:none}
+
+/* States */
+.state{display:none;animation:fadeUp .3s var(--ease)}
+.state.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.state-icon{font-size:2.8rem;text-align:center;margin-bottom:1rem}
+.state-title{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:300;color:#f0ede6;text-align:center;margin-bottom:.4rem}
+.state-sub{font-size:.8rem;color:var(--w3);text-align:center;line-height:1.6;margin-bottom:1.4rem}
+.spin{width:48px;height:48px;border-radius:50%;border:3px solid rgba(39,166,93,.2);border-top-color:var(--gm);animation:spin .8s linear infinite;margin:0 auto 1.2rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Benefits */
+.benefits{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.6rem}
+.benefit{display:flex;align-items:flex-start;gap:.65rem;font-size:.82rem;color:var(--w2);line-height:1.4}
+.benefit-icon{color:var(--gm);flex-shrink:0;font-size:.9rem}
+
+/* Auth tabs */
+.auth-tabs{display:flex;border-bottom:.5px solid rgba(255,255,255,.1);margin-bottom:1.4rem;position:relative}
+.auth-tabs::after{content:'';position:absolute;bottom:-1px;left:0;width:50%;height:2px;background:linear-gradient(90deg,var(--gm),#4de88f);border-radius:2px;transition:transform .3s var(--ease)}
+.auth-tabs.on-signup::after{transform:translateX(100%)}
+.auth-tab{flex:1;background:none;border:none;color:var(--w3);font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;padding:.55rem 0 .8rem;cursor:pointer;transition:color .2s}
+.auth-tab.active{color:#f0ede6}
+
+/* Form */
+.fg{margin-bottom:.9rem}
+.fg label{display:block;font-size:.67rem;color:var(--w3);margin-bottom:.32rem;text-transform:uppercase;letter-spacing:.08em;transition:color .2s}
+.fg:focus-within label{color:var(--gm)}
+.fg input{width:100%;background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.1);border-radius:11px;padding:.72rem 1rem;color:#f0ede6;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .25s,background .25s,box-shadow .25s}
+.fg input:focus{border-color:var(--gm);background:rgba(39,166,93,.04);box-shadow:0 0 0 3px rgba(39,166,93,.1)}
+.fg input::placeholder{color:rgba(255,255,255,.2)}
+
+/* Buttons */
+.btn{width:100%;background:linear-gradient(135deg,#1db954,var(--gm));color:#fff;border:none;border-radius:11px;padding:.82rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:.3rem;transition:transform .2s,box-shadow .2s,filter .2s;box-shadow:0 6px 24px rgba(39,166,93,.35);position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);opacity:0;transition:opacity .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(39,166,93,.45);filter:brightness(1.08)}
+.btn:hover::after{opacity:1}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+.btn-google{width:100%;background:rgba(255,255,255,.06);color:#f0ede6;border:.5px solid rgba(255,255,255,.12);border-radius:11px;padding:.74rem;font-family:'DM Sans',sans-serif;font-size:.87rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;transition:background .2s,border-color .2s,transform .2s;margin-top:.6rem}
+.btn-google:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+
+.divider{display:flex;align-items:center;gap:.8rem;margin:.9rem 0}
+.divider hr{flex:1;border:none;border-top:.5px solid rgba(255,255,255,.08)}
+.divider span{font-size:.72rem;color:var(--w3)}
+
+.msg{font-size:.78rem;text-align:center;margin-top:.7rem;min-height:1.1rem;border-radius:8px;padding:.3rem .5rem;transition:all .3s}
+.msg.err{color:#f07070;background:rgba(240,112,112,.08)}
+.msg.ok{color:var(--gm);background:rgba(39,166,93,.08)}
+
+.note-tag{display:inline-block;background:rgba(39,166,93,.12);border:1px solid rgba(39,166,93,.2);border-radius:20px;font-size:.72rem;color:var(--gm);padding:.2rem .75rem;margin-bottom:1.2rem;text-align:center;width:100%}
+
+.back{display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--w3);text-decoration:none;margin-top:1.4rem;justify-content:center;transition:color .2s}
+.back:hover{color:var(--w1)}
+</style>
+</head>
+<body>
+
+<div class="logo-wrap">
+  <a href="index.html"><img src="logo2.png" alt="KaribuStay"/></a>
+</div>
+
+<div class="card">
+
+  <!-- STATE: checking token -->
+  <div class="state active" id="s-checking">
+    <div class="spin"></div>
+    <div class="state-title">Inathibitisha mwaliko…</div>
+    <div class="state-sub">Tafadhali subiri kidogo.</div>
+  </div>
+
+  <!-- STATE: invalid/expired token -->
+  <div class="state" id="s-invalid">
+    <div class="state-icon">❌</div>
+    <div class="state-title">Mwaliko si sahihi</div>
+    <div class="state-sub">Link hii imekwisha muda wake, imetumika tayari, au si sahihi.<br>Wasiliana na KaribuStay kupata mwaliko mpya.</div>
+    <a href="https://wa.me/255745999918" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.25);color:#25d366;border-radius:11px;padding:.8rem;text-decoration:none;font-size:.85rem;font-weight:600;margin-top:1rem">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Wasiliana nasi WhatsApp
+    </a>
+  </div>
+
+  <!-- STATE: auth (sign up / log in) -->
+  <div class="state" id="s-auth">
+    <div class="state-icon">🏡</div>
+    <div class="state-title">Karibu, Host mpya!</div>
+    <div id="invite-note-tag" class="note-tag" style="display:none"></div>
+    <div class="benefits">
+      <div class="benefit"><span class="benefit-icon">✅</span><span>Unda na usimamie listings zako</span></div>
+      <div class="benefit"><span class="benefit-icon">✅</span><span>Fuatilia bookings na mapato</span></div>
+      <div class="benefit"><span class="benefit-icon">✅</span><span>Wasiliana na wageni moja kwa moja</span></div>
+    </div>
+
+    <div class="auth-tabs" id="auth-tabs">
+      <button class="auth-tab active" id="tab-signup" onclick="switchTab('signup')">Sajili</button>
+      <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Ingia</button>
+    </div>
+
+    <!-- SIGN UP FORM -->
+    <div id="form-signup">
+      <div class="fg"><label>Jina lako kamili</label><input type="text" id="su-name" placeholder="e.g. Amina Hassan"/></div>
+      <div class="fg"><label>Email</label><input type="email" id="su-email" placeholder="wewe@email.com"/></div>
+      <div class="fg"><label>Neno la siri</label><input type="password" id="su-pass" placeholder="Min 8 characters" autocomplete="new-password"/></div>
+      <button class="btn" id="su-btn" onclick="doSignup()">Sajili kama Host →</button>
+      <div class="divider"><hr/><span>au</span><hr/></div>
+      <button class="btn-google" onclick="doGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Ingia na Google
+      </button>
+    </div>
+
+    <!-- LOG IN FORM -->
+    <div id="form-login" style="display:none">
+      <div class="fg"><label>Email</label><input type="email" id="li-email" placeholder="wewe@email.com"/></div>
+      <div class="fg"><label>Neno la siri</label><input type="password" id="li-pass" placeholder="Neno lako la siri" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="btn" id="li-btn" onclick="doLogin()">Ingia kama Host →</button>
+      <div class="divider"><hr/><span>au</span><hr/></div>
+      <button class="btn-google" onclick="doGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Ingia na Google
+      </button>
+    </div>
+
+    <div class="msg" id="auth-msg"></div>
+  </div>
+
+  <!-- STATE: activating -->
+  <div class="state" id="s-activating">
+    <div class="spin"></div>
+    <div class="state-title">Inasajili akaunti yako…</div>
+    <div class="state-sub">Tafadhali subiri kidogo.</div>
+  </div>
+
+  <!-- STATE: success -->
+  <div class="state" id="s-success">
+    <div class="state-icon">🎉</div>
+    <div class="state-title">Umefanikiwa!</div>
+    <div class="state-sub">Akaunti yako ya host imeundwa. Unaweza sasa kuanza kuongeza listings zako.</div>
+    <a href="host.html" style="display:block;background:linear-gradient(135deg,#1db954,var(--gm));color:#fff;text-decoration:none;border-radius:11px;padding:.85rem;text-align:center;font-weight:700;font-size:.9rem;margin-top:.5rem;box-shadow:0 6px 24px rgba(39,166,93,.35)">
+      Nenda Host Dashboard →
+    </a>
+  </div>
+
+</div>
+
+<a class="back" href="index.html">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  Rudi KaribuStay
+</a>
+
+<script>
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+});
+
+let inviteToken = null, inviteData = null, pendingUser = null;
+
+// ── INIT ──────────────────────────────
+async function init(){
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  if(!token){ showState('s-invalid'); return; }
+
+  // Validate token
+  const { data, error } = await db
+    .from('host_invites')
+    .select('*')
+    .eq('token', token)
+    .is('used_by', null)
+    .gt('expires_at', new Date().toISOString())
+    .maybeSingle();
+
+  if(error || !data){ showState('s-invalid'); return; }
+
+  inviteToken = token;
+  inviteData  = data;
+
+  // Show note if admin left one
+  if(data.note){
+    const tag = document.getElementById('invite-note-tag');
+    tag.textContent = '🎫 ' + data.note;
+    tag.style.display = 'block';
+  }
+
+  // Pre-fill email if provided
+  if(data.email){
+    document.getElementById('su-email').value = data.email;
+    document.getElementById('li-email').value = data.email;
+  }
+
+  // Check if already logged in
+  const { data:{ user } } = await db.auth.getUser();
+  if(user){
+    pendingUser = user;
+    await activateHost(user);
+    return;
+  }
+
+  // Listen for Google OAuth callback
+  db.auth.onAuthStateChange(async (event, session) => {
+    if((event==='SIGNED_IN'||event==='INITIAL_SESSION') && session?.user && inviteToken){
+      if(!pendingUser){
+        pendingUser = session.user;
+        showState('s-activating');
+        await activateHost(session.user);
+      }
+    }
+  });
+
+  showState('s-auth');
+}
+
+// ── ACTIVATE ──────────────────────────
+async function activateHost(user){
+  showState('s-activating');
+
+  // Save full name if provided (signup)
+  const name = document.getElementById('su-name')?.value?.trim();
+  if(name){
+    await db.from('profiles').upsert(
+      { user_id:user.id, full_name:name },
+      { onConflict:'user_id' }
+    );
+  }
+
+  // Call DB function to use token + upgrade role atomically
+  const { data, error } = await db.rpc('use_host_invite', {
+    p_token: inviteToken,
+    p_user_id: user.id,
+  });
+
+  if(error || !data?.success){
+    setMsg(data?.error || error?.message || 'Hitilafu — jaribu tena', 'err');
+    showState('s-auth');
+    return;
+  }
+
+  showState('s-success');
+}
+
+// ── SIGN UP ───────────────────────────
+async function doSignup(){
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  if(!name||!email||!pass){ setMsg('Jaza sehemu zote'); return; }
+  if(pass.length<8){ setMsg('Neno la siri lazima liwe na herufi 8+'); return; }
+
+  const btn=document.getElementById('su-btn');
+  btn.disabled=true; btn.textContent='Inasajili…';
+
+  const { data, error } = await db.auth.signUp({ email, password:pass });
+  btn.disabled=false; btn.textContent='Sajili kama Host →';
+
+  if(error){ setMsg(error.message,'err'); return; }
+
+  if(data.user){
+    pendingUser=data.user;
+    await activateHost(data.user);
+  } else {
+    setMsg('Angalia email yako ili kuthibitisha akaunti.','ok');
+  }
+}
+
+// ── LOG IN ─────────────────────────────
+async function doLogin(){
+  const email=document.getElementById('li-email').value.trim();
+  const pass=document.getElementById('li-pass').value;
+  if(!email||!pass){ setMsg('Weka email na neno la siri'); return; }
+
+  const btn=document.getElementById('li-btn');
+  btn.disabled=true; btn.textContent='Inaingia…';
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password:pass });
+  btn.disabled=false; btn.textContent='Ingia kama Host →';
+
+  if(error){ setMsg(error.message,'err'); return; }
+  pendingUser=data.user;
+  await activateHost(data.user);
+}
+
+// ── GOOGLE ────────────────────────────
+async function doGoogle(){
+  // Store token in sessionStorage so we can use it after redirect
+  sessionStorage.setItem('host_invite_token', inviteToken);
+  await db.auth.signInWithOAuth({
+    provider:'google',
+    options:{ redirectTo: window.location.href }
+  });
+}
+
+// ── TAB SWITCH ─────────────────────────
+function switchTab(tab){
+  document.getElementById('auth-tabs').classList.toggle('on-signup', tab==='signup');
+  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
+  document.getElementById('form-login').style.display  = tab==='login'?'block':'none';
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  document.getElementById('tab-login').classList.toggle('active',  tab==='login');
+  document.getElementById('auth-msg').textContent='';
+}
+
+// ── HELPERS ───────────────────────────
+function showState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+function setMsg(msg, type='err'){
+  const el=document.getElementById('auth-msg');
+  el.textContent=msg;
+  el.className='msg '+(type==='err'?'err':'ok');
+}
+
+// Handle Google OAuth return (token stored in sessionStorage)
+const storedToken = sessionStorage.getItem('host_invite_token');
+if(storedToken) {
+  inviteToken = storedToken;
+  sessionStorage.removeItem('host_invite_token');
+}
+
+init();
+</script>
+</body>
+</html>

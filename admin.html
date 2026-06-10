@@ -305,14 +305,14 @@ tr:hover td{background:#FAFAFA}
       Reviews
       <span class="tab-badge" id="reviews-badge" style="display:none">0</span>
     </button>
-    <button class="admin-tab" id="tab-hosts" onclick="switchTab('hosts')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Hosts
-      <span class="tab-badge" id="hosts-badge" style="display:none">0</span>
-    </button>
     <button class="admin-tab" id="tab-analytics" onclick="switchTab('analytics')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Analytics
+    </button>
+    <button class="admin-tab" id="tab-hosts" onclick="switchTab('hosts')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Hosts
+      <span class="tab-badge green" id="hosts-badge" style="display:none">0</span>
     </button>
   </div>
 
@@ -499,47 +499,6 @@ tr:hover td{background:#FAFAFA}
     </div>
   </div>
 
-  <!-- ══ HOSTS ══ -->
-  <div class="admin-page" id="page-hosts">
-    <div class="sec-title-row">
-      <h2>Host Applications</h2>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-        <button onclick="filterHostApps('pending')" class="book-filter active" data-hf="pending">⏳ Pending</button>
-        <button onclick="filterHostApps('approved')" class="book-filter" data-hf="approved">✅ Approved</button>
-        <button onclick="filterHostApps('rejected')" class="book-filter" data-hf="rejected">✕ Rejected</button>
-        <button onclick="filterHostApps('all')" class="book-filter" data-hf="all">All</button>
-        <button onclick="loadHostApps()" style="background:rgba(39,166,93,.12);color:var(--gm);border:1px solid rgba(39,166,93,.2);padding:.5rem .9rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.3rem">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Refresh
-        </button>
-      </div>
-    </div>
-    <!-- Stats row -->
-    <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.4rem">
-      <div class="stat-chip"><strong id="hs-pending">0</strong><span>Pending</span></div>
-      <div class="stat-chip"><strong id="hs-approved">0</strong><span>Approved</span></div>
-      <div class="stat-chip"><strong id="hs-rejected">0</strong><span>Rejected</span></div>
-      <div class="stat-chip"><strong id="hs-total">0</strong><span>Total</span></div>
-    </div>
-    <div id="hosts-grid">
-      <div class="enq-empty">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        <h3>Inapakia...</h3>
-      </div>
-    </div>
-    <!-- Rejection reason modal -->
-    <div class="saving-overlay" id="reject-modal" style="display:none">
-      <div class="saving-box" style="max-width:420px;width:100%;text-align:left;padding:1.8rem 2rem">
-        <h3 style="font-size:1rem;font-weight:700;color:var(--gm);margin-bottom:1rem">Sababu ya Kukataa</h3>
-        <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:.8rem">Mwambie mwombaji kwa nini maombi yao hayakupita:</p>
-        <textarea id="rejection-note" style="width:100%;background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.12);border-radius:8px;padding:.7rem .9rem;color:var(--w1);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:vertical;min-height:90px;outline:none" placeholder="e.g. Picha za mali hazikutosha, tafadhali tuma picha za ubora wa juu zaidi..."></textarea>
-        <div style="display:flex;gap:.7rem;margin-top:1rem">
-          <button onclick="document.getElementById('reject-modal').style.display='none'" style="flex:1;background:rgba(255,255,255,.06);color:var(--w2);border:1px solid var(--gb);border-radius:8px;padding:.7rem;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer">Acha</button>
-          <button onclick="confirmRejectHost()" id="reject-confirm-btn" style="flex:1;background:rgba(239,83,80,.15);color:#f07070;border:1px solid rgba(239,83,80,.3);border-radius:8px;padding:.7rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer">Kataa Maombi</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ══ ANALYTICS ══ -->
   <div class="admin-page" id="page-analytics">
     <div class="sec-title-row"><h2>Platform Analytics</h2><button onclick="loadAnalytics()" style="background:var(--green-light);color:var(--green);border:none;padding:.5rem .9rem;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer">Refresh</button></div>
@@ -572,7 +531,7 @@ const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { autoRefreshToken: true, persistSession: true } });
 
-let listings = [], allEnquiries = [], allBookings = [], allPayments = [], allReviews = [], allHostApps = [];
+let listings = [], allEnquiries = [], allBookings = [], allPayments = [], allReviews = [];
 let selectedColor = '#C88B55,#4A2010';
 let enqFilter = 'all', bookFilter = 'all', reviewFilter = 'pending';
 let currentAdminRole = null;
@@ -640,7 +599,6 @@ function showAdmin(email) {
   loadEnquiries();
   loadBookingsBadge();
   loadReviewsBadge();
-  loadHostsBadge();
 }
 
 // Lightweight badge loaders — only fetch counts, don't render full tables
@@ -688,8 +646,109 @@ function switchTab(tab) {
   if (tab === 'bookings' && !allBookings.length) loadBookings();
   if (tab === 'payments' && !allPayments.length) loadPayments();
   if (tab === 'reviews' && !allReviews.length) loadReviews();
-  if (tab === 'hosts' && !allHostApps.length) loadHostApps();
   if (tab === 'analytics') loadAnalytics();
+  if (tab === 'hosts') loadHostsTab();
+}
+
+// ══ HOSTS TAB ════════════════════════════════════════
+let currentInviteLink = '';
+
+async function loadHostsTab(){
+  await Promise.all([loadInvites(), loadHosts()]);
+}
+
+async function generateInvite(){
+  const note   = document.getElementById('inv-note').value.trim();
+  const email  = document.getElementById('inv-email').value.trim();
+  const hours  = parseInt(document.getElementById('inv-expiry').value);
+  const token  = crypto.randomUUID().replace(/-/g,'').slice(0,32);
+  const expires = new Date(Date.now() + hours*3600*1000).toISOString();
+
+  const { data:{ user } } = await db.auth.getUser();
+  const { error } = await db.from('host_invites').insert({
+    token, note:note||null, email:email||null,
+    expires_at:expires, created_by:user?.id
+  });
+
+  if(error){ showNotification('❌ '+error.message,'error'); return; }
+
+  const link = `${window.location.origin}/host-invite.html?token=${token}`;
+  currentInviteLink = link;
+  document.getElementById('inv-link-display').value = link;
+  document.getElementById('inv-expiry-label').textContent = `Inaisha: ${new Date(expires).toLocaleString('sw-TZ')}`;
+  document.getElementById('inv-result').style.display='block';
+  showNotification('✅ Link imtengenezwa!','success');
+  loadInvites();
+}
+
+function copyInviteLink(){
+  navigator.clipboard.writeText(currentInviteLink).then(()=>showNotification('✅ Link imenakiliwa!','success'));
+}
+
+function shareInviteWA(){
+  const msg = `Habari! 🏡\n\nKaribuStay inakualika kuwa Host.\n\nBonyeza link hii kusajili akaunti yako ya host:\n${currentInviteLink}\n\n_Link inatumika mara moja tu._`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+async function loadInvites(){
+  const { data } = await db.from('host_invites').select('*').order('created_at',{ascending:false}).limit(20);
+  const tbody = document.getElementById('invites-tbody');
+  if(!data?.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:#aaa;padding:1.2rem">Hakuna mwaliko bado</td></tr>'; return; }
+  const now = new Date();
+  tbody.innerHTML = data.map(inv=>{
+    const used    = !!inv.used_by;
+    const expired = new Date(inv.expires_at)<now;
+    const status  = used ? '<span class="status-chip sc-confirmed">✅ Imetumika</span>'
+                  : expired ? '<span class="status-chip sc-declined">⌛ Imekwisha</span>'
+                  : '<span class="status-chip sc-pending">🟡 Inasubiri</span>';
+    return `<tr>
+      <td>${inv.note||'—'}</td>
+      <td>${inv.email||'—'}</td>
+      <td>${new Date(inv.created_at).toLocaleDateString('sw-TZ')}</td>
+      <td>${new Date(inv.expires_at).toLocaleDateString('sw-TZ')}</td>
+      <td>${status}</td>
+      <td>${!used?`<button onclick="deleteInvite('${inv.id}')" style="background:none;border:none;color:#e53935;cursor:pointer;font-size:.75rem">🗑️ Futa</button>`:''}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function deleteInvite(id){
+  if(!confirm('Futa mwaliko hii?')) return;
+  await db.from('host_invites').delete().eq('id',id);
+  loadInvites();
+}
+
+async function loadHosts(){
+  const { data:profiles } = await db.from('profiles').select('*').eq('role','host').order('host_since',{ascending:false});
+  const tbody = document.getElementById('hosts-tbody');
+  if(!profiles?.length){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:#aaa;padding:1.2rem">Hakuna hosts bado</td></tr>'; return; }
+
+  // Get listing counts
+  const ids = profiles.map(p=>p.user_id);
+  const { data:listings } = await db.from('listings').select('host_id').in('host_id',ids);
+  const counts = {};
+  (listings||[]).forEach(l=>{ counts[l.host_id]=(counts[l.host_id]||0)+1; });
+
+  tbody.innerHTML = profiles.map(p=>`
+    <tr>
+      <td>${p.full_name||p.name||'—'}</td>
+      <td style="font-size:.75rem;color:#888">${p.user_id.slice(0,8)}...</td>
+      <td>${p.host_since?new Date(p.host_since).toLocaleDateString('sw-TZ'):'—'}</td>
+      <td><span style="background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:.15rem .55rem;font-size:.72rem;font-weight:600">${counts[p.user_id]||0}</span></td>
+      <td><button onclick="removeHost('${p.user_id}')" style="background:none;border:1px solid #fca5a5;color:#e53935;border-radius:6px;padding:.25rem .65rem;font-size:.73rem;cursor:pointer">Ondoa role</button></td>
+    </tr>`).join('');
+
+  // Update badge
+  const badge = document.getElementById('hosts-badge');
+  badge.textContent=profiles.length; badge.style.display='inline';
+}
+
+async function removeHost(userId){
+  if(!confirm('Ondoa role ya host kwa mtumiaji huyu?')) return;
+  const { error } = await db.from('profiles').update({role:'guest'}).eq('user_id',userId);
+  if(error){ showNotification('❌ '+error.message,'error'); return; }
+  showNotification('✅ Role imeondolewa.','success');
+  loadHosts();
 }
 
 /* ── LISTINGS ── */
@@ -1142,148 +1201,6 @@ function getLast6Months() {
   return months;
 }
 
-/* ── HOSTS ── */
-let hostFilter = 'pending', rejectTargetId = null;
-
-async function loadHostsBadge() {
-  const { data } = await db.from('profiles').select('host_status').eq('host_status','pending');
-  const count = (data||[]).length;
-  const badge = document.getElementById('hosts-badge');
-  if (count > 0) { badge.textContent = count; badge.style.display = 'inline'; }
-  else badge.style.display = 'none';
-}
-
-async function loadHostApps() {
-  const { data, error } = await db.from('profiles')
-    .select('user_id,full_name,phone,city,nationality,host_bio,prop_type,prop_location,prop_price_estimate,has_photos,host_status,rejection_note,applied_at,email')
-    .not('host_status', 'is', null)
-    .order('applied_at', { ascending: false });
-
-  if (error) { showToast('❌ ' + error.message, true); return; }
-  allHostApps = data || [];
-  updateHostStats();
-  loadHostsBadge();
-  renderHostApps();
-}
-
-function updateHostStats() {
-  document.getElementById('hs-total').textContent = allHostApps.length;
-  document.getElementById('hs-pending').textContent = allHostApps.filter(h => h.host_status==='pending').length;
-  document.getElementById('hs-approved').textContent = allHostApps.filter(h => h.host_status==='approved').length;
-  document.getElementById('hs-rejected').textContent = allHostApps.filter(h => h.host_status==='rejected').length;
-}
-
-function filterHostApps(f) {
-  hostFilter = f;
-  document.querySelectorAll('[data-hf]').forEach(b => b.classList.toggle('active', b.dataset.hf === f));
-  renderHostApps();
-}
-
-function renderHostApps() {
-  const grid = document.getElementById('hosts-grid');
-  let items = hostFilter === 'all' ? allHostApps : allHostApps.filter(h => h.host_status === hostFilter);
-
-  if (!items.length) {
-    grid.innerHTML = `<div class="enq-empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><h3>Hakuna maombi</h3><p>Maombi ya hosts ${hostFilter !== 'all' ? '(' + hostFilter + ')' : ''} yataonekana hapa.</p></div>`;
-    return;
-  }
-
-  grid.innerHTML = items.map(h => {
-    const initials = (h.full_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-    const date = h.applied_at ? new Date(h.applied_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
-    const statusMap = { pending:'sc-pending', approved:'sc-confirmed', rejected:'sc-cancelled' };
-    const statusLabel = { pending:'⏳ Pending', approved:'✅ Approved', rejected:'✕ Rejected' };
-    const typeLabel = { apartment:'Apartment', villa:'Villa / Nyumba', hotel:'Hotel / Guesthouse', short_stay:'Short Stay', multiple:'Mali >1' }[h.prop_type] || h.prop_type;
-    const actions = h.host_status === 'pending' ? `
-      <button class="btn-confirm" onclick="approveHost('${h.user_id}')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Idhinisha
-      </button>
-      <button class="btn-decline" onclick="openRejectModal('${h.user_id}')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Kataa
-      </button>` :
-      h.host_status === 'approved' ? `<button class="btn-decline" onclick="openRejectModal('${h.user_id}')">Suspend</button>` :
-      `<button class="btn-confirm" onclick="approveHost('${h.user_id}')">Idhinisha Tena</button>`;
-
-    return `<div class="enq-card" id="happ-${h.user_id}">
-      <div class="enq-card-top">
-        <div class="enq-card-head">
-          <div>
-            <div class="enq-prop">${esc(h.full_name||'—')}</div>
-            <div style="font-size:.72rem;color:var(--w3);margin-top:.15rem">${esc(h.city||'')} ${h.nationality ? '· ' + esc(h.nationality) : ''} · ${date}</div>
-          </div>
-          <span class="status-chip ${statusMap[h.host_status]||'sc-pending'}">${statusLabel[h.host_status]||h.host_status}</span>
-        </div>
-        <div class="enq-guest">
-          <div class="enq-guest-av">${initials}</div>
-          <div>
-            <div style="font-weight:600;font-size:.8rem">${esc(h.phone||'—')}</div>
-            ${h.email ? `<div style="font-size:.7rem;color:var(--w3)">${esc(h.email)}</div>` : ''}
-          </div>
-        </div>
-      </div>
-      <div class="enq-card-body">
-        <div class="enq-row">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-          <span><strong>${esc(typeLabel||'—')}</strong> · ${esc(h.prop_location||'—')}${h.prop_price_estimate ? ' · TZS ' + Number(h.prop_price_estimate).toLocaleString() + '/usiku' : ''}</span>
-        </div>
-        ${h.has_photos ? `<div class="enq-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Picha: <strong>${esc(h.has_photos)}</strong></span></div>` : ''}
-        ${h.host_bio ? `<div class="enq-msg">"${esc(h.host_bio)}"</div>` : ''}
-        ${h.rejection_note ? `<div style="background:rgba(239,83,80,.07);border:1px solid rgba(239,83,80,.18);border-radius:7px;padding:.5rem .8rem;font-size:.74rem;color:#ef9090;margin-top:.2rem">📝 ${esc(h.rejection_note)}</div>` : ''}
-      </div>
-      <div class="enq-card-foot">
-        ${actions}
-        ${h.phone ? `<a href="https://wa.me/${(h.phone||'').replace(/\D/g,'')}?text=Habari ${esc(h.full_name?.split(' ')[0]||'')}! Tukikuhusu maombi yako ya kuwa Host wa KaribuStay." target="_blank" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>WhatsApp</a>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function approveHost(userId) {
-  const card = document.getElementById('happ-' + userId);
-  if (card) card.style.opacity = '.5';
-  const { error } = await db.from('profiles').update({
-    role: 'host',
-    host_status: 'approved',
-    rejection_note: null,
-    host_since: new Date().toISOString()
-  }).eq('user_id', userId);
-  if (error) { showToast('❌ ' + error.message, true); if (card) card.style.opacity='1'; return; }
-  const idx = allHostApps.findIndex(h => h.user_id === userId);
-  if (idx !== -1) { allHostApps[idx].host_status = 'approved'; allHostApps[idx].role = 'host'; }
-  updateHostStats();
-  loadHostsBadge();
-  renderHostApps();
-  showToast('✅ Host ameidhinishwa! Dashboard yake itafunguliwa.');
-}
-
-function openRejectModal(userId) {
-  rejectTargetId = userId;
-  document.getElementById('rejection-note').value = '';
-  document.getElementById('reject-modal').style.display = 'flex';
-}
-
-async function confirmRejectHost() {
-  if (!rejectTargetId) return;
-  const note = document.getElementById('rejection-note').value.trim();
-  const btn = document.getElementById('reject-confirm-btn');
-  btn.disabled = true;
-  const { error } = await db.from('profiles').update({
-    role: 'guest',
-    host_status: 'rejected',
-    rejection_note: note || null
-  }).eq('user_id', rejectTargetId);
-  btn.disabled = false;
-  document.getElementById('reject-modal').style.display = 'none';
-  if (error) { showToast('❌ ' + error.message, true); return; }
-  const idx = allHostApps.findIndex(h => h.user_id === rejectTargetId);
-  if (idx !== -1) { allHostApps[idx].host_status = 'rejected'; allHostApps[idx].rejection_note = note; }
-  updateHostStats();
-  loadHostsBadge();
-  renderHostApps();
-  showToast('Maombi yamekataliwa.');
-  rejectTargetId = null;
-}
-
 /* ── HELPERS ── */
 function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showSaving(on) { document.getElementById('saving-overlay').style.display = on ? 'flex' : 'none'; }
@@ -1305,6 +1222,74 @@ document.querySelectorAll('.swatch').forEach(s => {
 
 init();
 </script>
+
+  <!-- ══ HOSTS ══ -->
+  <div class="admin-page" id="page-hosts">
+    <div class="sec-title-row">
+      <h2>Host Management</h2>
+    </div>
+
+    <!-- Generate invite -->
+    <div style="background:#fff;border:1px solid var(--gray-border);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;max-width:560px">
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:1rem">🔗 Tengeneza Invite Link</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
+        <div>
+          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Jina / Note (optional)</label>
+          <input type="text" id="inv-note" placeholder="e.g. John - Masaki Host" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Email ya Host (optional)</label>
+          <input type="email" id="inv-email" placeholder="host@email.com" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:.7rem;align-items:center;flex-wrap:wrap">
+        <select id="inv-expiry" style="border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none;background:#fff">
+          <option value="24">Iishe baada ya: Masaa 24</option>
+          <option value="72">Iishe baada ya: Siku 3</option>
+          <option value="168" selected>Iishe baada ya: Wiki 1</option>
+          <option value="720">Iishe baada ya: Mwezi 1</option>
+        </select>
+        <button onclick="generateInvite()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:.6rem 1.3rem;font-family:'Poppins',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer">+ Tengeneza Link</button>
+      </div>
+
+      <!-- Generated link display -->
+      <div id="inv-result" style="display:none;margin-top:1rem;background:#f0f9f4;border:1px solid #b7e4c7;border-radius:10px;padding:.9rem 1rem">
+        <p style="font-size:.72rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">✅ Link imtengenezwa — tumia mara moja tu</p>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input type="text" id="inv-link-display" readonly style="flex:1;border:1px solid #b7e4c7;border-radius:7px;padding:.5rem .7rem;font-size:.78rem;background:#fff;outline:none;font-family:monospace"/>
+          <button onclick="copyInviteLink()" style="background:var(--green);color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">Copy</button>
+          <button onclick="shareInviteWA()" style="background:#25d366;color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">WhatsApp</button>
+        </div>
+        <p style="font-size:.7rem;color:#888;margin-top:.5rem" id="inv-expiry-label"></p>
+      </div>
+    </div>
+
+    <!-- Active invites table -->
+    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-bottom:.6rem">Mwaliko zilizotumwa</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Note</th><th>Email</th><th>Imeundwa</th><th>Inaisha</th><th>Hali</th><th>Futa</th>
+          </tr>
+        </thead>
+        <tbody id="invites-tbody">
+          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Active hosts table -->
+    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-top:1.5rem;margin-bottom:.6rem">Hosts waliopo</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Jina</th><th>Email</th><th>Tangu</th><th>Listings</th><th>Hatua</th></tr></thead>
+        <tbody id="hosts-tbody">
+          <tr><td colspan="5" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </body>
 </html>
 ADMINEOF
