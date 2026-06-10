@@ -179,6 +179,68 @@ tr:hover td{background:rgba(255,255,255,.02)}
 @keyframes mIn{from{opacity:0;transform:scale(.92) translateY(30px)}to{opacity:1;transform:none}}
 .mbox h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;margin-bottom:1.2rem}
 .mbox-btns{display:flex;gap:.7rem;margin-top:1.4rem}
+
+/* ── HOST REGISTRATION FORM ── */
+.reg-wrap{display:flex;align-items:flex-start;justify-content:center;padding:3rem 5vw 5rem;min-height:calc(100vh - 64px)}
+.reg-card{width:100%;max-width:680px;background:linear-gradient(160deg,var(--g3),var(--g2));border:.5px solid rgba(255,255,255,.10);border-radius:22px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);animation:cardIn .45s var(--ease) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.reg-hero{background:linear-gradient(135deg,var(--gd),#1e6b3f);padding:2.2rem 2.5rem;position:relative;overflow:hidden}
+.reg-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 70%);pointer-events:none}
+.reg-hero-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.6);margin-bottom:.5rem}
+.reg-hero-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:#fff;line-height:1.2;margin-bottom:.4rem}
+.reg-hero-sub{font-size:.8rem;color:rgba(255,255,255,.65);line-height:1.6}
+.reg-perks{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
+.reg-perk{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.1);border-radius:20px;padding:.3rem .8rem;font-size:.72rem;color:rgba(255,255,255,.85)}
+.reg-body{padding:2rem 2.5rem}
+@media(max-width:600px){.reg-body{padding:1.4rem 1.2rem}.reg-hero{padding:1.6rem 1.4rem}}
+.reg-step{display:none}
+.reg-step.active{display:block;animation:fadeIn .3s var(--ease)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.reg-section-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gm);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(39,166,93,.15)}
+.progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-bottom:2rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gm),#4de88f);border-radius:2px;transition:width .4s var(--ease)}
+.step-label{font-size:.72rem;color:var(--w3);margin-bottom:1.5rem;display:flex;align-items:center;gap:.4rem}
+.step-label span{font-weight:600;color:var(--gm)}
+/* Agreement box */
+.agreement-box{background:rgba(255,255,255,.03);border:.5px solid rgba(255,255,255,.1);border-radius:12px;padding:1.2rem;max-height:200px;overflow-y:auto;font-size:.75rem;color:var(--w3);line-height:1.7;margin-bottom:1rem}
+.agreement-box h4{font-size:.78rem;font-weight:600;color:var(--w2);margin-bottom:.5rem}
+.agreement-box p{margin-bottom:.6rem}
+.check-row{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.8rem}
+.check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--gm);flex-shrink:0;margin-top:.15rem;cursor:pointer}
+.check-row label{font-size:.8rem;color:var(--w2);cursor:pointer;line-height:1.5}
+.reg-nav{display:flex;gap:.8rem;margin-top:1.8rem;align-items:center}
+.reg-nav .back-link{font-size:.8rem;color:var(--w3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:.3rem;transition:color .2s;margin-right:auto}
+.reg-nav .back-link:hover{color:var(--w1)}
+
+/* ── PENDING STATE ── */
+.pending-wrap{display:flex;align-items:center;justify-content:center;padding:3rem 1rem;min-height:calc(100vh - 64px)}
+.pending-card{max-width:520px;width:100%;background:var(--g2);border:1px solid var(--gb);border-radius:22px;padding:2.8rem 2.5rem;text-align:center}
+.pending-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center}
+.pi-pending{background:rgba(244,137,66,.12);border:1px solid rgba(244,137,66,.2)}
+.pi-rejected{background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.2)}
+.pending-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;margin-bottom:.5rem}
+.pending-sub{font-size:.84rem;color:var(--w3);line-height:1.65;margin-bottom:1.5rem}
+.pending-ref{font-size:.7rem;color:var(--w3);background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:8px;padding:.4rem .8rem;display:inline-block;margin-bottom:1.5rem;font-family:monospace}
+.pending-steps{display:flex;flex-direction:column;gap:.6rem;text-align:left;margin-bottom:1.8rem}
+.ps-item{display:flex;align-items:center;gap:.7rem;font-size:.8rem;color:var(--w2);background:rgba(255,255,255,.03);border:1px solid var(--gb);border-radius:10px;padding:.65rem .9rem}
+.ps-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem}
+.psi-done{background:rgba(39,166,93,.15);color:var(--gm)}
+.psi-wait{background:rgba(244,137,66,.12);color:#f4a442}
+.psi-next{background:rgba(255,255,255,.06);color:var(--w3)}
+
+/* ── ADMIN HOSTS TAB ── */
+.host-app-card{background:#fff;border:1px solid var(--gray-border);border-radius:12px;overflow:hidden;transition:box-shadow .2s;margin-bottom:1rem}
+.host-app-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.hac-top{padding:1rem 1.2rem;border-bottom:1px solid var(--gray-bg);display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem}
+.hac-name{font-size:.95rem;font-weight:700;color:var(--text)}
+.hac-email{font-size:.75rem;color:var(--text-light);margin-top:.15rem}
+.hac-body{padding:.9rem 1.2rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.hac-field{font-size:.76rem;color:var(--text-mid)}
+.hac-field strong{color:var(--text);font-weight:600}
+.hac-bio{grid-column:1/-1;background:var(--gray-bg);border-radius:7px;padding:.6rem .8rem;font-size:.75rem;color:var(--text-mid);font-style:italic;line-height:1.55}
+.hac-foot{padding:.85rem 1.2rem;border-top:1px solid var(--gray-bg);display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.hac-contract{font-size:.7rem;color:var(--green-mid);display:flex;align-items:center;gap:.3rem;margin-left:auto;text-decoration:none}
+
 </style>
 </head>
 <body>
@@ -203,19 +265,138 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <a href="index.html" style="background:var(--gm);color:#fff;padding:.75rem 2rem;border-radius:50px;text-decoration:none;font-weight:600;font-size:.85rem">Rudi na uingie</a>
 </div>
 
-<!-- ONBOARDING (not yet a host) -->
-<div style="display:flex;align-items:center;justify-content:center;padding:3rem 1rem" id="onboard-gate" style="display:none">
-  <div class="onboard-card">
-    <div class="onboard-icon">🏡</div>
-    <h2>Kuwa Host wa KaribuStay</h2>
-    <p>Weka nyumba yako kwenye platform yetu na upate wageni kutoka Tanzania na duniani kote.</p>
-    <div class="onboard-benefits">
-      <div class="ob-item"><span class="ob-icon">✅</span><span>Tengeneza listings zako mwenyewe — picha, bei, amenities</span></div>
-      <div class="ob-item"><span class="ob-icon">✅</span><span>Fuatilia bookings na mapato yako</span></div>
-      <div class="ob-item"><span class="ob-icon">✅</span><span>Wasiliana na wageni moja kwa moja</span></div>
-      <div class="ob-item"><span class="ob-icon">✅</span><span>Listing yako inakaguliwa na team yetu kabla haijachapishwa</span></div>
+<!-- PENDING STATE -->
+<div class="pending-wrap" id="pending-gate" style="display:none">
+  <div class="pending-card" id="pending-card-inner">
+    <!-- filled by JS based on host_status -->
+  </div>
+</div>
+
+<!-- REGISTRATION FORM -->
+<div class="reg-wrap" id="onboard-gate" style="display:none">
+  <div class="reg-card">
+    <div class="reg-hero">
+      <div class="reg-hero-tag">KaribuStay Host Programme</div>
+      <h1 class="reg-hero-title">Kuwa Host wa<br/><em style="color:#7de8a0">KaribuStay</em></h1>
+      <p class="reg-hero-sub">Weka mali yako kwenye platform inayoaminika na upate mapato kutoka wageni wa Tanzania na duniani kote.</p>
+      <div class="reg-perks">
+        <div class="reg-perk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Bila ada ya kujiandikisha</div>
+        <div class="reg-perk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dashboard yako ya kibinafsi</div>
+        <div class="reg-perk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ukaguzi ndani ya masaa 24</div>
+        <div class="reg-perk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Msaada wa WhatsApp</div>
+      </div>
     </div>
-    <button class="btn-primary" style="width:100%" onclick="becomeHost()">Nianze kama Host →</button>
+
+    <div class="reg-body">
+      <div class="progress-bar"><div class="progress-fill" id="reg-progress" style="width:33%"></div></div>
+
+      <!-- STEP 1: Personal Info -->
+      <div class="reg-step active" id="reg-step-1">
+        <div class="step-label">Hatua <span>1 / 3</span> — Taarifa Zako</div>
+        <div class="reg-section-title">👤 Maelezo Binafsi</div>
+        <div class="form-row">
+          <div class="fg"><label>Jina Kamili *</label><input type="text" id="rg-name" placeholder="Jina lako kamili"/></div>
+          <div class="fg"><label>Namba ya Simu *</label><input type="tel" id="rg-phone" placeholder="+255 7XX XXX XXX"/></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Mji Unaoishi *</label>
+            <select id="rg-city">
+              <option value="">Chagua mji...</option>
+              <option>Dar es Salaam</option><option>Zanzibar</option><option>Arusha</option>
+              <option>Mwanza</option><option>Moshi</option><option>Dodoma</option><option>Mbeya</option><option>Tanga</option>
+            </select>
+          </div>
+          <div class="fg"><label>Kitaifa</label>
+            <select id="rg-nationality">
+              <option value="Tanzanian">Mtanzania</option>
+              <option value="East African">Afrika Mashariki</option>
+              <option value="Other">Nyingine</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Maelezo Mafupi (Bio) *</label><textarea id="rg-bio" placeholder="Jitambulishe — wewe ni nani, una uzoefu gani na ukarimu, na kwa nini unataka kuwa host..." rows="3"></textarea></div>
+        <div class="reg-nav">
+          <button class="btn-primary" onclick="regNext(1)">Endelea →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Property Info -->
+      <div class="reg-step" id="reg-step-2">
+        <div class="step-label">Hatua <span>2 / 3</span> — Mali Yako</div>
+        <div class="reg-section-title">🏠 Kuhusu Mali Unayotaka Kukodisha</div>
+        <div class="form-row">
+          <div class="fg"><label>Aina ya Mali *</label>
+            <select id="rg-prop-type">
+              <option value="">Chagua aina...</option>
+              <option value="apartment">Apartment</option>
+              <option value="villa">Villa / Nyumba</option>
+              <option value="hotel">Hotel / Guesthouse</option>
+              <option value="short_stay">Short Stay</option>
+              <option value="multiple">Mali Zaidi ya Moja</option>
+            </select>
+          </div>
+          <div class="fg"><label>Eneo la Mali *</label><input type="text" id="rg-prop-location" placeholder="e.g. Masaki, Dar es Salaam"/></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Bei ya Makadirio kwa Usiku (TZS)</label><input type="number" id="rg-prop-price" placeholder="e.g. 150,000"/></div>
+          <div class="fg"><label>Unayo Picha?</label>
+            <select id="rg-has-photos">
+              <option value="yes">Ndiyo, nina picha tayari</option>
+              <option value="need">Nahitaji msaada wa kupiga picha</option>
+              <option value="no">Bado sina</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Elezea Mali Yako (hiari)</label><textarea id="rg-prop-desc" placeholder="Vitu bora vya mali yako, jirani, huduma, n.k." rows="3"></textarea></div>
+        <div class="reg-nav">
+          <button class="back-link" onclick="regBack(2)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Rudi
+          </button>
+          <button class="btn-primary" onclick="regNext(2)">Endelea →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Agreement -->
+      <div class="reg-step" id="reg-step-3">
+        <div class="step-label">Hatua <span>3 / 3</span> — Mkataba wa Host</div>
+        <div class="reg-section-title">📄 Masharti ya Mwenyeji</div>
+        <div class="agreement-box">
+          <h4>Mkataba wa Mwenyeji wa KaribuStay</h4>
+          <p>Kwa kujiandikisha kama Host wa KaribuStay, unakubali masharti yafuatayo:</p>
+          <p><strong>1. Uadilifu wa Listing</strong> — Maelezo yote unayotoa lazima yawe ya kweli na sahihi. Picha lazima ziwakilishe hali halisi ya mali. Uongo wowote unaweza kusababisha kusimamishwa kwa akaunti yako.</p>
+          <p><strong>2. Ubora wa Huduma</strong> — Unakubali kutoa huduma ya hali ya juu kwa wageni wote. Nyumba lazima iwe safi, salama, na kulingana na maelezo yaliyotolewa.</p>
+          <p><strong>3. Michakato ya Malipo</strong> — KaribuStay itashikilia malipo ya booking na kukufikishia ndani ya siku 3 baada ya mgeni kuingia. Ada ya huduma ya KaribuStay ni 10% ya thamani ya booking yoyote.</p>
+          <p><strong>4. Kufuata Sheria</strong> — Unabeba jukumu la kuhakikisha mali yako inakidhi mahitaji yote ya kisheria ya Tanzania, ikiwemo leseni ya biashara inapohitajika, na malipo ya kodi.</p>
+          <p><strong>5. Faragha ya Wageni</strong> — Unakubali kushughulikia taarifa za wageni kwa usiri mkubwa na kuzitumia kwa madhumuni ya booking peke yake.</p>
+          <p><strong>6. Ukaguzi</strong> — KaribuStay inajizuia haki ya kufanya ukaguzi wa mali yako kabla ya kuiidhinisha. Hii inaweza kujumuisha ziara halisi au picha za ziada.</p>
+          <p><strong>7. Kusimamishwa</strong> — KaribuStay inajizuia haki ya kusimamisha au kufuta akaunti yoyote ya Host inayokiuka masharti haya au kupata malalamiko ya mara kwa mara kutoka kwa wageni.</p>
+          <p>Kwa maswali, wasiliana: <strong>hosts@karibustay.co.tz</strong> | WhatsApp: <strong>+255 745 999 918</strong></p>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="rg-agree-terms"/>
+          <label for="rg-agree-terms">Nimesoma na nakubali <strong>Masharti ya Mwenyeji wa KaribuStay</strong> yote yaliyoandikwa hapo juu</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="rg-agree-accurate"/>
+          <label for="rg-agree-accurate">Ninathibitisha kwamba taarifa zote nilizotoa ni za kweli na sahihi</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="rg-agree-18"/>
+          <label for="rg-agree-18">Ninathibitisha kuwa nina umri wa miaka 18 au zaidi</label>
+        </div>
+        <div class="reg-nav">
+          <button class="back-link" onclick="regBack(3)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Rudi
+          </button>
+          <button class="btn-primary" id="reg-submit-btn" onclick="submitHostApp()">
+            <span id="reg-submit-lbl">Wasilisha Maombi →</span>
+          </button>
+        </div>
+        <div id="reg-msg" style="margin-top:.8rem;font-size:.8rem;min-height:1.2rem;color:#f07070"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -458,6 +639,167 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true
 let currentUser = null, hostListings = [], deleteTarget = null;
 let uploadedImages = []; // array of {url, type: 'upload'|'url'}
 
+// ── REGISTRATION STATE ───────────────────
+let regStep = 1;
+
+function regNext(step) {
+  if (step === 1) {
+    const name = document.getElementById('rg-name').value.trim();
+    const phone = document.getElementById('rg-phone').value.trim();
+    const city = document.getElementById('rg-city').value;
+    const bio = document.getElementById('rg-bio').value.trim();
+    if (!name || !phone || !city || bio.length < 20) {
+      showT('⚠️ Jaza sehemu zote (bio angalau maneno 20)');
+      return;
+    }
+  }
+  if (step === 2) {
+    const type = document.getElementById('rg-prop-type').value;
+    const loc = document.getElementById('rg-prop-location').value.trim();
+    if (!type || !loc) { showT('⚠️ Chagua aina ya mali na eneo'); return; }
+  }
+  const next = step + 1;
+  document.getElementById('reg-step-' + step).classList.remove('active');
+  document.getElementById('reg-step-' + next).classList.add('active');
+  regStep = next;
+  const pct = { 2: 66, 3: 100 }[next] || 33;
+  document.getElementById('reg-progress').style.width = pct + '%';
+}
+
+function regBack(step) {
+  const prev = step - 1;
+  document.getElementById('reg-step-' + step).classList.remove('active');
+  document.getElementById('reg-step-' + prev).classList.add('active');
+  regStep = prev;
+  const pct = { 1: 33, 2: 66 }[prev] || 33;
+  document.getElementById('reg-progress').style.width = pct + '%';
+}
+
+async function submitHostApp() {
+  const btn = document.getElementById('reg-submit-btn');
+  const lbl = document.getElementById('reg-submit-lbl');
+  const msg = document.getElementById('reg-msg');
+
+  if (!document.getElementById('rg-agree-terms').checked ||
+      !document.getElementById('rg-agree-accurate').checked ||
+      !document.getElementById('rg-agree-18').checked) {
+    msg.textContent = '⚠️ Tafadhali kubali masharti yote matatu';
+    return;
+  }
+
+  btn.disabled = true;
+  lbl.textContent = 'Inawasilisha...';
+  msg.textContent = '';
+
+  const payload = {
+    user_id: currentUser.id,
+    full_name: document.getElementById('rg-name').value.trim(),
+    phone: document.getElementById('rg-phone').value.trim(),
+    city: document.getElementById('rg-city').value,
+    nationality: document.getElementById('rg-nationality').value,
+    host_bio: document.getElementById('rg-bio').value.trim(),
+    prop_type: document.getElementById('rg-prop-type').value,
+    prop_location: document.getElementById('rg-prop-location').value.trim(),
+    prop_price_estimate: parseInt(document.getElementById('rg-prop-price').value) || null,
+    prop_desc: document.getElementById('rg-prop-desc').value.trim() || null,
+    has_photos: document.getElementById('rg-has-photos').value,
+    host_status: 'pending',
+    role: 'guest',
+    applied_at: new Date().toISOString(),
+    agreed_terms: true,
+  };
+
+  const { error } = await db.from('profiles').upsert(payload, { onConflict: 'user_id' });
+
+  if (error) {
+    msg.textContent = '❌ ' + error.message;
+    btn.disabled = false;
+    lbl.textContent = 'Wasilisha Maombi →';
+    return;
+  }
+
+  // Show pending state
+  document.getElementById('onboard-gate').style.display = 'none';
+  showPendingState('pending', null);
+}
+
+function showPendingState(status, rejectionNote) {
+  const wrap = document.getElementById('pending-gate');
+  const card = document.getElementById('pending-card-inner');
+  wrap.style.display = 'flex';
+
+  if (status === 'pending') {
+    card.innerHTML = `
+      <div class="pending-icon pi-pending">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#f4a442" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="pending-title" style="color:#f4a442">Maombi Yako Yamepokelewa</div>
+      <p class="pending-sub">Asante kwa kuwasilisha maombi ya kuwa Host wa KaribuStay. Timu yetu itakagua taarifa zako na kukujibu ndani ya masaa 24.</p>
+      <div class="pending-ref">Ref: KS-HOST-${currentUser.id.slice(0,8).toUpperCase()}</div>
+      <div class="pending-steps">
+        <div class="ps-item">
+          <div class="ps-icon psi-done">✓</div>
+          <span>Maombi yako yamepokelewa</span>
+        </div>
+        <div class="ps-item">
+          <div class="ps-icon psi-wait">⏳</div>
+          <span>Timu inakagua taarifa zako</span>
+        </div>
+        <div class="ps-item">
+          <div class="ps-icon psi-next" style="font-size:.9rem">📧</div>
+          <span>Utapokea ujumbe wa email/WhatsApp ukithibitishwa</span>
+        </div>
+        <div class="ps-item">
+          <div class="ps-icon psi-next" style="font-size:.9rem">🏠</div>
+          <span>Dashboard yako ya Host itafunguliwa</span>
+        </div>
+      </div>
+      <a href="https://wa.me/255745999918?text=Habari! Nimefanya maombi ya kuwa Host (Ref: KS-HOST-${currentUser.id.slice(0,8).toUpperCase()})" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.5rem;background:#25D366;color:#fff;border-radius:10px;padding:.8rem 1.5rem;text-decoration:none;font-weight:600;font-size:.85rem;margin-bottom:1rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>
+        Wasiliana kupitia WhatsApp
+      </a>
+      <a href="index.html" style="font-size:.8rem;color:var(--w3);text-decoration:none">← Rudi nyumbani</a>
+    `;
+  } else if (status === 'rejected') {
+    card.innerHTML = `
+      <div class="pending-icon pi-rejected">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <div class="pending-title" style="color:#ef9090">Maombi Hayakuidhinishwa</div>
+      <p class="pending-sub">Samahani, maombi yako hayakupita ukaguzi kwa sababu zifuatazo:</p>
+      ${rejectionNote ? `<div class="rejection-note" style="margin-bottom:1.5rem;text-align:left">📝 ${esc(rejectionNote)}</div>` : ''}
+      <a href="https://wa.me/255745999918?text=Habari! Nataka kujua zaidi kuhusu maombi yangu ya Host yaliyokataliwa (Ref: KS-HOST-${currentUser.id.slice(0,8).toUpperCase()})" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.5rem;background:#25D366;color:#fff;border-radius:10px;padding:.8rem 1.5rem;text-decoration:none;font-weight:600;font-size:.85rem;margin-bottom:.8rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>
+        Wasiliana Nasi
+      </a>
+      <button onclick="resetHostApp()" style="background:rgba(255,255,255,.06);color:var(--w2);border:1px solid var(--gb);border-radius:10px;padding:.75rem 1.5rem;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;width:100%;margin-bottom:.8rem">Jaribu Tena</button>
+      <a href="index.html" style="font-size:.8rem;color:var(--w3);text-decoration:none">← Rudi nyumbani</a>
+    `;
+  }
+}
+
+function resetHostApp() {
+  document.getElementById('pending-gate').style.display = 'none';
+  document.getElementById('onboard-gate').style.display = 'flex';
+  // Reset form
+  ['rg-name','rg-phone','rg-bio','rg-prop-location','rg-prop-price','rg-prop-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['rg-city','rg-nationality','rg-prop-type','rg-has-photos'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.selectedIndex = 0;
+  });
+  ['rg-agree-terms','rg-agree-accurate','rg-agree-18'].forEach(id => {
+    document.getElementById(id).checked = false;
+  });
+  // Go back to step 1
+  document.querySelectorAll('.reg-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('reg-step-1').classList.add('active');
+  regStep = 1;
+  document.getElementById('reg-progress').style.width = '33%';
+}
+
 // ── INIT ──────────────────────────────
 async function init(){
   const { data:{ user } } = await db.auth.getUser();
@@ -468,35 +810,37 @@ async function init(){
   currentUser = user;
   document.getElementById('nav-user-name').textContent = user.email;
 
-  // Check role
-  const { data: profile } = await db.from('profiles').select('role,full_name,host_bio').eq('user_id', user.id).maybeSingle();
+  // Check role & host_status
+  const { data: profile } = await db.from('profiles')
+    .select('role,full_name,host_bio,host_status,rejection_note')
+    .eq('user_id', user.id).maybeSingle();
+
   const role = profile?.role || 'guest';
+  const hostStatus = profile?.host_status;
   const name = profile?.full_name || user.email.split('@')[0];
 
-  if(role !== 'host' && role !== 'admin'){
-    document.getElementById('onboard-gate').style.display='flex';
+  // Show correct state
+  if (role === 'host' || role === 'admin') {
+    // Approved — show dashboard
+    document.getElementById('dashboard').style.display='grid';
+    document.getElementById('host-first-name').textContent = name.split(' ')[0];
+    document.getElementById('nav-user-name').textContent = name;
+    await Promise.all([loadListings(), loadBookings()]);
     return;
   }
 
-  // Show dashboard
-  document.getElementById('dashboard').style.display='grid';
-  document.getElementById('host-first-name').textContent = name.split(' ')[0];
-  document.getElementById('nav-user-name').textContent = name;
+  if (hostStatus === 'pending') {
+    showPendingState('pending', null);
+    return;
+  }
 
-  await Promise.all([loadListings(), loadBookings()]);
-}
+  if (hostStatus === 'rejected') {
+    showPendingState('rejected', profile?.rejection_note);
+    return;
+  }
 
-// ── BECOME HOST ───────────────────────
-async function becomeHost(){
-  const btn = event.target;
-  btn.disabled=true; btn.textContent='Inasajili...';
-  const { error } = await db.from('profiles').upsert(
-    { user_id: currentUser.id, role: 'host', host_since: new Date().toISOString() },
-    { onConflict: 'user_id' }
-  );
-  if(error){ showT('❌ '+error.message); btn.disabled=false; btn.textContent='Nianze kama Host →'; return; }
-  showT('✅ Karibu! Dashboard inapakia...');
-  setTimeout(()=>location.reload(), 1200);
+  // No application yet — show registration form
+  document.getElementById('onboard-gate').style.display='flex';
 }
 
 // ── LOAD LISTINGS ─────────────────────
