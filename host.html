@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Host Dashboard – KaribuStay</title>
+<meta name="description" content="Manage your listings, bookings and earnings on KaribuStay."/>
+<link rel="icon" type="image/png" href="logo3.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --gm:#27A65D;--gd:#1A5C3A;--g0:#030b06;--g1:#050e08;--g2:#0a1a0f;--g3:#0f2518;
+  --gb:rgba(255,255,255,.08);--gb2:rgba(255,255,255,.04);
+  --w1:rgba(255,255,255,.92);--w2:rgba(255,255,255,.60);--w3:rgba(255,255,255,.30);
+  --am:#F48942;--red:#ef5350;--blue:#2979ff;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--g0);color:var(--w1);min-height:100vh}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:64px;background:rgba(3,11,6,.95);border-bottom:1px solid var(--gb);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.nl img{height:36px;filter:brightness(0) invert(1)}
+.nav-right{display:flex;align-items:center;gap:.8rem}
+.nav-tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gm);background:rgba(39,166,93,.12);border:1px solid rgba(39,166,93,.2);padding:.25rem .7rem;border-radius:20px}
+.nav-user{font-size:.82rem;color:var(--w2)}
+.nav-back{font-size:.78rem;color:var(--w3);text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:color .2s}
+.nav-back:hover{color:var(--gm)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}}
+
+/* ── SIDEBAR ── */
+.sidebar{background:rgba(5,14,8,.8);border-right:1px solid var(--gb);padding:1.5rem 0;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+@media(max-width:768px){.sidebar{display:none}}
+.sb-section{margin-bottom:.5rem}
+.sb-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w3);padding:.4rem 1.4rem;margin-bottom:.2rem}
+.sb-btn{display:flex;align-items:center;gap:.65rem;width:100%;background:none;border:none;padding:.65rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--w2);cursor:pointer;transition:all .18s;text-align:left;border-left:2px solid transparent}
+.sb-btn:hover{background:rgba(255,255,255,.04);color:var(--w1)}
+.sb-btn.active{background:rgba(39,166,93,.1);color:var(--gm);border-left-color:var(--gm);font-weight:600}
+.sb-btn svg{flex-shrink:0;opacity:.7}
+.sb-btn.active svg{opacity:1}
+.sb-badge{margin-left:auto;background:var(--am);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:10px}
+
+/* ── MAIN ── */
+.main{padding:2rem 2.5rem;overflow-y:auto}
+@media(max-width:600px){.main{padding:1rem}}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:1.8rem}
+.ph-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gm);margin-bottom:.4rem}
+.ph-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;line-height:1.2}
+.ph-sub{font-size:.8rem;color:var(--w3);margin-top:.3rem}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── STATS GRID ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--g2);border:1px solid var(--gb);border-radius:var(--r);padding:1.1rem 1.2rem}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--w1);line-height:1}
+.stat-lbl{font-size:.72rem;color:var(--w3);margin-top:.3rem}
+.stat-card.green .stat-val{color:var(--gm)}
+.stat-card.amber .stat-val{color:var(--am)}
+
+/* ── LISTING CARDS ── */
+.listings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem}
+.lcard{background:var(--g2);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.lcard:hover{border-color:rgba(255,255,255,.15)}
+.lcard-img{height:160px;background:linear-gradient(135deg,var(--g3),var(--g2));position:relative;overflow:hidden}
+.lcard-img img{width:100%;height:100%;object-fit:cover}
+.lcard-status{position:absolute;top:.6rem;left:.6rem;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.22rem .65rem;border-radius:20px}
+.ls-approved{background:rgba(39,166,93,.2);color:#27a65d;border:1px solid rgba(39,166,93,.3)}
+.ls-pending{background:rgba(244,137,66,.15);color:#f4a442;border:1px solid rgba(244,137,66,.25)}
+.ls-rejected{background:rgba(239,83,80,.12);color:#ef5350;border:1px solid rgba(239,83,80,.2)}
+.lcard-body{padding:1rem 1.1rem}
+.lcard-name{font-size:.92rem;font-weight:600;color:var(--w1);margin-bottom:.25rem}
+.lcard-loc{font-size:.73rem;color:var(--w3);margin-bottom:.6rem}
+.lcard-price{font-size:.85rem;color:var(--gm);font-weight:600}
+.lcard-actions{display:flex;gap:.5rem;padding:.75rem 1.1rem;border-top:1px solid var(--gb)}
+.btn-sm{font-size:.74rem;font-weight:500;padding:.38rem .85rem;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .18s}
+.btn-edit{background:rgba(255,255,255,.07);color:var(--w2);border:1px solid var(--gb)}
+.btn-edit:hover{background:rgba(255,255,255,.12);color:var(--w1)}
+.btn-del{background:rgba(239,83,80,.1);color:var(--red);border:1px solid rgba(239,83,80,.2)}
+.btn-del:hover{background:rgba(239,83,80,.2)}
+.btn-view{background:rgba(39,166,93,.1);color:var(--gm);border:1px solid rgba(39,166,93,.2)}
+.btn-view:hover{background:rgba(39,166,93,.18)}
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--w3)}
+.empty-state h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;margin:.8rem 0 .5rem;color:var(--w2)}
+
+/* ── FORM ── */
+.form-card{background:var(--g2);border:1px solid var(--gb);border-radius:var(--r);padding:1.8rem 2rem;max-width:740px}
+@media(max-width:600px){.form-card{padding:1.2rem}}
+.form-section{margin-bottom:1.6rem}
+.form-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gm);margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:1px solid rgba(39,166,93,.15)}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.7rem;color:var(--w3);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.07em;transition:color .2s}
+.fg:focus-within label{color:var(--gm)}
+.fg input,.fg textarea,.fg select{
+  width:100%;background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:.72rem 1rem;color:var(--w1);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gm);background:rgba(39,166,93,.04);box-shadow:0 0 0 3px rgba(39,166,93,.1)}
+.fg textarea{resize:vertical;min-height:90px}
+.fg select option{background:#0a1a0f}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(255,255,255,.2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+.amenity-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.3rem}
+.am-chip{display:flex;align-items:center;gap:.3rem;cursor:pointer}
+.am-chip input{display:none}
+.am-label{font-size:.75rem;padding:.3rem .8rem;border-radius:20px;border:.5px solid rgba(255,255,255,.12);color:var(--w3);background:rgba(255,255,255,.04);transition:all .18s;cursor:pointer;user-select:none}
+.am-chip input:checked + .am-label{background:rgba(39,166,93,.15);border-color:rgba(39,166,93,.4);color:var(--gm)}
+
+/* Image upload area */
+.img-upload-area{border:1.5px dashed rgba(255,255,255,.15);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.02)}
+.img-upload-area:hover{border-color:rgba(39,166,93,.4);background:rgba(39,166,93,.04)}
+.img-upload-area input{display:none}
+.img-preview{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.8rem}
+.img-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden}
+.img-thumb img{width:100%;height:100%;object-fit:cover}
+.img-thumb-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.img-url-row{display:flex;gap:.5rem;margin-top:.5rem}
+.img-url-row input{flex:1}
+.img-url-row button{background:rgba(39,166,93,.15);color:var(--gm);border:1px solid rgba(39,166,93,.25);border-radius:8px;padding:.5rem .9rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* Primary button */
+.btn-primary{background:linear-gradient(135deg,#1db954,var(--gm));color:#fff;border:none;border-radius:10px;padding:.82rem 2rem;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(39,166,93,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(39,166,93,.4);filter:brightness(1.07)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--w2);border:1px solid var(--gb);border-radius:10px;padding:.78rem 1.6rem;font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+
+/* ── BOOKINGS TABLE ── */
+.table-wrap{background:var(--g2);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden;margin-top:1rem}
+table{width:100%;border-collapse:collapse}
+th{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--w3);padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--gb);white-space:nowrap}
+td{font-size:.8rem;color:var(--w2);padding:.8rem 1rem;border-bottom:.5px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.status-pill{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .6rem;border-radius:20px}
+.sp-pending{background:rgba(244,137,66,.12);color:#f4a442}
+.sp-confirmed{background:rgba(39,166,93,.12);color:#27a65d}
+.sp-cancelled{background:rgba(239,83,80,.1);color:#ef5350}
+.sp-completed{background:rgba(100,200,150,.1);color:#64c896}
+@media(max-width:600px){.table-wrap{overflow-x:auto}}
+
+/* ── BECOME HOST (onboarding) ── */
+.onboard-card{max-width:560px;background:var(--g2);border:1px solid var(--gb);border-radius:20px;padding:2.2rem;text-align:center}
+.onboard-icon{font-size:3rem;margin-bottom:1rem}
+.onboard-card h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:.5rem}
+.onboard-card p{font-size:.85rem;color:var(--w3);line-height:1.7;margin-bottom:1.5rem}
+.onboard-benefits{display:flex;flex-direction:column;gap:.6rem;text-align:left;margin-bottom:1.8rem}
+.ob-item{display:flex;align-items:flex-start;gap:.7rem;font-size:.82rem;color:var(--w2)}
+.ob-icon{color:var(--gm);flex-shrink:0;margin-top:.1rem}
+
+/* ── REJECTION NOTE ── */
+.rejection-note{background:rgba(239,83,80,.07);border:1px solid rgba(239,83,80,.2);border-radius:10px;padding:.7rem 1rem;font-size:.78rem;color:#ef9090;margin-top:.5rem;line-height:1.5}
+
+/* ── AUTH GATE ── */
+.auth-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:2rem}
+.auth-gate h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:.5rem}
+.auth-gate p{font-size:.84rem;color:var(--w3);margin-bottom:1.5rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(5,14,8,.96);border:1px solid rgba(39,166,93,.25);backdrop-filter:blur(20px);color:var(--w1);padding:.85rem 1.8rem;border-radius:50px;font-size:.82rem;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transition:transform .4s var(--ease),opacity .4s;z-index:300;white-space:nowrap}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ── MOV (modal overlay) ── */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s}
+.mov.open{opacity:1;pointer-events:all}
+.mbox{background:linear-gradient(145deg,var(--g3),var(--g2));border:1px solid var(--gb);border-radius:20px;width:100%;max-width:480px;padding:1.8rem 2rem;animation:mIn .3s var(--ease) both;max-height:90vh;overflow-y:auto}
+@keyframes mIn{from{opacity:0;transform:scale(.92) translateY(30px)}to{opacity:1;transform:none}}
+.mbox h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;margin-bottom:1.2rem}
+.mbox-btns{display:flex;gap:.7rem;margin-top:1.4rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nl"><img src="logo2.png" alt="KaribuStay"/></a>
+  <div class="nav-right">
+    <span class="nav-tag">🏠 Host</span>
+    <span class="nav-user" id="nav-user-name">—</span>
+    <a href="index.html" class="nav-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Nyumbani
+    </a>
+  </div>
+</nav>
+
+<!-- AUTH GATE -->
+<div class="auth-gate" id="auth-gate" style="display:none">
+  <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+  <h2>Ingia kwanza</h2>
+  <p>Unahitaji account ili kutumia Host Dashboard</p>
+  <a href="index.html" style="background:var(--gm);color:#fff;padding:.75rem 2rem;border-radius:50px;text-decoration:none;font-weight:600;font-size:.85rem">Rudi na uingie</a>
+</div>
+
+<!-- ONBOARDING (not yet a host) -->
+<div style="display:flex;align-items:center;justify-content:center;padding:3rem 1rem" id="onboard-gate" style="display:none">
+  <div class="onboard-card">
+    <div class="onboard-icon">🏡</div>
+    <h2>Kuwa Host wa KaribuStay</h2>
+    <p>Weka nyumba yako kwenye platform yetu na upate wageni kutoka Tanzania na duniani kote.</p>
+    <div class="onboard-benefits">
+      <div class="ob-item"><span class="ob-icon">✅</span><span>Tengeneza listings zako mwenyewe — picha, bei, amenities</span></div>
+      <div class="ob-item"><span class="ob-icon">✅</span><span>Fuatilia bookings na mapato yako</span></div>
+      <div class="ob-item"><span class="ob-icon">✅</span><span>Wasiliana na wageni moja kwa moja</span></div>
+      <div class="ob-item"><span class="ob-icon">✅</span><span>Listing yako inakaguliwa na team yetu kabla haijachapishwa</span></div>
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="becomeHost()">Nianze kama Host →</button>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div class="layout" id="dashboard" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Dashibodi</div>
+      <button class="sb-btn active" onclick="showPage('overview')" id="sb-overview">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Muhtasari
+      </button>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Listings</div>
+      <button class="sb-btn" onclick="showPage('listings')" id="sb-listings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Listings zangu
+        <span class="sb-badge" id="sb-pending-count" style="display:none">0</span>
+      </button>
+      <button class="sb-btn" onclick="showPage('add-listing')" id="sb-add-listing">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Ongeza listing
+      </button>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Biashara</div>
+      <button class="sb-btn" onclick="showPage('bookings')" id="sb-bookings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Bookings
+        <span class="sb-badge" id="sb-bookings-count" style="display:none">0</span>
+      </button>
+      <button class="sb-btn" onclick="showPage('earnings')" id="sb-earnings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Mapato
+      </button>
+    </div>
+    <div class="sb-section" style="margin-top:auto;padding-top:1rem">
+      <button class="sb-btn" onclick="window.location.href='profile.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Wasifu wangu
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="ph">
+        <div class="ph-tag">Dashibodi</div>
+        <h1 class="ph-title">Habari, <span id="host-first-name">Host</span>! 👋</h1>
+        <p class="ph-sub" id="overview-sub">Hivi ndivyo biashara yako inavyokwenda</p>
+      </div>
+      <div class="stats" id="stats-grid">
+        <div class="stat-card"><div class="stat-val" id="st-listings">—</div><div class="stat-lbl">Listings zote</div></div>
+        <div class="stat-card green"><div class="stat-val" id="st-approved">—</div><div class="stat-lbl">Zimeidhinishwa</div></div>
+        <div class="stat-card amber"><div class="stat-val" id="st-pending">—</div><div class="stat-lbl">Zinasubiri ukaguzi</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-bookings">—</div><div class="stat-lbl">Bookings (mwezi)</div></div>
+        <div class="stat-card green"><div class="stat-val" id="st-earnings">—</div><div class="stat-lbl">Mapato (mwezi)</div></div>
+      </div>
+
+      <!-- Recent bookings -->
+      <h3 style="font-size:.88rem;font-weight:600;color:var(--w2);margin-bottom:.8rem">Bookings za hivi karibuni</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mgeni</th><th>Listing</th><th>Tarehe</th><th>Jumla</th><th>Hali</th></tr></thead>
+          <tbody id="recent-bookings-body"><tr><td colspan="5" style="text-align:center;color:var(--w3);padding:2rem">Inapakia...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MY LISTINGS -->
+    <div class="page" id="page-listings">
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div class="ph-tag">Listings</div>
+          <h1 class="ph-title">Listings zangu</h1>
+        </div>
+        <button class="btn-primary" onclick="showPage('add-listing')" style="align-self:flex-end">+ Ongeza listing</button>
+      </div>
+      <div class="listings-grid" id="my-listings-grid">
+        <div style="grid-column:1/-1;text-align:center;color:var(--w3);padding:3rem">Inapakia...</div>
+      </div>
+    </div>
+
+    <!-- ADD / EDIT LISTING -->
+    <div class="page" id="page-add-listing">
+      <div class="ph">
+        <div class="ph-tag" id="form-tag">Ongeza Listing</div>
+        <h1 class="ph-title" id="form-title">Listing mpya</h1>
+        <p class="ph-sub">Jaza maelezo yote — itakaguliwa na team yetu ndani ya masaa 24</p>
+      </div>
+      <div class="form-card">
+        <input type="hidden" id="edit-id"/>
+
+        <div class="form-section">
+          <div class="form-section-title">📍 Maelezo ya Msingi</div>
+          <div class="fg"><label>Jina la Listing *</label><input type="text" id="f-name" placeholder="e.g. Luxury Apartment in Masaki"/></div>
+          <div class="form-row">
+            <div class="fg"><label>Aina *</label>
+              <select id="f-type">
+                <option value="apartment">Apartment</option>
+                <option value="hotel">Hotel</option>
+                <option value="short_stay">Short Stay</option>
+                <option value="villa">Villa</option>
+                <option value="guesthouse">Guesthouse</option>
+              </select>
+            </div>
+            <div class="fg"><label>Bei kwa Usiku (TZS) *</label><input type="number" id="f-price" placeholder="e.g. 150000"/></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Mji / City *</label>
+              <select id="f-city">
+                <option value="Dar es Salaam">Dar es Salaam</option>
+                <option value="Zanzibar">Zanzibar</option>
+                <option value="Arusha">Arusha</option>
+                <option value="Mwanza">Mwanza</option>
+                <option value="Moshi">Moshi</option>
+                <option value="Dodoma">Dodoma</option>
+              </select>
+            </div>
+            <div class="fg"><label>Mtaa / Area</label><input type="text" id="f-location" placeholder="e.g. Masaki, Dar es Salaam"/></div>
+          </div>
+          <div class="fg"><label>Maelezo *</label><textarea id="f-desc" placeholder="Elezea nyumba yako — vitu bora, jirani, na zaidi..."></textarea></div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">🏠 Uwezo & Amenities</div>
+          <div class="form-row">
+            <div class="fg"><label>Vyumba vya Kulala</label><input type="number" id="f-beds" placeholder="e.g. 2" min="1"/></div>
+            <div class="fg"><label>Bafuni</label><input type="number" id="f-baths" placeholder="e.g. 1" min="1"/></div>
+          </div>
+          <div class="fg">
+            <label>Huduma (Amenities)</label>
+            <div class="amenity-grid">
+              <label class="am-chip"><input type="checkbox" id="am-wifi" value="wifi"><span class="am-label">📶 WiFi</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-pool" value="pool"><span class="am-label">🏊 Pool</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-parking" value="parking"><span class="am-label">🚗 Parking</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-ac" value="ac"><span class="am-label">❄️ AC</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-gym" value="gym"><span class="am-label">💪 Gym</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-kitchen" value="kitchen"><span class="am-label">🍳 Kitchen</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-tv" value="tv"><span class="am-label">📺 TV</span></label>
+              <label class="am-chip"><input type="checkbox" id="am-security" value="security"><span class="am-label">🔒 Security</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">📸 Picha</div>
+          <!-- Upload -->
+          <div class="img-upload-area" onclick="document.getElementById('img-file-input').click()">
+            <input type="file" id="img-file-input" accept="image/*" multiple onchange="handleImgUpload(this)"/>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5" style="margin-bottom:.5rem"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p style="font-size:.8rem;color:var(--w3)">Bonyeza kupakia picha <span style="color:var(--gm)">(max 5MB kila moja)</span></p>
+          </div>
+          <!-- URL fallback -->
+          <div style="margin-top:.7rem">
+            <p style="font-size:.72rem;color:var(--w3);margin-bottom:.4rem">Au weka URL ya picha:</p>
+            <div class="img-url-row">
+              <input type="url" id="img-url-input" placeholder="https://..."/>
+              <button onclick="addImgUrl()">+ Ongeza</button>
+            </div>
+          </div>
+          <div class="img-preview" id="img-preview"></div>
+          <input type="hidden" id="f-images" value="[]"/>
+        </div>
+
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+          <button class="btn-primary" id="submit-listing-btn" onclick="submitListing()">
+            <span id="submit-listing-lbl">Wasilisha kwa Ukaguzi</span>
+          </button>
+          <button class="btn-secondary" onclick="resetForm();showPage('listings')">Ghairi</button>
+        </div>
+        <p style="font-size:.74rem;color:var(--w3);margin-top:.8rem">⏳ Listing yako itakaguliwa ndani ya masaa 24 kabla haijawekwa.</p>
+        <div id="form-msg" style="margin-top:.7rem;font-size:.8rem;min-height:1.2rem"></div>
+      </div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div class="page" id="page-bookings">
+      <div class="ph">
+        <div class="ph-tag">Biashara</div>
+        <h1 class="ph-title">Bookings za Wageni</h1>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mgeni</th><th>Listing</th><th>Check-in</th><th>Check-out</th><th>Jumla</th><th>Hali</th></tr></thead>
+          <tbody id="host-bookings-body"><tr><td colspan="6" style="text-align:center;color:var(--w3);padding:2rem">Inapakia...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EARNINGS -->
+    <div class="page" id="page-earnings">
+      <div class="ph">
+        <div class="ph-tag">Mapato</div>
+        <h1 class="ph-title">Mapato Yangu</h1>
+      </div>
+      <div class="stats">
+        <div class="stat-card green"><div class="stat-val" id="earn-total">—</div><div class="stat-lbl">Jumla (mwaka)</div></div>
+        <div class="stat-card"><div class="stat-val" id="earn-month">—</div><div class="stat-lbl">Mwezi huu</div></div>
+        <div class="stat-card"><div class="stat-val" id="earn-bookings">—</div><div class="stat-lbl">Bookings (mwaka)</div></div>
+      </div>
+      <div class="table-wrap" style="margin-top:.5rem">
+        <table>
+          <thead><tr><th>Listing</th><th>Mgeni</th><th>Tarehe</th><th>Usiku</th><th>Mapato</th></tr></thead>
+          <tbody id="earnings-body"><tr><td colspan="5" style="text-align:center;color:var(--w3);padding:2rem">Inapakia...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="mov" id="del-modal">
+  <div class="mbox">
+    <h3>Futa Listing?</h3>
+    <p style="font-size:.83rem;color:var(--w2);margin-bottom:1rem">Listing hii itafutwa kabisa. Bookings zilizopo hazitaathiriwa.</p>
+    <div id="del-listing-name" style="font-weight:600;color:var(--w1);margin-bottom:1.2rem"></div>
+    <div class="mbox-btns">
+      <button class="btn-secondary" onclick="closeDelModal()" style="flex:1">Acha</button>
+      <button style="flex:1;background:rgba(239,83,80,.15);color:var(--red);border:1px solid rgba(239,83,80,.3);border-radius:10px;padding:.8rem;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer" id="del-confirm-btn" onclick="confirmDelete()">Ndiyo, Futa</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
+
+let currentUser = null, hostListings = [], deleteTarget = null;
+let uploadedImages = []; // array of {url, type: 'upload'|'url'}
+
+// ── INIT ──────────────────────────────
+async function init(){
+  const { data:{ user } } = await db.auth.getUser();
+  if(!user){
+    document.getElementById('auth-gate').style.display='flex';
+    return;
+  }
+  currentUser = user;
+  document.getElementById('nav-user-name').textContent = user.email;
+
+  // Check role
+  const { data: profile } = await db.from('profiles').select('role,full_name,host_bio').eq('user_id', user.id).maybeSingle();
+  const role = profile?.role || 'guest';
+  const name = profile?.full_name || user.email.split('@')[0];
+
+  if(role !== 'host' && role !== 'admin'){
+    document.getElementById('onboard-gate').style.display='flex';
+    return;
+  }
+
+  // Show dashboard
+  document.getElementById('dashboard').style.display='grid';
+  document.getElementById('host-first-name').textContent = name.split(' ')[0];
+  document.getElementById('nav-user-name').textContent = name;
+
+  await Promise.all([loadListings(), loadBookings()]);
+}
+
+// ── BECOME HOST ───────────────────────
+async function becomeHost(){
+  const btn = event.target;
+  btn.disabled=true; btn.textContent='Inasajili...';
+  const { error } = await db.from('profiles').upsert(
+    { user_id: currentUser.id, role: 'host', host_since: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  if(error){ showT('❌ '+error.message); btn.disabled=false; btn.textContent='Nianze kama Host →'; return; }
+  showT('✅ Karibu! Dashboard inapakia...');
+  setTimeout(()=>location.reload(), 1200);
+}
+
+// ── LOAD LISTINGS ─────────────────────
+async function loadListings(){
+  const { data, error } = await db.from('listings').select('*').eq('host_id', currentUser.id).order('created_at',{ascending:false});
+  hostListings = data||[];
+  renderListings();
+  renderStats();
+}
+
+function renderListings(){
+  const grid = document.getElementById('my-listings-grid');
+  if(!hostListings.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div style="font-size:2.5rem">🏡</div><h3>Bado huna listings</h3><p style="font-size:.82rem">Ongeza listing yako ya kwanza!</p><button class="btn-primary" onclick="showPage('add-listing')" style="margin-top:1rem">+ Ongeza sasa</button></div>`;
+    return;
+  }
+  grid.innerHTML = hostListings.map(p=>{
+    const imgs = p.images||[];
+    const firstImg = Array.isArray(imgs)&&imgs.length ? imgs[0] : null;
+    const statusClass = {approved:'ls-approved',pending:'ls-pending',rejected:'ls-rejected'}[p.status]||'ls-pending';
+    const statusLabel = {approved:'✅ Imeidhinishwa',pending:'⏳ Inasubiri',rejected:'❌ Imekataliwa'}[p.status]||'⏳ Inasubiri';
+    return `<div class="lcard">
+      <div class="lcard-img">
+        ${firstImg?`<img src="${esc(firstImg)}" alt="${esc(p.name)}" onerror="this.style.display='none'">`:''}
+        <span class="lcard-status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-name">${esc(p.name)}</div>
+        <div class="lcard-loc">📍 ${esc(p.location||p.city||'')}</div>
+        <div class="lcard-price">TZS ${Number(p.price||0).toLocaleString()} / usiku</div>
+        ${p.status==='rejected'&&p.rejection_reason?`<div class="rejection-note">❌ Sababu: ${esc(p.rejection_reason)}</div>`:''}
+      </div>
+      <div class="lcard-actions">
+        <button class="btn-sm btn-edit" onclick="editListing('${p.id}')">✏️ Hariri</button>
+        <button class="btn-sm btn-del" onclick="openDelModal('${p.id}')">🗑️ Futa</button>
+        ${p.status==='approved'?`<a href="property.html?id=${p.id}" class="btn-sm btn-view" target="_blank">👁️ Tazama</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Update pending badge
+  const pending = hostListings.filter(p=>p.status==='pending').length;
+  const badge = document.getElementById('sb-pending-count');
+  badge.textContent=pending; badge.style.display=pending?'inline':'none';
+}
+
+function renderStats(){
+  const approved=hostListings.filter(p=>p.status==='approved').length;
+  const pending=hostListings.filter(p=>p.status==='pending').length;
+  document.getElementById('st-listings').textContent=hostListings.length;
+  document.getElementById('st-approved').textContent=approved;
+  document.getElementById('st-pending').textContent=pending;
+}
+
+// ── LOAD BOOKINGS ─────────────────────
+async function loadBookings(){
+  const listingIds = hostListings.map(p=>p.id);
+  if(!listingIds.length){
+    ['recent-bookings-body','host-bookings-body','earnings-body'].forEach(id=>{
+      document.getElementById(id).innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--w3);padding:1.5rem">Hakuna listings bado</td></tr>`;
+    });
+    ['st-bookings','st-earnings','earn-total','earn-month','earn-bookings'].forEach(id=>document.getElementById(id).textContent='0');
+    return;
+  }
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  const { data: bookings } = await db.from('bookings')
+    .select('*, listings(name)')
+    .in('listing_id', listingIds)
+    .neq('status','cancelled')
+    .order('created_at',{ascending:false});
+
+  const all = bookings||[];
+
+  // Stats
+  const monthBookings = all.filter(b=>b.created_at>=startOfMonth);
+  const monthEarnings = monthBookings.reduce((s,b)=>s+Number(b.total_amount||0),0);
+  const totalEarnings = all.filter(b=>b.status==='confirmed'||b.status==='completed').reduce((s,b)=>s+Number(b.total_amount||0),0);
+  const yearEarnings = all.filter(b=>new Date(b.created_at).getFullYear()===now.getFullYear()).reduce((s,b)=>s+Number(b.total_amount||0),0);
+
+  document.getElementById('st-bookings').textContent=monthBookings.length;
+  document.getElementById('st-earnings').textContent='TZS '+monthEarnings.toLocaleString();
+  document.getElementById('earn-total').textContent='TZS '+yearEarnings.toLocaleString();
+  document.getElementById('earn-month').textContent='TZS '+monthEarnings.toLocaleString();
+  document.getElementById('earn-bookings').textContent=all.length;
+
+  const sbk = document.getElementById('sb-bookings-count');
+  const upcoming = all.filter(b=>b.checkin&&b.checkin>=new Date().toISOString().split('T')[0]).length;
+  sbk.textContent=upcoming; sbk.style.display=upcoming?'inline':'none';
+
+  // Recent bookings (overview)
+  document.getElementById('recent-bookings-body').innerHTML = all.slice(0,5).map(b=>bkRow(b,false)).join('') || noRows(5);
+  // All bookings
+  document.getElementById('host-bookings-body').innerHTML = all.map(b=>bkRow(b,true)).join('') || noRows(6);
+  // Earnings table
+  const confirmed = all.filter(b=>b.status==='confirmed'||b.status==='completed');
+  document.getElementById('earnings-body').innerHTML = confirmed.map(b=>{
+    const nights = b.checkin&&b.checkout ? Math.round((new Date(b.checkout)-new Date(b.checkin))/86400000) : '—';
+    return `<tr><td>${esc(b.listings?.name||'—')}</td><td>${esc(b.guest_name||'—')}</td><td>${fmtD(b.checkin)}</td><td>${nights}</td><td style="color:var(--gm);font-weight:600">TZS ${Number(b.total_amount||0).toLocaleString()}</td></tr>`;
+  }).join('') || noRows(5);
+}
+
+function bkRow(b, full){
+  const sp={pending:'sp-pending',confirmed:'sp-confirmed',cancelled:'sp-cancelled',completed:'sp-completed'};
+  const sl={pending:'⏳ Pending',confirmed:'✅ Confirmed',cancelled:'❌ Cancelled',completed:'🏁 Done'};
+  const status=b.status||'pending';
+  const base=`<td>${esc(b.guest_name||'—')}</td><td>${esc(b.listings?.name||'—')}</td><td>${fmtD(b.checkin)}</td>`;
+  const extra=full?`<td>${fmtD(b.checkout)}</td>`:'';
+  return `<tr>${base}${extra}<td style="color:var(--gm);font-weight:500">TZS ${Number(b.total_amount||0).toLocaleString()}</td><td><span class="status-pill ${sp[status]||'sp-pending'}">${sl[status]||status}</span></td></tr>`;
+}
+function noRows(n){ return `<tr><td colspan="${n}" style="text-align:center;color:var(--w3);padding:2rem">Hakuna data bado</td></tr>`; }
+
+// ── FORM ──────────────────────────────
+function resetForm(){
+  ['f-name','f-price','f-location','f-desc','f-beds','f-baths'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-type').value='apartment';
+  document.getElementById('f-city').value='Dar es Salaam';
+  document.getElementById('edit-id').value='';
+  ['am-wifi','am-pool','am-parking','am-ac','am-gym','am-kitchen','am-tv','am-security'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+  uploadedImages=[]; renderImgPreview();
+  document.getElementById('f-images').value='[]';
+  document.getElementById('form-msg').textContent='';
+  document.getElementById('form-tag').textContent='Ongeza Listing';
+  document.getElementById('form-title').textContent='Listing mpya';
+  document.getElementById('submit-listing-lbl').textContent='Wasilisha kwa Ukaguzi';
+}
+
+function editListing(id){
+  const p = hostListings.find(x=>x.id===id); if(!p) return;
+  resetForm();
+  document.getElementById('edit-id').value=id;
+  document.getElementById('f-name').value=p.name||'';
+  document.getElementById('f-price').value=p.price||'';
+  document.getElementById('f-location').value=p.location||'';
+  document.getElementById('f-desc').value=p.description||'';
+  document.getElementById('f-beds').value=p.bedrooms||'';
+  document.getElementById('f-baths').value=p.bathrooms||'';
+  document.getElementById('f-type').value=p.property_type||p.type||'apartment';
+  document.getElementById('f-city').value=p.city||'Dar es Salaam';
+  // amenities
+  ['wifi','pool','parking','ac','gym','kitchen','tv','security'].forEach(a=>{
+    const el=document.getElementById('am-'+a); if(el) el.checked=!!p[a];
+  });
+  // images
+  const imgs=p.images||[];
+  uploadedImages=Array.isArray(imgs)?imgs.map(u=>({url:u,type:'existing'})):[];
+  renderImgPreview();
+  document.getElementById('form-tag').textContent='Hariri Listing';
+  document.getElementById('form-title').textContent='Hariri: '+p.name;
+  document.getElementById('submit-listing-lbl').textContent='Hifadhi Mabadiliko';
+  showPage('add-listing');
+}
+
+async function submitListing(){
+  const name=document.getElementById('f-name').value.trim();
+  const price=document.getElementById('f-price').value.trim();
+  const city=document.getElementById('f-city').value;
+  const desc=document.getElementById('f-desc').value.trim();
+  if(!name||!price||!desc){ setFormMsg('❌ Jaza sehemu zote zinazohitajika (*)','err'); return; }
+
+  const btn=document.getElementById('submit-listing-btn');
+  btn.disabled=true;
+  document.getElementById('submit-listing-lbl').textContent='Inahifadhi...';
+
+  const editId=document.getElementById('edit-id').value;
+  const images=uploadedImages.map(i=>i.url);
+
+  const payload={
+    name, price:Number(price), description:desc,
+    property_type:document.getElementById('f-type').value,
+    type:document.getElementById('f-type').value,
+    city, location:document.getElementById('f-location').value||city,
+    bedrooms:Number(document.getElementById('f-beds').value)||null,
+    bathrooms:Number(document.getElementById('f-baths').value)||null,
+    wifi:document.getElementById('am-wifi').checked,
+    pool:document.getElementById('am-pool').checked,
+    parking:document.getElementById('am-parking').checked,
+    ac:document.getElementById('am-ac').checked,
+    gym:document.getElementById('am-gym').checked,
+    kitchen:document.getElementById('am-kitchen').checked,
+    tv:document.getElementById('am-tv').checked,
+    security:document.getElementById('am-security').checked,
+    images, host_id:currentUser.id,
+  };
+
+  let error;
+  if(editId){
+    // Keep existing status unless rejected (re-submit resets to pending)
+    const existing=hostListings.find(p=>p.id===editId);
+    payload.status = existing?.status==='rejected'?'pending':(existing?.status||'pending');
+    ({ error } = await db.from('listings').update(payload).eq('id',editId));
+  } else {
+    payload.status='pending';
+    payload.submitted_at=new Date().toISOString();
+    ({ error } = await db.from('listings').insert(payload));
+  }
+
+  btn.disabled=false;
+  document.getElementById('submit-listing-lbl').textContent=editId?'Hifadhi Mabadiliko':'Wasilisha kwa Ukaguzi';
+
+  if(error){ setFormMsg('❌ '+error.message,'err'); return; }
+
+  showT(editId?'✅ Listing imesasishwa!':'✅ Listing imewasilishwa — inasubiri ukaguzi!');
+  resetForm();
+  await loadListings();
+  showPage('listings');
+}
+
+function setFormMsg(msg, type){
+  const el=document.getElementById('form-msg');
+  el.textContent=msg;
+  el.style.color=type==='err'?'#f07070':'var(--gm)';
+}
+
+// ── IMAGE HANDLING ─────────────────────
+async function handleImgUpload(input){
+  const files=Array.from(input.files).slice(0,10);
+  for(const file of files){
+    if(file.size>5*1024*1024){ showT('❌ '+file.name+' kubwa sana (max 5MB)'); continue; }
+    showT('⏳ Inapakia '+file.name+'...');
+    const ext=file.name.split('.').pop().toLowerCase()||'jpg';
+    const path=`${currentUser.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error:upErr } = await db.storage.from('listing-images').upload(path, file, { upsert:false, contentType:file.type });
+    if(upErr){ showT('❌ Upload imeshindwa: '+upErr.message); continue; }
+    const { data:{ publicUrl } } = db.storage.from('listing-images').getPublicUrl(path);
+    uploadedImages.push({ url:publicUrl, type:'upload' });
+    renderImgPreview();
+  }
+  input.value='';
+}
+
+function addImgUrl(){
+  const url=document.getElementById('img-url-input').value.trim();
+  if(!url||!url.startsWith('http')){ showT('❌ Weka URL sahihi'); return; }
+  uploadedImages.push({ url, type:'url' });
+  document.getElementById('img-url-input').value='';
+  renderImgPreview();
+}
+
+function removeImg(i){
+  uploadedImages.splice(i,1);
+  renderImgPreview();
+}
+
+function renderImgPreview(){
+  const prev=document.getElementById('img-preview');
+  prev.innerHTML=uploadedImages.map((img,i)=>`
+    <div class="img-thumb">
+      <img src="${esc(img.url)}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%230a1a0f%22 width=%22100%22 height=%22100%22/></svg>'"/>
+      <button class="img-thumb-del" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+  document.getElementById('f-images').value=JSON.stringify(uploadedImages.map(i=>i.url));
+}
+
+// ── DELETE ────────────────────────────
+function openDelModal(id){
+  deleteTarget=id;
+  const p=hostListings.find(x=>x.id===id);
+  document.getElementById('del-listing-name').textContent=p?.name||'';
+  document.getElementById('del-modal').classList.add('open');
+}
+function closeDelModal(){ document.getElementById('del-modal').classList.remove('open'); deleteTarget=null; }
+async function confirmDelete(){
+  if(!deleteTarget) return;
+  const btn=document.getElementById('del-confirm-btn');
+  btn.disabled=true; btn.textContent='Inafuta...';
+  const { error } = await db.from('listings').delete().eq('id',deleteTarget);
+  btn.disabled=false; btn.textContent='Ndiyo, Futa';
+  closeDelModal();
+  if(error){ showT('❌ '+error.message); return; }
+  showT('✅ Listing imefutwa.');
+  await loadListings();
+}
+
+// ── NAVIGATION ────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  document.getElementById('sb-'+name)?.classList.add('active');
+  if(name==='listings') renderListings();
+}
+
+// ── HELPERS ───────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtD(d){ if(!d) return '—'; return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function showT(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),3500); }
+
+document.getElementById('del-modal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeDelModal(); });
+
+init();
+</script>
+</body>
+</html>
