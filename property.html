@@ -4,6 +4,16 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Property – KaribuStay</title>
+<meta name="description" content="View property details on KaribuStay — Tanzania's trusted accommodation platform."/>
+<meta property="og:title" content="Property – KaribuStay"/>
+<meta property="og:description" content="Book verified accommodation across Tanzania on KaribuStay."/>
+<meta property="og:image" content="https://karibustay.co.tz/og-cover.jpg"/>
+<meta property="og:url" content="https://karibustay.co.tz/property.html"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Property – KaribuStay"/>
+<meta name="twitter:description" content="Book verified accommodation across Tanzania on KaribuStay."/>
+<meta name="twitter:image" content="https://karibustay.co.tz/og-cover.jpg"/>
 <link rel="icon" type="image/png" href="logo3.png"/>
 <link rel="apple-touch-icon" href="logo3.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -277,7 +287,7 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
         </button>
       </div>
     </div>
-    <a href="https://wa.me/255745999918" target="_blank" style="background:#25D366;color:#fff;padding:.45rem .9rem;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:.4rem;text-decoration:none">
+    <a href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer" style="background:#25D366;color:#fff;padding:.45rem .9rem;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:.4rem;text-decoration:none">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>
       WhatsApp
     </a>
@@ -403,11 +413,11 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
         </div>
         <div class="bc-body">
           <div class="bc-row">
-            <div class="bc-field"><label>Check-in</label><input type="date" id="bc-in" onchange="calcTotal()"/></div>
-            <div class="bc-field"><label>Check-out</label><input type="date" id="bc-out" onchange="calcTotal()"/></div>
+            <div class="bc-field"><label for="bc-in">Check-in</label><input type="date" id="bc-in" onchange="calcTotal()"/></div>
+            <div class="bc-field"><label for="bc-out">Check-out</label><input type="date" id="bc-out" onchange="calcTotal()"/></div>
           </div>
           <div class="bc-field">
-            <label>Guests</label>
+            <label for="bc-guests">Guests</label>
             <select id="bc-guests"><option value="1">1 Guest</option><option value="2">2 Guests</option><option value="3">3 Guests</option><option value="4">4 Guests</option><option value="5">5+ Guests</option></select>
           </div>
           <div class="bc-total-row" id="bc-total-row">
@@ -454,8 +464,8 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
       <div class="mhdr"><h2>Welcome back</h2><p>Sign in to your account</p><button class="mclose" onclick="closeModal()">✕</button></div>
       <div class="mbody">
         <div class="mtabs"><button class="mtab active" onclick="openPane('login')">Login</button><button class="mtab" onclick="openPane('signup')">Sign Up</button></div>
-        <div class="mfg"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com" autocomplete="email"/></div>
-        <div class="mfg"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <div class="mfg"><label for="li-email">Email</label><input type="email" id="li-email" placeholder="you@email.com" autocomplete="email"/></div>
+        <div class="mfg"><label for="li-pass">Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
         <div class="aerr" id="li-err"></div>
         <button class="abtn" id="li-btn" onclick="doLogin()">Login</button>
         <div class="adiv">or</div>
@@ -470,11 +480,11 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
       <div class="mbody">
         <div class="mtabs"><button class="mtab" onclick="openPane('login')">Login</button><button class="mtab active" onclick="openPane('signup')">Sign Up</button></div>
         <div class="mrow">
-          <div class="mfg"><label>First Name *</label><input type="text" id="su-first" placeholder="John"/></div>
-          <div class="mfg"><label>Last Name</label><input type="text" id="su-last" placeholder="Doe"/></div>
+          <div class="mfg"><label for="su-first">First Name *</label><input type="text" id="su-first" placeholder="John"/></div>
+          <div class="mfg"><label for="su-last">Last Name</label><input type="text" id="su-last" placeholder="Doe"/></div>
         </div>
-        <div class="mfg"><label>Email *</label><input type="email" id="su-email" placeholder="you@email.com"/></div>
-        <div class="mfg"><label>Password *</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
+        <div class="mfg"><label for="su-email">Email *</label><input type="email" id="su-email" placeholder="you@email.com"/></div>
+        <div class="mfg"><label for="su-pass">Password *</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
         <button class="abtn" id="su-btn" onclick="doSignup()">Create Account</button>
         <div class="adiv">or</div>
         <button class="gbtn" onclick="doGoogle()">
@@ -505,13 +515,13 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
     <div class="mbody">
       <div class="bk-prop-info" id="bk-info"></div>
       <div class="mrow">
-        <div class="mfg"><label>Check-in *</label><input type="date" id="bk-in"/></div>
-        <div class="mfg"><label>Check-out *</label><input type="date" id="bk-out"/></div>
+        <div class="mfg"><label for="bk-in">Check-in *</label><input type="date" id="bk-in"/></div>
+        <div class="mfg"><label for="bk-out">Check-out *</label><input type="date" id="bk-out"/></div>
       </div>
-      <div class="mfg"><label>Guests</label>
+      <div class="mfg"><label for="bk-guests">Guests</label>
         <select id="bk-guests"><option value="1">1 Guest</option><option value="2">2 Guests</option><option value="3">3 Guests</option><option value="4">4 Guests</option><option value="5">5+ Guests</option></select>
       </div>
-      <div class="mfg"><label>Message (optional)</label><textarea id="bk-msg" placeholder="Any special requests?"></textarea></div>
+      <div class="mfg"><label for="bk-msg">Message (optional)</label><textarea id="bk-msg" placeholder="Any special requests?"></textarea></div>
       <div class="aerr" id="bk-err"></div>
       <div class="aok" id="bk-ok"></div>
       <button class="abtn" id="bk-submit" onclick="submitEnquiry()">
@@ -584,6 +594,18 @@ async function loadProperty() {
 
 function renderProperty(p) {
   document.title = p.name + ' – KaribuStay';
+  // Update OG/Twitter meta tags dynamically for sharing
+  const desc = (p.description || 'Book this property on KaribuStay — Tanzania\'s trusted accommodation.').slice(0, 160);
+  const img = p.image_url || 'https://karibustay.co.tz/og-cover.jpg';
+  const url = 'https://karibustay.co.tz/property.html?id=' + p.id;
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc);
+  document.querySelector('meta[property="og:image"]')?.setAttribute('content', img);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', desc);
+  document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', img);
+  document.querySelector('meta[name="description"]')?.setAttribute('content', desc);
   const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
   const typeLabel = { apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay', villa:'Villa', hostel:'Hostel' }[p.type] || p.type;
 
@@ -771,6 +793,11 @@ async function submitEnquiry() {
   err.classList.remove('show');
   if (!checkin || !checkout) { err.textContent = 'Please select check-in and check-out dates.'; err.classList.add('show'); return; }
   if (checkout <= checkin)   { err.textContent = 'Check-out must be after check-in.'; err.classList.add('show'); return; }
+  if (bookedRanges.some(r => checkin < r.end && checkout > r.start)) {
+    err.textContent = 'Those dates overlap an existing booking. Please choose different dates.';
+    err.classList.add('show');
+    return;
+  }
   btn.disabled = true; btn.textContent = 'Sending…';
   const { error } = await db.from('enquiries').insert({
     user_id: currentUser.id,
@@ -788,6 +815,22 @@ async function submitEnquiry() {
   showToast('✅ Booking enquiry sent!');
   setTimeout(() => closeBooking(), 2600);
 }
+
+(function enhancePropertyPage(){
+  const today = new Date().toISOString().split('T')[0];
+  ['bc-in','bc-out','bk-in','bk-out'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.min=today;
+  });
+  document.querySelectorAll('label').forEach((label,i)=>{
+    if(label.htmlFor) return;
+    const control=label.parentElement?.querySelector('input,select,textarea');
+    if(!control) return;
+    if(!control.id) control.id='property-field-'+i;
+    label.htmlFor=control.id;
+  });
+  document.querySelectorAll('a[target="_blank"]').forEach(a=>a.rel='noopener noreferrer');
+})();
 
 function bookViaWA() {
   const ci = document.getElementById('bc-in').value || '—';
@@ -955,9 +998,9 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 
 async function loadAvailability(listingId) {
   const { data } = await db.from('bookings')
-    .select('checkin, checkout, booking_status')
+    .select('checkin, checkout, status')
     .eq('listing_id', listingId)
-    .in('booking_status', ['confirmed', 'pending']);
+    .in('status', ['confirmed', 'pending']);
   bookedRanges = (data || []).map(b => ({ start: b.checkin, end: b.checkout }));
   const now = new Date();
   calYear  = now.getFullYear();
@@ -1041,7 +1084,7 @@ async function checkCanReview(userId, listingId) {
     .select('id')
     .eq('user_id', userId)
     .eq('listing_id', listingId)
-    .in('booking_status', ['confirmed', 'completed'])
+    .in('status', ['confirmed', 'completed'])
     .maybeSingle();
   return !!data;
 }

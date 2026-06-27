@@ -178,19 +178,19 @@ body{
   <!-- STATE: set new password form -->
   <div class="state" id="s-form">
     <div class="field">
-      <label>Nenosiri jipya</label>
+      <label for="new-pass">Nenosiri jipya</label>
       <input type="password" id="new-pass" placeholder="Min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
       <div class="pwd-bar" id="pwd-bar"></div>
       <div class="pwd-hint" id="pwd-hint"></div>
     </div>
     <div class="field">
-      <label>Thibitisha nenosiri</label>
+      <label for="new-pass2">Thibitisha nenosiri</label>
       <input type="password" id="new-pass2" placeholder="Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitReset()"/>
     </div>
     <button class="btn" id="reset-btn" onclick="submitReset()">
       Weka nenosiri jipya
     </button>
-    <div class="msg" id="reset-msg"></div>
+    <div class="msg" id="reset-msg" role="status" aria-live="polite"></div>
   </div>
 
   <!-- STATE: success -->
@@ -292,6 +292,12 @@ async function submitReset() {
 
 // ── INIT — detect recovery session from URL ────────────────────
 (async function init() {
+  const { data:{ session } } = await db.auth.getSession();
+  const isRecoveryLink = window.location.hash.includes('type=recovery') || new URLSearchParams(window.location.search).get('type') === 'recovery';
+  if(session && isRecoveryLink){
+    showState('s-form');
+    document.getElementById('new-pass').focus();
+  }
   // Supabase detectSessionInUrl:true will automatically exchange
   // the #access_token + type=recovery from the email link into a
   // live session. We then listen for PASSWORD_RECOVERY event.

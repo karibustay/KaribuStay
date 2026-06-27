@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Private/admin pages — block search engines
+Disallow: /admin.html
+Disallow: /host.html
+Disallow: /host-invite.html
+Disallow: /profile.html
+Disallow: /bookings.html
+Disallow: /reset.html
+
+Sitemap: https://karibustay.co.tz/sitemap.xml

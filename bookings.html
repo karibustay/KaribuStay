@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://karibustay.co.tz/bookings.html"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <link rel="icon" type="image/png" href="logo3.png"/>
+<link rel="apple-touch-icon" href="logo3.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -356,7 +357,7 @@ async function confirmCancel(){
         booking: cancelTarget,
         listing: { name: l.name, location: l.location },
       }
-    }).catch(()=>{});
+    }).catch((err) => { console.warn('[bookings] Email send failed (non-blocking):', err?.message || err); });
   }
 
   // Update local state

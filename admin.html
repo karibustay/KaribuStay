@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KaribuStay – Admin Panel</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="apple-touch-icon" href="logo3.png"/>
 <link rel="icon" type="image/png" href="logo3.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -241,11 +243,11 @@ tr:hover td{background:#FAFAFA}
       <p>Authorised Access Only</p>
     </div>
     <div class="login-field">
-      <label>Email Address</label>
+      <label for="login-email">Email Address</label>
       <input type="email" id="login-email" placeholder="admin@karibustay.com" autocomplete="email"/>
     </div>
     <div class="login-field">
-      <label>Password</label>
+      <label for="login-password">Password</label>
       <input type="password" id="login-password" placeholder="••••••••••" autocomplete="current-password"
         onkeydown="if(event.key==='Enter')doLogin()"/>
     </div>
@@ -270,7 +272,7 @@ tr:hover td{background:#FAFAFA}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="admin-email-display"></span>
       </div>
-      <a href="index.html" class="tb-link" target="_blank">
+      <a href="index.html" class="tb-link" target="_blank" rel="noopener noreferrer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         View Site
       </a>
@@ -521,6 +523,75 @@ tr:hover td{background:#FAFAFA}
   </div>
 </div>
 
+
+  <!-- ══ HOSTS ══ -->
+  <div class="admin-page" id="page-hosts">
+    <div class="sec-title-row">
+      <h2>Host Management</h2>
+    </div>
+
+    <!-- Generate invite -->
+    <div style="background:#fff;border:1px solid var(--gray-border);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;max-width:560px">
+      <h3 style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:1rem">🔗 Tengeneza Invite Link</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
+        <div>
+          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Jina / Note (optional)</label>
+          <input type="text" id="inv-note" placeholder="e.g. John - Masaki Host" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Email ya Host (optional)</label>
+          <input type="email" id="inv-email" placeholder="host@email.com" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:.7rem;align-items:center;flex-wrap:wrap">
+        <select id="inv-expiry" style="border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none;background:#fff">
+          <option value="24">Iishe baada ya: Masaa 24</option>
+          <option value="72">Iishe baada ya: Siku 3</option>
+          <option value="168" selected>Iishe baada ya: Wiki 1</option>
+          <option value="720">Iishe baada ya: Mwezi 1</option>
+        </select>
+        <button onclick="generateInvite()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:.6rem 1.3rem;font-family:'Poppins',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer">+ Tengeneza Link</button>
+      </div>
+
+      <!-- Generated link display -->
+      <div id="inv-result" style="display:none;margin-top:1rem;background:#f0f9f4;border:1px solid #b7e4c7;border-radius:10px;padding:.9rem 1rem">
+        <p style="font-size:.72rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">✅ Link imtengenezwa — tumia mara moja tu</p>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input type="text" id="inv-link-display" readonly style="flex:1;border:1px solid #b7e4c7;border-radius:7px;padding:.5rem .7rem;font-size:.78rem;background:#fff;outline:none;font-family:monospace"/>
+          <button onclick="copyInviteLink()" style="background:var(--green);color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">Copy</button>
+          <button onclick="shareInviteWA()" style="background:#25d366;color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">WhatsApp</button>
+        </div>
+        <p style="font-size:.7rem;color:#888;margin-top:.5rem" id="inv-expiry-label"></p>
+      </div>
+    </div>
+
+    <!-- Active invites table -->
+    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-bottom:.6rem">Mwaliko zilizotumwa</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Note</th><th>Email</th><th>Imeundwa</th><th>Inaisha</th><th>Hali</th><th>Futa</th>
+          </tr>
+        </thead>
+        <tbody id="invites-tbody">
+          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Active hosts table -->
+    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-top:1.5rem;margin-bottom:.6rem">Hosts waliopo</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Jina</th><th>Email</th><th>Tangu</th><th>Listings</th><th>Hatua</th></tr></thead>
+        <tbody id="hosts-tbody">
+          <tr><td colspan="5" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 <div class="saving-overlay" id="saving-overlay"><div class="saving-box"><div class="spinner"></div>Saving…</div></div>
 <div class="toast" id="toast"></div>
 
@@ -548,7 +619,6 @@ async function init() {
 
 async function verifyAdmin(user) {
   // ── DEBUG: log the authenticated user before the profile lookup
-  console.log('[verifyAdmin] Authenticated user:', user);
 
   const { data, error } = await db
     .from('admin_profiles')
@@ -557,8 +627,6 @@ async function verifyAdmin(user) {
     .maybeSingle();            // FIX: .single() throws 406 on 0 or >1 rows
 
   // ── DEBUG: log the raw response from admin_profiles
-  console.log('[verifyAdmin] admin_profiles data:', data);
-  console.log('[verifyAdmin] admin_profiles error:', error);
 
   // Handle Supabase query error (network, RLS, etc.)
   if (error) {
@@ -584,7 +652,6 @@ async function verifyAdmin(user) {
     return;
   }
 
-  console.log('[verifyAdmin] Access granted. Role:', data.role);
   currentAdminRole = data.role;
   document.getElementById('admin-role-badge').textContent = data.role.replace(/_/g, ' ').toUpperCase();
   showAdmin(user.email);
@@ -603,9 +670,9 @@ function showAdmin(email) {
 
 // Lightweight badge loaders — only fetch counts, don't render full tables
 async function loadBookingsBadge() {
-  const { data, error } = await db.from('bookings').select('booking_status');
+  const { data, error } = await db.from('bookings').select('status');
   if (error) { console.warn('[loadBookingsBadge] error:', error); return; }
-  const pending = (data || []).filter(b => b.booking_status === 'pending').length;
+  const pending = (data || []).filter(b => b.status === 'pending').length;
   const badge = document.getElementById('bookings-badge');
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
   else badge.style.display = 'none';
@@ -969,7 +1036,7 @@ function buildEnqCard(e) {
     : e.status === 'confirmed' ? `<button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
     : `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Re-confirm</button>`;
   const waMsg = phone ? encodeURIComponent(`Hi ${guestName}, your enquiry for *${e.listing_name}* (${e.checkin} → ${e.checkout}) has been ${e.status === 'confirmed' ? '✅ confirmed' : 'received'}. Thank you for choosing KaribuStay!`) : '';
-  const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>WhatsApp</a>` : '';
+  const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>WhatsApp</a>` : '';
   return `<div class="enq-card" id="enq-${e.id}">
     <div class="enq-card-top">
       <div class="enq-card-head"><div class="enq-prop">${esc(e.listing_name||'Unknown Property')}</div><span class="status-chip ${statusMap[e.status]||'sc-pending'}">${statusLabel[e.status]||e.status}</span></div>
@@ -999,11 +1066,11 @@ async function updateEnqStatus(id, status) {
 async function loadBookings() {
   document.getElementById('bookings-loading').style.display = 'block';
   document.getElementById('bookings-table').style.display = 'none';
-  const { data, error } = await db.from('bookings').select('*').order('created_at', { ascending: false });
+  const { data, error } = await db.from('bookings').select('*, listings(name)').order('created_at', { ascending: false });
   document.getElementById('bookings-loading').style.display = 'none';
   if (error) { console.error('[loadBookings] error:', error); showToast('Bookings load failed: ' + error.message, true); return; }
   allBookings = data || [];
-  const pending = allBookings.filter(b => b.booking_status === 'pending').length;
+  const pending = allBookings.filter(b => b.status === 'pending').length;
   const badge = document.getElementById('bookings-badge');
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
   else badge.style.display = 'none';
@@ -1017,36 +1084,38 @@ function filterBookings(f) {
 }
 
 function renderBookings() {
-  const items = bookFilter === 'all' ? allBookings : allBookings.filter(b => b.booking_status === bookFilter);
+  const items = bookFilter === 'all' ? allBookings : allBookings.filter(b => b.status === bookFilter);
   const tbody = document.getElementById('bookings-body');
   const table = document.getElementById('bookings-table');
   table.style.display = 'table';
   if (!items.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-light)">No bookings found.</td></tr>`; return; }
   tbody.innerHTML = items.map(b => {
     const guestName = b.guest_name || b.full_name || 'Guest';
-    const property = b.listing_name || b.property_name || 'Unknown Property';
+    const property = b.listings?.name || b.listing_name || b.property_name || 'Unknown Property';
+    const nights = b.checkin && b.checkout ? Math.max(1, Math.round((new Date(b.checkout)-new Date(b.checkin))/86400000)) : null;
+    const paymentStatus = b.payment_status || 'unpaid';
     return `<tr>
       <td>${esc(guestName)}</td>
       <td>${esc(property)}</td>
       <td style="font-size:.75rem">${b.checkin||'—'} → ${b.checkout||'—'}</td>
-      <td>${b.nights||'—'}</td>
-      <td><strong>TZS ${Number(b.amount||0).toLocaleString()}</strong></td>
-      <td><span class="status-chip sc-${b.booking_status}">${b.booking_status}</span></td>
-      <td><span class="status-chip sc-${b.payment_status}">${b.payment_status}</span></td>
+      <td>${nights||'—'}</td>
+      <td><strong>TZS ${Number(b.total_amount||b.amount||0).toLocaleString()}</strong></td>
+        <td><span class="status-chip sc-${b.status}">${b.status}</span></td>
+      <td><span class="status-chip sc-${paymentStatus}">${paymentStatus}</span></td>
       <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
-        ${b.booking_status==='pending'?`<button class="btn btn-sm btn-approve" onclick="updateBookingStatus('${b.id}','confirmed')">Confirm</button>`:''}
-        ${b.booking_status==='confirmed'?`<button class="btn btn-sm" style="background:#EDE9FE;color:#5B21B6" onclick="updateBookingStatus('${b.id}','completed')">Complete</button>`:''}
-        ${['pending','confirmed'].includes(b.booking_status)?`<button class="btn btn-sm btn-del" onclick="updateBookingStatus('${b.id}','cancelled')">Cancel</button>`:''}
+          ${b.status==='pending'?`<button class="btn btn-sm btn-approve" onclick="updateBookingStatus('${b.id}','confirmed')">Confirm</button>`:''}
+          ${b.status==='confirmed'?`<button class="btn btn-sm" style="background:#EDE9FE;color:#5B21B6" onclick="updateBookingStatus('${b.id}','completed')">Complete</button>`:''}
+          ${['pending','confirmed'].includes(b.status)?`<button class="btn btn-sm btn-del" onclick="updateBookingStatus('${b.id}','cancelled')">Cancel</button>`:''}
       </div></td>
     </tr>`;
   }).join('');
 }
 
 async function updateBookingStatus(id, status) {
-  const { error } = await db.from('bookings').update({ booking_status: status }).eq('id', id);
+  const { error } = await db.from('bookings').update({ status }).eq('id', id);
   if (error) { showToast('Update failed: ' + error.message, true); return; }
   const idx = allBookings.findIndex(b => b.id === id);
-  if (idx !== -1) allBookings[idx].booking_status = status;
+  if (idx !== -1) allBookings[idx].status = status;
   renderBookings();
   showToast('Booking status updated to: ' + status);
 }
@@ -1153,7 +1222,7 @@ async function loadAnalytics() {
   const [listRes, userRes, bookRes, enqRes, payRes, revRes] = await Promise.all([
     db.from('listings').select('*', { count: 'exact', head: true }),
     db.from('profiles').select('*', { count: 'exact', head: true }),
-    db.from('bookings').select('amount, booking_status, created_at'),
+    db.from('bookings').select('total_amount, status, created_at'),
     db.from('enquiries').select('status'),
     db.from('payments').select('amount, status, created_at'),
     db.from('reviews').select('*', { count: 'exact', head: true }),
@@ -1222,73 +1291,5 @@ document.querySelectorAll('.swatch').forEach(s => {
 
 init();
 </script>
-
-  <!-- ══ HOSTS ══ -->
-  <div class="admin-page" id="page-hosts">
-    <div class="sec-title-row">
-      <h2>Host Management</h2>
-    </div>
-
-    <!-- Generate invite -->
-    <div style="background:#fff;border:1px solid var(--gray-border);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;max-width:560px">
-      <h3 style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:1rem">🔗 Tengeneza Invite Link</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
-        <div>
-          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Jina / Note (optional)</label>
-          <input type="text" id="inv-note" placeholder="e.g. John - Masaki Host" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
-        </div>
-        <div>
-          <label style="font-size:.72rem;color:var(--text-mid);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em">Email ya Host (optional)</label>
-          <input type="email" id="inv-email" placeholder="host@email.com" style="width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none"/>
-        </div>
-      </div>
-      <div style="display:flex;gap:.7rem;align-items:center;flex-wrap:wrap">
-        <select id="inv-expiry" style="border:1px solid var(--gray-border);border-radius:8px;padding:.55rem .8rem;font-size:.83rem;font-family:'Poppins',sans-serif;outline:none;background:#fff">
-          <option value="24">Iishe baada ya: Masaa 24</option>
-          <option value="72">Iishe baada ya: Siku 3</option>
-          <option value="168" selected>Iishe baada ya: Wiki 1</option>
-          <option value="720">Iishe baada ya: Mwezi 1</option>
-        </select>
-        <button onclick="generateInvite()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:.6rem 1.3rem;font-family:'Poppins',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer">+ Tengeneza Link</button>
-      </div>
-
-      <!-- Generated link display -->
-      <div id="inv-result" style="display:none;margin-top:1rem;background:#f0f9f4;border:1px solid #b7e4c7;border-radius:10px;padding:.9rem 1rem">
-        <p style="font-size:.72rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">✅ Link imtengenezwa — tumia mara moja tu</p>
-        <div style="display:flex;gap:.5rem;align-items:center">
-          <input type="text" id="inv-link-display" readonly style="flex:1;border:1px solid #b7e4c7;border-radius:7px;padding:.5rem .7rem;font-size:.78rem;background:#fff;outline:none;font-family:monospace"/>
-          <button onclick="copyInviteLink()" style="background:var(--green);color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">Copy</button>
-          <button onclick="shareInviteWA()" style="background:#25d366;color:#fff;border:none;border-radius:7px;padding:.5rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap">WhatsApp</button>
-        </div>
-        <p style="font-size:.7rem;color:#888;margin-top:.5rem" id="inv-expiry-label"></p>
-      </div>
-    </div>
-
-    <!-- Active invites table -->
-    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-bottom:.6rem">Mwaliko zilizotumwa</h3>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Note</th><th>Email</th><th>Imeundwa</th><th>Inaisha</th><th>Hali</th><th>Futa</th>
-          </tr>
-        </thead>
-        <tbody id="invites-tbody">
-          <tr><td colspan="6" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Active hosts table -->
-    <h3 style="font-size:.85rem;font-weight:600;color:var(--text-mid);margin-top:1.5rem;margin-bottom:.6rem">Hosts waliopo</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Jina</th><th>Email</th><th>Tangu</th><th>Listings</th><th>Hatua</th></tr></thead>
-        <tbody id="hosts-tbody">
-          <tr><td colspan="5" style="text-align:center;color:#aaa;padding:1.5rem">Inapakia...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </body>
 </html>

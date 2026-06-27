@@ -1001,6 +1001,11 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 @media(min-width:769px) {
   #nav-overlay, #mobile-drawer { display:none !important; }
 }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+  #hcanvas,.orb,.hero-bg video { display:none!important; }
+}
 
 </style>
 </head>
@@ -1023,7 +1028,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
     <li><a href="about.html">About Us</a></li>
   </ul>
   <div class="nr">
-    <a href="https://wa.me/255745999918" target="_blank" class="btn-wa">
+    <a href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer" class="btn-wa">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
@@ -1111,7 +1116,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       About Us
     </a>
     <div class="dl-sep"></div>
-    <a class="dl-link" href="https://wa.me/255745999918" target="_blank">
+    <a class="dl-link" href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp Us
     </a>
@@ -1163,7 +1168,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg">
-    <video autoplay muted loop playsinline preload="auto">
+    <video autoplay muted loop playsinline preload="metadata">
       <source src="hero.mp4" type="video/mp4">
     </video>
   </div>
@@ -1191,22 +1196,22 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
         <div class="sg-field">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <div class="sg-field-inner">
-            <label class="sg-label">Where are you going?</label>
-            <input type="text" id="hero-search" placeholder="Dar es Salaam, Arusha, Zanzibar..."/>
+              <label class="sg-label" for="hero-search">Where are you going?</label>
+              <input type="text" id="hero-search" placeholder="Dar es Salaam, Arusha, Zanzibar..."/>
           </div>
         </div>
         <div class="sg-row-2">
           <div class="sg-field">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             <div class="sg-field-inner">
-              <label class="sg-label">Check-in</label>
+              <label class="sg-label" for="search-in">Check-in</label>
               <input type="date" id="search-in"/>
             </div>
           </div>
           <div class="sg-field">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             <div class="sg-field-inner">
-              <label class="sg-label">Check-out</label>
+              <label class="sg-label" for="search-out">Check-out</label>
               <input type="date" id="search-out"/>
             </div>
           </div>
@@ -1217,7 +1222,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Search Stays
         </button>
-        <a href="https://wa.me/255745999918" target="_blank" class="sg-wa-btn">
+        <a href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer" class="sg-wa-btn" aria-label="Contact KaribuStay on WhatsApp">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
       </div>
@@ -1262,25 +1267,25 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
     <h2 class="section-title">Browse <em>by category</em></h2>
   </div>
   <div class="cats">
-    <div class="cat rv" style="transition-delay:.1s" onclick="setFilter('apartment')">
+    <div class="cat rv" role="button" tabindex="0" style="transition-delay:.1s" onclick="setFilter('apartment')" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter('apartment')">
       <svg class="cat-bg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#C88B55"/><stop offset="100%" stop-color="#1a0805"/></linearGradient></defs><rect width="400" height="200" fill="url(#cg1)"/><rect width="400" height="200" fill="rgba(3,11,6,.42)"/><rect x="55" y="15" width="75" height="185" fill="rgba(255,255,255,.07)"/><rect x="145" y="0" width="95" height="200" fill="rgba(255,255,255,.09)"/><rect x="255" y="25" width="75" height="175" fill="rgba(255,255,255,.06)"/><rect x="155" y="15" width="13" height="9" rx="1" fill="rgba(255,220,100,.55)"/><rect x="175" y="15" width="13" height="9" rx="1" fill="rgba(255,220,100,.4)"/></svg>
       <div class="cat-ov"></div><div class="cat-glow"></div>
       <div class="cat-arr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       <div class="cat-cnt"><div class="cat-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 21V7M16 21V7M2 12h20"/></svg></div><div class="cat-name">Apartments</div><div class="cat-sub">Short &amp; Long-term stays</div></div>
     </div>
-    <div class="cat rv" style="transition-delay:.2s" onclick="setFilter('hotel')">
+    <div class="cat rv" role="button" tabindex="0" style="transition-delay:.2s" onclick="setFilter('hotel')" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter('hotel')">
       <svg class="cat-bg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3A8060"/><stop offset="100%" stop-color="#03100a"/></linearGradient></defs><rect width="400" height="200" fill="url(#cg2)"/><rect width="400" height="200" fill="rgba(3,11,6,.38)"/><rect x="30" y="100" width="340" height="75" rx="5" fill="rgba(255,240,200,.08)"/><rect x="85" y="22" width="230" height="62" rx="4" fill="rgba(160,210,255,.08)"/></svg>
       <div class="cat-ov"></div><div class="cat-glow"></div>
       <div class="cat-arr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       <div class="cat-cnt"><div class="cat-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="cat-name">Hotels</div><div class="cat-sub">Comfort &amp; Luxury</div></div>
     </div>
-    <div class="cat rv" style="transition-delay:.3s" onclick="setFilter('short_stay')">
+    <div class="cat rv" role="button" tabindex="0" style="transition-delay:.3s" onclick="setFilter('short_stay')" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter('short_stay')">
       <svg class="cat-bg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#906040"/><stop offset="100%" stop-color="#120808"/></linearGradient></defs><rect width="400" height="200" fill="url(#cg3)"/><rect width="400" height="200" fill="rgba(3,11,6,.4)"/><rect x="130" y="30" width="140" height="130" rx="10" fill="rgba(255,255,255,.1)"/><rect x="130" y="30" width="140" height="32" rx="10" fill="rgba(244,137,66,.45)"/></svg>
       <div class="cat-ov"></div><div class="cat-glow"></div>
       <div class="cat-arr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       <div class="cat-cnt"><div class="cat-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="cat-name">Short Stays</div><div class="cat-sub">Day, Week &amp; More</div></div>
     </div>
-    <div class="cat rv" style="transition-delay:.4s" onclick="setFilter('all')">
+    <div class="cat rv" role="button" tabindex="0" style="transition-delay:.4s" onclick="setFilter('all')" onkeydown="if(event.key==='Enter'||event.key===' ')setFilter('all')">
       <svg class="cat-bg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#305878"/><stop offset="100%" stop-color="#030810"/></linearGradient></defs><rect width="400" height="200" fill="url(#cg4)"/><rect width="400" height="200" fill="rgba(3,11,6,.42)"/><circle cx="200" cy="100" r="80" fill="none" stroke="rgba(39,166,93,.15)" stroke-width="1"/><circle cx="200" cy="100" r="50" fill="none" stroke="rgba(244,137,66,.15)" stroke-width="1"/></svg>
       <div class="cat-ov"></div><div class="cat-glow"></div>
       <div class="cat-arr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
@@ -1391,7 +1396,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
     <h2>Ready for your<br/><span>perfect stay?</span></h2>
     <p>Contact us on WhatsApp for instant availability and booking. No account needed — just fast, human service.</p>
     <div class="cta-btns">
-      <a href="https://wa.me/255745999918" target="_blank" class="btn-cta-p">
+  <a href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer" class="btn-cta-p">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Book via WhatsApp
       </a>
@@ -1421,15 +1426,15 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       <ul>
         <li><a href="about.html"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>About Us</a></li>
         <li><a href="about.html#contact"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Contact</a></li>
-        <li><a href="#"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>List Property</a></li>
+        <li><a href="host.html"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>List Property</a></li>
       </ul>
     </div>
     <div class="fcol">
       <h5>Contact</h5>
       <ul>
-        <li><a href="https://wa.me/255745999918" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 13.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 9.91a16 16 0 006.29 6.29l1.17-1.17a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>WhatsApp</a></li>
+        <li><a href="https://wa.me/255745999918" target="_blank" rel="noopener noreferrer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.9 13.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 9.91a16 16 0 006.29 6.29l1.17-1.17a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>WhatsApp</a></li>
         <li><a href="mailto:info@karibustay.com"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>info@karibustay.com</a></li>
-        <li><a href="#"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Dar es Salaam, TZ</a></li>
+        <li><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Dar es Salaam, TZ</span></li>
       </ul>
     </div>
   </div>
@@ -1448,7 +1453,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 <!-- BOOKING MODAL -->
 
 <!-- ══ AUTH MODAL ════════════════════════════════════════ -->
-<div class="mov" id="auth-modal" onclick="if(event.target===this)closeAuth()">
+<div class="mov" id="auth-modal" role="dialog" aria-modal="true" aria-label="Account access" onclick="if(event.target===this)closeAuth()">
   <div class="auth-box">
     <button class="auth-close" onclick="closeAuth()">✕</button>
     <div class="auth-logo">
@@ -1463,9 +1468,9 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 
     <!-- login form -->
     <div id="auth-login-form">
-      <div class="auth-field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="auth-field"><label for="li-email">Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email"/></div>
       <div class="auth-field">
-        <label>Password</label>
+        <label for="li-pass">Password</label>
         <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
         <span class="auth-forgot" onclick="doForgot()">Forgot password?</span>
       </div>
@@ -1479,9 +1484,9 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
 
     <!-- signup form -->
     <div id="auth-signup-form" style="display:none">
-      <div class="auth-field"><label>Full name</label><input type="text" id="su-name" placeholder="Amina Mwangi" autocomplete="name"/></div>
-      <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com" autocomplete="email"/></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"/></div>
+      <div class="auth-field"><label for="su-name">Full name</label><input type="text" id="su-name" placeholder="Amina Mwangi" autocomplete="name"/></div>
+      <div class="auth-field"><label for="su-email">Email</label><input type="email" id="su-email" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="auth-field"><label for="su-pass">Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"/></div>
       <button class="auth-btn" onclick="doSignup()">Create account</button>
       <div class="auth-divider"><hr/><span>or</span><hr/></div>
       <button class="auth-google" onclick="doGoogle()">
@@ -1494,7 +1499,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
   </div>
 </div>
 
-<div class="mov" id="bmodal" onclick="if(event.target===this)closeBk()">
+<div class="mov" id="bmodal" role="dialog" aria-modal="true" aria-labelledby="bk-title" onclick="if(event.target===this)closeBk()">
   <div class="mbox" style="max-width:500px">
     <div class="mh">
       <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.2rem">
@@ -1513,21 +1518,21 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       <!-- STEP 1: Dates + guests -->
       <div id="bk-s1">
         <div class="mrow">
-          <div class="mfg"><label>Check-in</label><input type="date" id="bk-in"/></div>
-          <div class="mfg"><label>Check-out</label><input type="date" id="bk-out"/></div>
+          <div class="mfg"><label for="bk-in">Check-in</label><input type="date" id="bk-in" required/></div>
+          <div class="mfg"><label for="bk-out">Check-out</label><input type="date" id="bk-out" required/></div>
         </div>
-        <div class="mfg"><label>Wageni / Guests</label>
+        <div class="mfg"><label for="bk-gs">Wageni / Guests</label>
           <select id="bk-gs">
             <option value="1">1 Mgeni</option><option value="2">2 Wageni</option>
             <option value="3">3 Wageni</option><option value="4">4+ Wageni</option>
           </select>
         </div>
-        <div class="mfg"><label>Jina Lako / Your Name</label>
-          <input type="text" id="bk-name" placeholder="e.g. Amina Hassan"/>
+        <div class="mfg"><label for="bk-name">Jina Lako / Your Name</label>
+          <input type="text" id="bk-name" placeholder="e.g. Amina Hassan" autocomplete="name" required/>
         </div>
         <div class="mrow">
-          <div class="mfg"><label>Simu / Phone</label><input type="tel" id="bk-phone" placeholder="+255..."/></div>
-          <div class="mfg"><label>Email</label><input type="email" id="bk-email" placeholder="wewe@email.com"/></div>
+          <div class="mfg"><label for="bk-phone">Simu / Phone</label><input type="tel" id="bk-phone" placeholder="+255..." autocomplete="tel" required/></div>
+          <div class="mfg"><label for="bk-email">Email</label><input type="email" id="bk-email" placeholder="wewe@email.com" autocomplete="email"/></div>
         </div>
         <div id="bk-summary-box" style="display:none;background:rgba(39,166,93,.06);border:1px solid rgba(39,166,93,.18);border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;font-size:.78rem;color:var(--w2);line-height:1.7"></div>
         <button class="mbtn" onclick="bkNext1()">Endelea → Chagua Malipo</button>
@@ -1537,16 +1542,16 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
       <div id="bk-s2" style="display:none">
         <p style="font-size:.8rem;color:var(--w3);margin-bottom:1rem">Chagua jinsi ya kulipa:</p>
         <div style="display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.2rem">
-          <label style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s" id="pay-mpesa-lbl">
-            <input type="radio" name="pay-method" value="mpesa" id="pay-mpesa" style="accent-color:var(--gm)" onchange="selectPay('mpesa')">
+          <label style="display:none" id="pay-mpesa-lbl">
+            <input type="radio" name="pay-method" value="mpesa" id="pay-mpesa" disabled>
             <div>
               <div style="font-size:.85rem;font-weight:600;color:var(--w1)">📱 M-Pesa</div>
               <div style="font-size:.7rem;color:var(--w3)">Lipa haraka na simu yako</div>
             </div>
             <span id="pay-mpesa-badge" style="margin-left:auto;font-size:.65rem;background:rgba(39,166,93,.15);color:var(--gm);padding:.2rem .6rem;border-radius:20px;display:none">✓ Chaguo</span>
           </label>
-          <label style="display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s" id="pay-stripe-lbl">
-            <input type="radio" name="pay-method" value="stripe" id="pay-stripe" style="accent-color:var(--gm)" onchange="selectPay('stripe')">
+          <label style="display:none" id="pay-stripe-lbl">
+            <input type="radio" name="pay-method" value="stripe" id="pay-stripe" disabled>
             <div>
               <div style="font-size:.85rem;font-weight:600;color:var(--w1)">💳 Kadi / Stripe</div>
               <div style="font-size:.7rem;color:var(--w3)">Visa, Mastercard, au kadi nyingine</div>
@@ -1576,7 +1581,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
         <div id="bk-confirm-summary" style="background:rgba(39,166,93,.06);border:1px solid rgba(39,166,93,.18);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.2rem;font-size:.8rem;color:var(--w2);line-height:2"></div>
         <div id="bk-mpesa-form" style="display:none;margin-bottom:1rem">
           <div class="mfg">
-            <label>Namba ya M-Pesa</label>
+            <label for="bk-mpesa-num">Namba ya M-Pesa</label>
             <input type="tel" id="bk-mpesa-num" placeholder="+255 7XX XXX XXX"/>
           </div>
           <p style="font-size:.7rem;color:var(--w3);margin-top:-.5rem;margin-bottom:.7rem">Utapata push notification kwenye simu yako</p>
@@ -1594,7 +1599,7 @@ footer > .fg > div:first-child p { font-size:.78rem; line-height:1.8; color:var(
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 // ══ SUPABASE ════════════════════════════
@@ -1630,11 +1635,13 @@ async function toggleWish(listingId, btn){
   if(!user){ openAuth('login'); return; }
   const liked = myWishlist.has(listingId);
   if(liked){
-    await db.from('favorites').delete().eq('user_id', user.id).eq('listing_id', listingId);
+    const { error } = await db.from('favorites').delete().eq('user_id', user.id).eq('listing_id', listingId);
+    if(error){ showT('Could not update your wishlist. Please try again.'); return; }
     myWishlist.delete(listingId); btn.classList.remove('liked');
     showT('💔 Imeondolewa kwenye wishlist');
   } else {
-    await db.from('favorites').insert({ user_id: user.id, listing_id: listingId });
+    const { error } = await db.from('favorites').insert({ user_id: user.id, listing_id: listingId });
+    if(error){ showT('Could not update your wishlist. Please try again.'); return; }
     myWishlist.add(listingId); btn.classList.add('liked');
     btn.style.transform='scale(1.4)'; setTimeout(()=>btn.style.transform='',250);
     showT('❤️ Imehifadhiwa kwenye wishlist!');
@@ -1665,7 +1672,10 @@ let hasMore = false;
 
 // ══ CANVAS PARTICLES ══════════════════
 (function(){
+  // Skip particles on mobile (saves CPU/battery) and reduced motion
+  if (window.innerWidth < 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const c = document.getElementById('hcanvas');
+  if (!c) return;
   const ctx = c.getContext('2d');
   let pts = [], W, H;
   const resize = () => { W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; };
@@ -1724,7 +1734,11 @@ document.querySelectorAll('.cat').forEach(c => {
 async function loadL() {
   document.getElementById('lgrid').innerHTML = `<div class="lem" style="grid-column:1/-1"><div style="width:38px;height:38px;border:3px solid rgba(39,166,93,.15);border-top-color:var(--gm);border-radius:50%;animation:kspin .7s linear infinite;margin:0 auto .8rem"></div><p style="font-size:.84rem">Loading listings...</p></div>`;
   const {data,error} = await db.from('listings').select('*').order('created_at',{ascending:false}).range(0, PAGE_SIZE);
-  const rows = error?[]:(data||[]);
+  if(error){
+    document.getElementById('lgrid').innerHTML = '<div class="lem" style="grid-column:1/-1"><h3>Listings could not be loaded</h3><p>Please check your connection and try again.</p></div>';
+    return;
+  }
+  const rows = data||[];
   hasMore = rows.length === PAGE_SIZE + 1;
   allL = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
   renderL();
@@ -1787,7 +1801,13 @@ function setFilter(type){
 
 function doSearch(){
   const q = document.getElementById('hero-search').value.toLowerCase().trim();
-  if(q){ activeF='all'; document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all')); renderL(q); document.getElementById('listings-section').scrollIntoView({behavior:'smooth'}); }
+  const checkin = document.getElementById('search-in').value;
+  const checkout = document.getElementById('search-out').value;
+  if(checkin && checkout && checkout <= checkin){ showT('Check-out must be after check-in.'); return; }
+  activeF='all';
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
+  renderL(q);
+  document.getElementById('listings-section').scrollIntoView({behavior:'smooth'});
 }
 
 function applyAdvFilters(){
@@ -1880,7 +1900,7 @@ function mkCard(p){
       ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="pimg-bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<svg class="pimg-bg" viewBox="0 0 380 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${esc(c1)}"/><stop offset="100%" stop-color="${esc(c2)}"/></linearGradient></defs><rect width="380" height="190" fill="url(#${uid})"/><rect x="0" y="105" width="380" height="85" fill="rgba(3,11,6,.55)"/><rect x="16" y="18" width="348" height="156" rx="5" fill="rgba(255,255,255,.05)"/><text x="190" y="72" text-anchor="middle" fill="rgba(255,255,255,.18)" font-family="Georgia,serif" font-size="11" letter-spacing="3">${esc(p.type.toUpperCase().replace('_',' '))}</text></svg>`}
       <div class="pimg-ov"></div>
       ${badge}
-      <button class="pheart" id="heart-${p.id}" onclick="event.stopPropagation();toggleWish('${p.id}',this)">
+      <button class="pheart" id="heart-${p.id}" aria-label="Save ${esc(p.name)}" onclick="event.stopPropagation();toggleWish('${p.id}',this)">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       </button>
     </div>
@@ -1910,6 +1930,8 @@ function openBk(id){
   document.getElementById('bk-info').innerHTML=`<div class="bk-th" style="background:linear-gradient(135deg,${c1},${c2})"></div><div><div class="bk-n">${esc(p.name)}</div><div class="bk-l">📍 ${esc(p.location)} · <strong style="color:var(--gm)">${fmtPrice(Number(p.price))}/usiku</strong></div></div>`;
   // Reset fields
   ['bk-in','bk-out','bk-name','bk-phone','bk-email','bk-mpesa-num'].forEach(fid=>{const el=document.getElementById(fid);if(el)el.value='';});
+  document.getElementById('bk-in').value = document.getElementById('search-in').value;
+  document.getElementById('bk-out').value = document.getElementById('search-out').value;
   document.getElementById('bk-gs').value='1';
   document.getElementById('bk-summary-box').style.display='none';
   document.querySelectorAll('input[name="pay-method"]').forEach(r=>r.checked=false);
@@ -1964,10 +1986,11 @@ function bkNext1(){
 
 function selectPay(method){
   bkPayMethod=method;
+  const selectedId = method === 'whatsapp' ? 'wa' : method;
   ['mpesa','stripe','wa'].forEach(m=>{
     const lbl=document.getElementById('pay-'+m+'-lbl');
     const badge=document.getElementById('pay-'+m+'-badge');
-    if(m===method){ lbl.style.borderColor='rgba(39,166,93,.5)'; badge.style.display='inline'; }
+    if(m===selectedId){ lbl.style.borderColor='rgba(39,166,93,.5)'; badge.style.display='inline'; }
     else { lbl.style.borderColor=''; badge.style.display='none'; }
   });
 }
@@ -1987,6 +2010,7 @@ function bkNext2(){
 
 async function submitBooking(){
   if(!bkTarget) return;
+  if(bkPayMethod !== 'whatsapp'){ showT('Online payments are not available yet. Please use WhatsApp.'); return; }
   const ci=document.getElementById('bk-in').value;
   const co=document.getElementById('bk-out').value;
   const gs=document.getElementById('bk-gs').value;
@@ -2279,7 +2303,6 @@ async function onAuthStateChange(user) {
   // still call getSession() to get the resolved session object.
   const { data: { session }, error } = await db.auth.getSession();
   if (error) console.error('[initAuth] getSession error:', error);
-  console.log('[initAuth] session on load:', session);
 
   // Step 2: Clean the URL — remove #access_token fragment so it
   // doesn't appear on refresh or when user copies the link.
@@ -2293,7 +2316,6 @@ async function onAuthStateChange(user) {
   // Step 4: Listen for all future auth changes (login, logout, token refresh, OAuth)
   // INITIAL_SESSION fires on every page load (including after OAuth redirect) — must handle it.
   db.auth.onAuthStateChange(async (event, session) => {
-    console.log('[onAuthStateChange] event:', event, '| user:', session?.user?.email);
 
     if (
       event === 'INITIAL_SESSION'  ||   // ← OAuth callback + normal refresh
@@ -2343,6 +2365,22 @@ function closeDrawer() {
 }
 // Close drawer on Escape key
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeDrawer(); });
+
+(function enhancePage(){
+  const today = new Date().toISOString().split('T')[0];
+  ['search-in','search-out','bk-in','bk-out'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.min=today;
+  });
+  document.querySelectorAll('label').forEach((label,i)=>{
+    if(label.htmlFor) return;
+    const control=label.parentElement?.querySelector('input,select,textarea');
+    if(!control) return;
+    if(!control.id) control.id='field-'+i;
+    label.htmlFor=control.id;
+  });
+  document.querySelectorAll('a[target="_blank"]').forEach(a=>a.rel='noopener noreferrer');
+})();
 </script>
 </body>
 </html>
