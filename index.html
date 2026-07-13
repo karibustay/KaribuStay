@@ -67,10 +67,15 @@ body::before{
    HERO — signature glass search panel
 ═══════════════════════════════════════ */
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:7rem 5vw 4rem}
-.hero-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(150deg,#051a0d 0%,#030b06 55%,#081f10 100%)}
+.hero-bg{position:absolute;inset:0;z-index:0;background:#030b06;overflow:hidden}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.hero-video.loaded{opacity:1}
+/* dark + green-tint overlay so text stays readable over any video */
 .hero-bg::after{content:'';position:absolute;inset:0;background:
-  radial-gradient(ellipse 60% 50% at 75% 30%,rgba(39,166,93,.16),transparent 70%),
-  radial-gradient(ellipse 50% 40% at 15% 80%,rgba(244,137,66,.10),transparent 70%);}
+  linear-gradient(135deg,rgba(3,11,6,.82) 0%,rgba(5,20,10,.55) 50%,rgba(3,11,6,.72) 100%),
+  radial-gradient(ellipse 60% 50% at 75% 30%,rgba(39,166,93,.12),transparent 70%),
+  radial-gradient(ellipse 50% 40% at 15% 80%,rgba(244,137,66,.07),transparent 70%);
+  z-index:1;}
 .hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
   background-image:linear-gradient(rgba(39,166,93,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(39,166,93,.025) 1px,transparent 1px);
@@ -277,9 +282,14 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:3.5rem 5vw 2r
   .fg{grid-template-columns:1fr}
   .cta-btns{flex-direction:column;align-items:center}
 }
+@media(max-width:768px){
+  .hero-video{display:none}
+  .hero-bg{background:url("https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=900&q=70") center/cover no-repeat}
+}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .hero-video{display:none}
 }
 </style>
 </head>
@@ -309,7 +319,13 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:3.5rem 5vw 2r
 </nav>
 
 <section class="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-bg">
+    <video class="hero-video" autoplay muted loop playsinline preload="auto"
+           oncanplay="this.classList.add('loaded')"
+           poster="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&q=60">
+      <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38aaa458ef898684d&profile_id=164" type="video/mp4"/>
+    </video>
+  </div>
   <div class="hero-grid">
     <div>
       <div class="hero-eyebrow"><span class="eyebrow-dot"></span>Tanzania's trusted stay platform</div>
