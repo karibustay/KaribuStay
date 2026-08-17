@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "KaribuStay",
+    "slug": "karibustay-customer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/karibustay-icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.karibustay.customer"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#074A2C",
+        "foregroundImage": "./assets/karibustay-icon.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.karibustay.customer"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

@@ -1,9 +1,10 @@
 # KaribuStay
 
-KaribuStay is being delivered as two connected products sharing Supabase:
+KaribuStay is being delivered as two connected mobile apps sharing Supabase, plus an admin web workspace:
 
-- **Customer app** — an installable, mobile-first web app for discovering stays, filtering, saving favourites, authenticating, and managing bookings.
-- **Host and admin web workspace** — role-protected tools for host onboarding, listing management, booking and revenue visibility, plus platform moderation and analytics.
+- **KaribuStay** — the native iPhone and Android app for guests. Source: `apps/customer`.
+- **KaribuStay Host** — the native iPhone and Android app for hosts. Source: `apps/host`.
+- **Admin web workspace** — role-protected tools for platform moderation and analytics. Source: `admin.html`.
 
 ## Open locally
 
@@ -11,6 +12,7 @@ Serve this folder using any static web server, then open [index.html](index.html
 
 ## Current delivery
 
+- Native customer and host apps have separate Android application IDs and iOS bundle IDs, authentication, Supabase-ready data access, and store build configuration. See `apps/STORE_RELEASE.md` for the release path.
 - Customer search has location, type, guest, price, and amenity filters; sorting; saved stays; and a responsive bottom navigation.
 - The customer experience is installable as a PWA through `app.webmanifest` and has a small offline app shell.
 - Property detail, enquiry, review, booking history, profile, host onboarding, and the admin dashboard remain connected to the existing Supabase setup.
