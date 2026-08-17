@@ -692,24 +692,23 @@ async function submitHostApp() {
   msg.textContent = '';
 
   const payload = {
-    user_id: currentUser.id,
+    id: currentUser.id,
     full_name: document.getElementById('rg-name').value.trim(),
     phone: document.getElementById('rg-phone').value.trim(),
     city: document.getElementById('rg-city').value,
     nationality: document.getElementById('rg-nationality').value,
-    host_bio: document.getElementById('rg-bio').value.trim(),
+    bio: document.getElementById('rg-bio').value.trim(),
     prop_type: document.getElementById('rg-prop-type').value,
     prop_location: document.getElementById('rg-prop-location').value.trim(),
     prop_price_estimate: parseInt(document.getElementById('rg-prop-price').value) || null,
     prop_desc: document.getElementById('rg-prop-desc').value.trim() || null,
     has_photos: document.getElementById('rg-has-photos').value,
     host_status: 'pending',
-    role: 'guest',
     applied_at: new Date().toISOString(),
     agreed_terms: true,
   };
 
-  const { error } = await db.from('profiles').upsert(payload, { onConflict: 'user_id' });
+  const { error } = await db.from('profiles').upsert(payload, { onConflict: 'id' });
 
   if (error) {
     msg.textContent = '❌ ' + error.message;
@@ -810,17 +809,17 @@ async function init(){
   currentUser = user;
   document.getElementById('nav-user-name').textContent = user.email;
 
-  // Check role & host_status
+  // The live profiles table uses `id` and `is_host` for authorization.
   const { data: profile } = await db.from('profiles')
-    .select('role,full_name,host_bio,host_status,rejection_note')
-    .eq('user_id', user.id).maybeSingle();
+    .select('id,full_name,bio,host_status,rejection_note,is_host')
+    .eq('id', user.id).maybeSingle();
 
-  const role = profile?.role || 'guest';
+  const isHost = profile?.is_host === true;
   const hostStatus = profile?.host_status;
   const name = profile?.full_name || user.email.split('@')[0];
 
   // Show correct state
-  if (role === 'host' || role === 'admin') {
+  if (isHost) {
     // Approved — show dashboard
     document.getElementById('dashboard').style.display='grid';
     document.getElementById('host-first-name').textContent = name.split(' ')[0];

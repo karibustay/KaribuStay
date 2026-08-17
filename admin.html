@@ -786,12 +786,12 @@ async function deleteInvite(id){
 }
 
 async function loadHosts(){
-  const { data:profiles } = await db.from('profiles').select('*').eq('role','host').order('host_since',{ascending:false});
+  const { data:profiles } = await db.from('profiles').select('*').eq('is_host',true).order('host_since',{ascending:false});
   const tbody = document.getElementById('hosts-tbody');
   if(!profiles?.length){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:#aaa;padding:1.2rem">Hakuna hosts bado</td></tr>'; return; }
 
   // Get listing counts
-  const ids = profiles.map(p=>p.user_id);
+  const ids = profiles.map(p=>p.id);
   const { data:listings } = await db.from('listings').select('host_id').in('host_id',ids);
   const counts = {};
   (listings||[]).forEach(l=>{ counts[l.host_id]=(counts[l.host_id]||0)+1; });
@@ -799,10 +799,10 @@ async function loadHosts(){
   tbody.innerHTML = profiles.map(p=>`
     <tr>
       <td>${p.full_name||p.name||'—'}</td>
-      <td style="font-size:.75rem;color:#888">${p.user_id.slice(0,8)}...</td>
+      <td style="font-size:.75rem;color:#888">${p.id.slice(0,8)}...</td>
       <td>${p.host_since?new Date(p.host_since).toLocaleDateString('sw-TZ'):'—'}</td>
-      <td><span style="background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:.15rem .55rem;font-size:.72rem;font-weight:600">${counts[p.user_id]||0}</span></td>
-      <td><button onclick="removeHost('${p.user_id}')" style="background:none;border:1px solid #fca5a5;color:#e53935;border-radius:6px;padding:.25rem .65rem;font-size:.73rem;cursor:pointer">Ondoa role</button></td>
+      <td><span style="background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:.15rem .55rem;font-size:.72rem;font-weight:600">${counts[p.id]||0}</span></td>
+      <td><button onclick="removeHost('${p.id}')" style="background:none;border:1px solid #fca5a5;color:#e53935;border-radius:6px;padding:.25rem .65rem;font-size:.73rem;cursor:pointer">Ondoa Host</button></td>
     </tr>`).join('');
 
   // Update badge
@@ -811,10 +811,10 @@ async function loadHosts(){
 }
 
 async function removeHost(userId){
-  if(!confirm('Ondoa role ya host kwa mtumiaji huyu?')) return;
-  const { error } = await db.from('profiles').update({role:'guest'}).eq('user_id',userId);
+  if(!confirm('Ondoa uwezo wa Host kwa mtumiaji huyu?')) return;
+  const { error } = await db.from('profiles').update({is_host:false}).eq('id',userId);
   if(error){ showNotification('❌ '+error.message,'error'); return; }
-  showNotification('✅ Role imeondolewa.','success');
+  showNotification('✅ Uwezo wa Host umeondolewa.','success');
   loadHosts();
 }
 
