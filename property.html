@@ -466,6 +466,7 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
         <div class="mtabs"><button class="mtab active" onclick="openPane('login')">Login</button><button class="mtab" onclick="openPane('signup')">Sign Up</button></div>
         <div class="mfg"><label for="li-email">Email</label><input type="email" id="li-email" placeholder="you@email.com" autocomplete="email"/></div>
         <div class="mfg"><label for="li-pass">Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <a href="reset.html" style="display:block;width:max-content;margin:-.2rem 0 1rem auto;color:var(--green);font-size:.76rem;font-weight:700;text-decoration:none">Forgot password?</a>
         <div class="aerr" id="li-err"></div>
         <button class="abtn" id="li-btn" onclick="doLogin()">Login</button>
         <div class="adiv">or</div>
@@ -923,9 +924,14 @@ async function doSignup() {
   if (!first||!email||!pass) { errEl.textContent='Please fill required fields.'; errEl.classList.add('show'); return; }
   if (pass.length<6) { errEl.textContent='Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
   btn.disabled=true; btn.textContent='Creating…';
-  const { error } = await db.auth.signUp({ email, password:pass, options:{ data:{ full_name:[first,last].filter(Boolean).join(' ') } } });
+  const { data, error } = await db.auth.signUp({ email, password:pass, options:{ data:{ full_name:[first,last].filter(Boolean).join(' ') } } });
   btn.disabled=false; btn.textContent='Create Account';
   if (error) { errEl.textContent='❌ '+error.message; errEl.classList.add('show'); return; }
+  if (data.session) {
+    closeModal();
+    showToast('✅ Account created. Welcome to KaribuStay!');
+    return;
+  }
   okEl.classList.add('show');
   showToast('✅ Check your email to confirm!');
 }

@@ -193,6 +193,21 @@ body{
     <div class="msg" id="reset-msg" role="status" aria-live="polite"></div>
   </div>
 
+  <!-- STATE: request a password reset link -->
+  <div class="state" id="s-request">
+    <div class="state-icon icon-ok">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gm)" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+    </div>
+    <div class="state-title">Umesahau nenosiri?</div>
+    <div class="state-sub">Weka email yako. Tutatuma kiungo salama cha kubadili nenosiri.</div>
+    <div class="field" style="margin-top:1.35rem">
+      <label for="reset-email">Email yako</label>
+      <input type="email" id="reset-email" placeholder="wewe@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')requestReset()"/>
+    </div>
+    <button class="btn" id="request-btn" onclick="requestReset()">Tuma kiungo cha reset</button>
+    <div class="msg" id="request-msg" role="status" aria-live="polite"></div>
+  </div>
+
   <!-- STATE: success -->
   <div class="state" id="s-success">
     <div class="state-icon icon-ok">
@@ -210,7 +225,7 @@ body{
     </div>
     <div class="state-title">Kiungo kimekwisha</div>
     <div class="state-sub" id="err-sub">Kiungo cha reset kimekwisha muda wake au kimetumiwa tayari. Omba kiungo kipya.</div>
-    <button class="btn" onclick="window.location.href='index.html'">Omba upya</button>
+    <button class="btn" onclick="showState('s-request')">Omba upya</button>
     <button class="btn-ghost" onclick="window.location.href='index.html'">Rudi nyumbani</button>
   </div>
 
@@ -242,6 +257,23 @@ function setMsg(msg, isErr=true) {
   const el = document.getElementById('reset-msg');
   el.textContent = msg;
   el.className = 'msg ' + (isErr ? 'err' : 'ok');
+}
+
+async function requestReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  const msg = document.getElementById('request-msg');
+  const btn = document.getElementById('request-btn');
+  if (!email) { msg.textContent='Weka email yako kwanza.'; msg.className='msg err'; return; }
+  btn.disabled=true;
+  btn.textContent='Inatuma…';
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset.html`
+  });
+  btn.disabled=false;
+  btn.textContent='Tuma kiungo cha reset';
+  if (error) { msg.textContent=error.message; msg.className='msg err'; return; }
+  msg.textContent='Kama email hii ina akaunti, kiungo cha reset kimetumwa. Angalia Inbox na Spam.';
+  msg.className='msg ok';
 }
 
 // ── PASSWORD STRENGTH ──────────────────────────────────────────
@@ -292,9 +324,13 @@ async function submitReset() {
 
 // ── INIT — detect recovery session from URL ────────────────────
 (async function init() {
-  const { data:{ session } } = await db.auth.getSession();
   const isRecoveryLink = window.location.hash.includes('type=recovery') || new URLSearchParams(window.location.search).get('type') === 'recovery';
-  if(session && isRecoveryLink){
+  if (!isRecoveryLink) {
+    showState('s-request');
+    return;
+  }
+  const { data:{ session } } = await db.auth.getSession();
+  if(session){
     showState('s-form');
     document.getElementById('new-pass').focus();
   }
