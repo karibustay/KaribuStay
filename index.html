@@ -73,6 +73,8 @@ body::before{
 .btn-wa svg{flex-shrink:0}
 #login-nav-btn{background:none;border:1.5px solid rgba(255,255,255,.18);color:var(--w2);padding:clamp(.4rem,1.6vw,.5rem) clamp(.55rem,2.8vw,1.1rem);border-radius:50px;font-size:clamp(.68rem,2vw,.8rem);font-weight:500;cursor:pointer;transition:border-color .2s,color .2s;white-space:nowrap;flex-shrink:0}
 #login-nav-btn:hover{border-color:rgba(255,255,255,.45);color:#fff}
+#login-nav-btn.logged-in{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.46);font-weight:700}
+#nav.solid #login-nav-btn.logged-in{background:var(--g2);border-color:var(--gb);color:var(--gd)}
 #hamburger{display:none}
 
 /* ═══════════════════════════════════════
@@ -575,6 +577,30 @@ footer{background:#27A660;border-top:1px solid rgba(255,255,255,.26);padding:3.5
 
 // NAV SCROLL
 window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('solid', scrollY > 60));
+
+// Keep the customer account visible after moving between pages.
+const SUPABASE_URL = 'https://vxuziqogjtzbdrowakeg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2HlrTQcrkpkaQVSDkipxDQ_F4Xygse7';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+});
+
+function updateHomeAuth(user){
+  const button = document.getElementById('login-nav-btn');
+  if(!user){
+    button.textContent='Login / Sign up';
+    button.classList.remove('logged-in');
+    button.onclick=()=>window.location.href='listings.html?auth=login';
+    return;
+  }
+  const name=user.user_metadata?.full_name||user.user_metadata?.name||user.email.split('@')[0];
+  button.textContent=`My account · ${name.split(' ')[0]}`;
+  button.classList.add('logged-in');
+  button.onclick=()=>window.location.href='profile.html';
+}
+
+db.auth.getSession().then(({data:{session}})=>updateHomeAuth(session?.user));
+db.auth.onAuthStateChange((_event,session)=>updateHomeAuth(session?.user));
 
 // SCROLL REVEAL
 const ro = new IntersectionObserver(entries => {
