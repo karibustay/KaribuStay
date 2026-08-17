@@ -1,0 +1,31 @@
+{
+  "name": "KaribuStay",
+  "short_name": "KaribuStay",
+  "description": "Find and book trusted stays across Tanzania.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030b06",
+  "theme_color": "#1A5C3A",
+  "lang": "en-TZ",
+  "icons": [
+    {
+      "src": "logo3.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Find a stay",
+      "url": "/listings.html",
+      "icons": [{ "src": "logo3.png", "sizes": "any" }]
+    },
+    {
+      "name": "My bookings",
+      "url": "/bookings.html",
+      "icons": [{ "src": "logo3.png", "sizes": "any" }]
+    }
+  ]
+}

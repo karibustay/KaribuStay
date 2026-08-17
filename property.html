@@ -545,6 +545,14 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { autoRefreshToken: 
 
 let property = null, currentUser = null, isFav = false, descExpanded = false;
 const propId = new URLSearchParams(window.location.search).get('id');
+const previewProperties = {
+  'demo-masaki': {id:'demo-masaki',name:'Masaki Ocean View Apartment',type:'apartment',location:'Masaki, Dar es Salaam',price:120000,beds:2,baths:2,guests:4,rating:4.8,reviews:32,wifi:true,parking:true,pool:true,ac:true,badge:'popular',color:'#277657,#113f2c',image_url:'https://images.unsplash.com/photo-1502672023488-70e25813eb80?w=1200&q=85',description:'A bright, relaxed apartment close to the ocean in Masaki. It is designed for travellers who want a comfortable home base with space to work, cook and unwind.'},
+  'demo-mikocheni': {id:'demo-mikocheni',name:'Mikocheni City Apartment',type:'apartment',location:'Mikocheni, Dar es Salaam',price:150000,beds:2,baths:2,guests:4,rating:4.7,reviews:21,wifi:true,parking:true,ac:true,badge:'new',color:'#82664d,#3c2419',image_url:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=85',description:'A modern two-bedroom apartment in the heart of Mikocheni, with easy access to restaurants, beaches and the city centre.'},
+  'demo-serena': {id:'demo-serena',name:'Kivukoni Garden Hotel',type:'hotel',location:'Kivukoni, Dar es Salaam',price:220000,beds:1,baths:1,guests:2,rating:4.6,reviews:18,wifi:true,parking:true,pool:true,ac:true,color:'#607f63,#233c2a',image_url:'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&q=85',description:'A calm city hotel with garden views, thoughtful service and a convenient Kivukoni location.'},
+  'demo-zanzibar': {id:'demo-zanzibar',name:'Jambiani Beach Villa',type:'villa',location:'Jambiani, Zanzibar',price:280000,beds:3,baths:3,guests:6,rating:4.9,reviews:46,wifi:true,parking:true,pool:true,ac:true,badge:'popular',color:'#298398,#16586b',image_url:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=85',description:'A spacious coastal villa just moments from Jambiani Beach. Gather with friends and family, enjoy the pool and wake to the sound of the Indian Ocean.'},
+  'demo-arusha': {id:'demo-arusha',name:'Arusha Coffee Lodge',type:'lodge',location:'Arusha, Tanzania',price:175000,beds:1,baths:1,guests:2,rating:4.8,reviews:27,wifi:true,parking:true,pool:true,color:'#496d47,#223a25',image_url:'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=85',description:'A welcoming lodge set among leafy gardens, ideal for an Arusha stopover or a peaceful start to a safari.'},
+  'demo-stone-town': {id:'demo-stone-town',name:'Stone Town Heritage Stay',type:'short_stay',location:'Stone Town, Zanzibar',price:105000,beds:1,baths:1,guests:2,rating:4.5,reviews:14,wifi:true,ac:true,color:'#936a47,#4a2e1d',image_url:'https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=1200&q=85',description:'A characterful stay in historic Stone Town, a short walk from the waterfront, cafés and local markets.'}
+};
 
 async function init() {
   const { data: { session } } = await db.auth.getSession();
@@ -578,41 +586,50 @@ function onSignedOut() {
 }
 
 async function loadProperty() {
-  const { data, error } = await db.from('listings').select('*').eq('id', propId).single();
+  const isLocalPreview = ['localhost','127.0.0.1','::1'].includes(location.hostname) && !!previewProperties[propId];
+  let data = isLocalPreview ? previewProperties[propId] : null;
+  let error = null;
+  if (!data) ({ data, error } = await db.from('listings').select('*').eq('id', propId).single());
   if (error || !data) { showError(); return; }
   property = data;
   document.getElementById('state-loading').style.display = 'none';
   document.getElementById('prop-content').style.display = 'block';
   renderProperty(data);
   lbImages = buildImageList(data);
-  await loadReviews(data.id);
-  await loadSimilar(data.type, data.id);
-  await loadAvailability(data.id);
-  if (currentUser) { await checkFav(); maybeShowReviewForm(); }
-  maybeShowReviewForm();
+  if (isLocalPreview) {
+    document.getElementById('reviews-count-label').textContent = '';
+    document.getElementById('reviews-list').innerHTML = '<div class="no-reviews">Preview stay — live guest reviews will appear here.</div>';
+    document.querySelector('.similar-sec').style.display = 'none';
+  } else {
+    await loadReviews(data.id);
+    await loadSimilar(data.type, data.id);
+    await loadAvailability(data.id);
+    if (currentUser) { await checkFav(); maybeShowReviewForm(); }
+    maybeShowReviewForm();
+  }
 }
 
 function renderProperty(p) {
   document.title = p.name + ' – KaribuStay';
   // Update OG/Twitter meta tags dynamically for sharing
-  const desc = (p.description || 'Book this property on KaribuStay — Tanzania\'s trusted accommodation.').slice(0, 160);
+  const metaDescription = (p.description || 'Book this property on KaribuStay — Tanzania\'s trusted accommodation.').slice(0, 160);
   const img = p.image_url || 'https://karibustay.co.tz/og-cover.jpg';
   const url = 'https://karibustay.co.tz/property.html?id=' + p.id;
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
-  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', metaDescription);
   document.querySelector('meta[property="og:image"]')?.setAttribute('content', img);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
   document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
-  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', desc);
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', metaDescription);
   document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', img);
-  document.querySelector('meta[name="description"]')?.setAttribute('content', desc);
+  document.querySelector('meta[name="description"]')?.setAttribute('content', metaDescription);
   const [c1, c2] = (p.color || '#C88B55,#4A2010').split(',');
   const typeLabel = { apartment:'Apartment', hotel:'Hotel', short_stay:'Short Stay', villa:'Villa', hostel:'Hostel' }[p.type] || p.type;
 
   // Breadcrumb
   document.getElementById('bc-name').textContent = p.name;
   document.getElementById('bc-type-link').textContent = typeLabel;
-  document.getElementById('bc-type-link').href = 'index.html?type=' + p.type;
+  document.getElementById('bc-type-link').href = 'listings.html?type=' + p.type;
 
   // Gallery
   const gid = String(p.id).replace(/-/g,'').slice(0,8);
@@ -722,6 +739,7 @@ async function loadSimilar(type, excludeId) {
 /* FAVOURITES */
 async function checkFav() {
   if (!currentUser || !property) return;
+  if (String(property.id).startsWith('demo-')) { isFav = false; updateFavBtn(); return; }
   const { data } = await db.from('favourites').select('id').eq('user_id', currentUser.id).eq('listing_id', property.id).maybeSingle();
   isFav = !!data;
   updateFavBtn();
@@ -744,6 +762,7 @@ function updateFavBtn() {
 
 async function toggleFav() {
   if (!currentUser) { openModal('login'); showToast('Login to save properties', true); return; }
+  if (String(property.id).startsWith('demo-')) { showToast('Preview stays cannot be saved.', true); return; }
   if (isFav) {
     await db.from('favourites').delete().eq('user_id', currentUser.id).eq('listing_id', property.id);
     isFav = false; showToast('Removed from saved');
@@ -791,6 +810,7 @@ async function submitEnquiry() {
   const ok       = document.getElementById('bk-ok');
   const btn      = document.getElementById('bk-submit');
   err.classList.remove('show');
+  if (String(property?.id).startsWith('demo-')) { err.textContent = 'This local preview stay cannot accept bookings.'; err.classList.add('show'); return; }
   if (!checkin || !checkout) { err.textContent = 'Please select check-in and check-out dates.'; err.classList.add('show'); return; }
   if (checkout <= checkin)   { err.textContent = 'Check-out must be after check-in.'; err.classList.add('show'); return; }
   if (bookedRanges.some(r => checkin < r.end && checkout > r.start)) {
@@ -1091,6 +1111,7 @@ async function checkCanReview(userId, listingId) {
 
 async function submitReview() {
   if (!currentUser) { openModal('login'); return; }
+  if (String(property?.id).startsWith('demo-')) { document.getElementById('review-msg').textContent = 'This local preview stay cannot accept reviews.'; return; }
   if (!reviewStars) { document.getElementById('review-msg').textContent = 'Please select a star rating.'; return; }
   const comment = document.getElementById('review-comment').value.trim();
   if (!comment)  { document.getElementById('review-msg').textContent = 'Please write a comment.'; return; }
