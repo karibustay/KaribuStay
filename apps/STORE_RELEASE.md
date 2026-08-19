@@ -11,17 +11,28 @@ Admin hatumpeleki App Store au Play Store. Anaendelea kutumia `admin.html` kweny
 
 ## Kabla ya kutengeneza store build
 
-1. Nakili `.env.example` kuwa `.env` ndani ya `apps/customer` na `apps/host`, kisha weka Supabase URL na publishable/anon key ya production. Usiiweke `.env` kwenye Git.
-2. Hakikisha database, Supabase storage, na RLS policies vimewekwa kulingana na `Backend Schema.txt`. Tumia accounts za majaribio kujaribu flow nzima: host verification, property approval, booking request, host response, na review.
-3. Weka privacy policy na terms za KaribuStay kwenye website ya umma. Google na Apple huomba link hizi wakati wa kuwasilisha app.
-4. Fungua Google Play Console na Apple Developer accounts za biashara ya KaribuStay. Taarifa za kisheria, support email, screenshots za apps, na maelezo ya app vitawekwa kwenye accounts hizo.
+1. Kwa majaribio ya kompyuta, nakili `.env.example` kuwa `.env` ndani ya `apps/customer` na `apps/host`, kisha weka Supabase URL na publishable/anon key ya production. Usiiweke `.env` kwenye Git.
+2. Kwa cloud builds, baada ya kuingia EAS, weka values hizi kwenye environment ya `development`, `preview`, na `production` kwa kila app:
+
+```powershell
+npx eas env:set --name EXPO_PUBLIC_SUPABASE_URL --value https://vxuziqogjtzbdrowakeg.supabase.co --environment production --visibility plaintext
+npx eas env:set --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value YOUR_SUPABASE_PUBLISHABLE_KEY --environment production --visibility plaintext
+```
+
+Rudia kwa `preview` na `development` au tumia values za mazingira hayo. `EXPO_PUBLIC_` values zinaonekana kwenye app iliyojengwa, kwa hiyo usitumie service-role key au secret nyingine.
+3. Hakikisha database, Supabase storage, na RLS policies vimewekwa kulingana na `Backend Schema.txt`. Tumia accounts za majaribio kujaribu flow nzima: host verification, property approval, booking request, host response, na review.
+4. Weka Supabase Site URL kuwa `https://karibustay.co.tz` na ongeza `https://karibustay.co.tz/reset.html` kwenye Redirect URLs. Weka Custom SMTP kabla ya kutegemea signup au reset emails za wateja.
+5. Privacy Policy na Terms za KaribuStay zipo kwenye `privacy.html` na `terms.html`; zipitie na wakili kabla ya launch. Google na Apple huomba links hizi wakati wa kuwasilisha app.
+6. Fungua Google Play Console na Apple Developer accounts za biashara ya KaribuStay. Taarifa za kisheria, support email, screenshots za apps, na maelezo ya app vitawekwa kwenye accounts hizo.
 
 ## Kutengeneza build
 
 Kwa kila app, ingia kwenye folder lake na uendeshe:
 
 ```powershell
+npm run typecheck
 npx eas login
+npx eas init
 npx eas build --platform android --profile production
 npx eas build --platform ios --profile production
 ```
