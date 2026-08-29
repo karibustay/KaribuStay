@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 200" role="img" aria-labelledby="title desc">
+  <title id="title">Nerava</title>
+  <desc id="desc">Nerava accommodation platform logo</desc>
+  <defs>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b5d38"/>
+      <stop offset="1" stop-color="#073b27"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7b733"/>
+      <stop offset="1" stop-color="#f48942"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12 12)">
+    <rect width="176" height="176" rx="48" fill="url(#green)"/>
+    <circle cx="129" cy="48" r="19" fill="url(#sun)"/>
+    <path d="M35 103 88 57l54 46" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+    <path d="M52 99v41c0 8 6 14 14 14h44c8 0 14-6 14-14V99" fill="#fff"/>
+    <path d="M78 154v-31h20v31" fill="url(#green)"/>
+    <path d="M119 84v-22c0-5 4-9 9-9h6c5 0 9 4 9 9v36" fill="#fff"/>
+  </g>
+  <text x="220" y="105" fill="#073b27" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="800" letter-spacing="-3">Nerava</text>
+  <text x="225" y="150" fill="#607267" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" letter-spacing="4">FIND YOUR PLACE IN AFRICA</text>
+</svg>

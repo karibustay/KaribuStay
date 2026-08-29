@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "KaribuStay Host",
-    "slug": "karibustay-host",
+    "name": "Nerava Host",
+    "slug": "nerava-host",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/karibustay-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.karibustay.host"
+      "bundleIdentifier": "com.nerava.host"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.karibustay.host"
+      "package": "com.nerava.host"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#1A5C3A"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<title>Find stays in Tanzania | KaribuStay</title>
+<title>Find stays in Tanzania | Nerava</title>
 <meta name="description" content="Search verified apartments, hotels, villas and short stays across Tanzania."/>
-<link rel="icon" type="image/png" href="logo3.png"/>
-<link rel="apple-touch-icon" href="logo3.png"/>
+<link rel="icon" type="image/svg+xml" href="nerava-icon.svg"/>
+<link rel="apple-touch-icon" href="nerava-icon.svg"/>
 <link rel="manifest" href="app.webmanifest"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://images.unsplash.com"/>
@@ -28,7 +28,7 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="index.html" aria-label="KaribuStay home"><img src="logo2.png" alt="KaribuStay"/></a>
+  <a class="brand" href="index.html" aria-label="Nerava home"><img src="nerava-logo.svg" alt="Nerava"/></a>
   <nav class="nav-links" aria-label="Main navigation">
     <a class="active" href="listings.html">Explore stays</a>
     <a href="host.html">Become a host</a>
@@ -134,7 +134,7 @@ function normalizeStay(row){
   return {
     ...row,
     id:String(row.id),
-    name:row.name || row.title || 'KaribuStay property',
+    name:row.name || row.title || 'Nerava property',
     type:row.property_type || row.type || 'apartment',
     city:row.city || (row.location || '').split(',').pop()?.trim() || 'Tanzania',
     location:row.location || row.address || row.city || 'Tanzania',
@@ -264,8 +264,8 @@ function closeAuth(){document.getElementById('auth-modal').classList.remove('ope
 function setAuthPane(pane){document.querySelectorAll('.pane').forEach(el=>el.classList.toggle('active',el.id===`auth-pane-${pane}`));document.getElementById('auth-tab-login').classList.toggle('active',pane==='login');document.getElementById('auth-tab-signup').classList.toggle('active',pane==='signup');document.getElementById('auth-title').textContent=pane==='login'?'Welcome back':'Create your account';document.getElementById('auth-subtitle').textContent=pane==='login'?'Sign in to save stays and manage bookings.':'Save places you love and book with confidence.';clearAuthMessage();}
 function setAuthMessage(text,type){const node=document.getElementById('auth-message');node.textContent=text;node.className=`message ${type}`;}
 function clearAuthMessage(){const node=document.getElementById('auth-message');node.textContent='';node.className='message';}
-async function login(){const email=document.getElementById('login-email').value.trim(),password=document.getElementById('login-password').value,button=document.getElementById('login-submit');button.disabled=true;button.textContent='Logging in…';const {error}=await db.auth.signInWithPassword({email,password});button.disabled=false;button.textContent='Log in';if(error){setAuthMessage('❌ '+error.message,'error');return;}closeAuth();showToast('Welcome back to KaribuStay.');}
-async function signup(){const name=document.getElementById('signup-name').value.trim(),email=document.getElementById('signup-email').value.trim(),password=document.getElementById('signup-password').value,button=document.getElementById('signup-submit');button.disabled=true;button.textContent='Creating…';const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}});button.disabled=false;button.textContent='Create account';if(error){setAuthMessage('❌ '+error.message,'error');return;}if(data.session){closeAuth();showToast('Account created. Welcome to KaribuStay!');return;}setAuthMessage('✅ Account created. Please use the email confirmation link, then log in.','success');}
+async function login(){const email=document.getElementById('login-email').value.trim(),password=document.getElementById('login-password').value,button=document.getElementById('login-submit');button.disabled=true;button.textContent='Logging in…';const {error}=await db.auth.signInWithPassword({email,password});button.disabled=false;button.textContent='Log in';if(error){setAuthMessage('❌ '+error.message,'error');return;}closeAuth();showToast('Welcome back to Nerava.');}
+async function signup(){const name=document.getElementById('signup-name').value.trim(),email=document.getElementById('signup-email').value.trim(),password=document.getElementById('signup-password').value,button=document.getElementById('signup-submit');button.disabled=true;button.textContent='Creating…';const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}});button.disabled=false;button.textContent='Create account';if(error){setAuthMessage('❌ '+error.message,'error');return;}if(data.session){closeAuth();showToast('Account created. Welcome to Nerava!');return;}setAuthMessage('✅ Account created. Please use the email confirmation link, then log in.','success');}
 async function signOut(){await db.auth.signOut();document.getElementById('account-menu').classList.remove('open');showToast('You are logged out.');}
 function toggleAccount(){document.getElementById('account-menu').classList.toggle('open');}
 async function toggleSaved(encodedId){const id=decodeURIComponent(encodedId);if(!currentUser){openAuth('login');showToast('Log in to save stays.');return;}if(String(id).startsWith('demo-')){savedIds.has(id)?savedIds.delete(id):savedIds.add(id);showToast(savedIds.has(id)?'Stay saved.':'Removed from saved stays.');applyFilters(false);return;}if(savedIds.has(id)){const {error}=await db.from('favourites').delete().eq('user_id',currentUser.id).eq('listing_id',id);if(error){showToast('Could not update saved stays.');return;}savedIds.delete(id);showToast('Removed from saved stays.');}else{const {error}=await db.from('favourites').insert({user_id:currentUser.id,listing_id:id});if(error){showToast('Could not save this stay.');return;}savedIds.add(id);showToast('Stay saved.');}applyFilters(false);}

@@ -1,7 +1,7 @@
 {
-  "name": "KaribuStay",
-  "short_name": "KaribuStay",
-  "description": "Find and book trusted stays across Tanzania.",
+  "name": "Nerava",
+  "short_name": "Nerava",
+  "description": "Find and book trusted stays across Africa.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
@@ -10,9 +10,9 @@
   "lang": "en-TZ",
   "icons": [
     {
-      "src": "logo3.png",
+      "src": "nerava-icon.svg",
       "sizes": "any",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ],
@@ -20,12 +20,12 @@
     {
       "name": "Find a stay",
       "url": "/listings.html",
-      "icons": [{ "src": "logo3.png", "sizes": "any" }]
+      "icons": [{ "src": "nerava-icon.svg", "sizes": "any" }]
     },
     {
       "name": "My bookings",
       "url": "/bookings.html",
-      "icons": [{ "src": "logo3.png", "sizes": "any" }]
+      "icons": [{ "src": "nerava-icon.svg", "sizes": "any" }]
     }
   ]
 }

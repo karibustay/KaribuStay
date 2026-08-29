@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Property – KaribuStay</title>
-<meta name="description" content="View property details on KaribuStay — Tanzania's trusted accommodation platform."/>
-<meta property="og:title" content="Property – KaribuStay"/>
-<meta property="og:description" content="Book verified accommodation across Tanzania on KaribuStay."/>
-<meta property="og:image" content="https://karibustay.co.tz/og-cover.jpg"/>
+<title>Property – Nerava</title>
+<meta name="description" content="View property details on Nerava — trusted accommodation across Africa."/>
+<meta property="og:title" content="Property – Nerava"/>
+<meta property="og:description" content="Book verified accommodation across Africa on Nerava."/>
+<meta property="og:image" content="https://karibustay.co.tz/nerava-icon.svg"/>
 <meta property="og:url" content="https://karibustay.co.tz/property.html"/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Property – KaribuStay"/>
-<meta name="twitter:description" content="Book verified accommodation across Tanzania on KaribuStay."/>
-<meta name="twitter:image" content="https://karibustay.co.tz/og-cover.jpg"/>
-<link rel="icon" type="image/png" href="logo3.png"/>
-<link rel="apple-touch-icon" href="logo3.png"/>
+<meta name="twitter:title" content="Property – Nerava"/>
+<meta name="twitter:description" content="Book verified accommodation across Africa on Nerava."/>
+<meta name="twitter:image" content="https://karibustay.co.tz/nerava-icon.svg"/>
+<link rel="icon" type="image/svg+xml" href="nerava-icon.svg"/>
+<link rel="apple-touch-icon" href="nerava-icon.svg"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -477,7 +477,7 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
       </div>
     </div>
     <div id="pane-signup" class="apane">
-      <div class="mhdr"><h2>Create account ✨</h2><p>Join KaribuStay — it's free</p><button class="mclose" onclick="closeModal()">✕</button></div>
+      <div class="mhdr"><h2>Create account ✨</h2><p>Join Nerava — it's free</p><button class="mclose" onclick="closeModal()">✕</button></div>
       <div class="mbody">
         <div class="mtabs"><button class="mtab" onclick="openPane('login')">Login</button><button class="mtab active" onclick="openPane('signup')">Sign Up</button></div>
         <div class="mrow">
@@ -533,7 +533,7 @@ footer{background:var(--g1);border-top:1px solid var(--gb);padding:1.5rem 5vw}
   </div>
 </div>
 
-<footer><div class="fbot"><span>© 2026 KaribuStay. All rights reserved.</span><span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span><span>🇹🇿 Tanzania · TZS</span></div></footer>
+<footer><div class="fbot"><span>© 2026 Nerava. All rights reserved.</span><span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span><span>🌍 Africa · TZS</span></div></footer>
 <div class="ftag-bar">Karibu Tanzania, Karibu Nyumbani. ♡</div>
 <div class="ks-toast" id="ks-toast"></div>
 
@@ -611,16 +611,16 @@ async function loadProperty() {
 }
 
 function renderProperty(p) {
-  document.title = p.name + ' – KaribuStay';
+  document.title = p.name + ' – Nerava';
   // Update OG/Twitter meta tags dynamically for sharing
-  const metaDescription = (p.description || 'Book this property on KaribuStay — Tanzania\'s trusted accommodation.').slice(0, 160);
-  const img = p.image_url || 'https://karibustay.co.tz/og-cover.jpg';
+  const metaDescription = (p.description || 'Book this property on Nerava — trusted accommodation across Africa.').slice(0, 160);
+  const img = p.image_url || 'https://karibustay.co.tz/nerava-icon.svg';
   const url = 'https://karibustay.co.tz/property.html?id=' + p.id;
-  document.querySelector('meta[property="og:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', p.name + ' – Nerava');
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', metaDescription);
   document.querySelector('meta[property="og:image"]')?.setAttribute('content', img);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
-  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', p.name + ' – KaribuStay');
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', p.name + ' – Nerava');
   document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', metaDescription);
   document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', img);
   document.querySelector('meta[name="description"]')?.setAttribute('content', metaDescription);
@@ -857,13 +857,13 @@ function bookViaWA() {
   const ci = document.getElementById('bc-in').value || '—';
   const co = document.getElementById('bc-out').value || '—';
   const g  = document.getElementById('bc-guests').value || '1';
-  const msg = `Hi KaribuStay! 👋\n\nI'd like to book:\n*${property?.name}*\n📍 ${property?.location}\n💰 TZS ${Number(property?.price||0).toLocaleString()}/night\n\n📅 Check-in: ${ci}\n📅 Check-out: ${co}\n👥 Guests: ${g}\n\nPlease confirm availability. Asante! 🙏`;
+  const msg = `Hi Nerava! 👋\n\nI'd like to book:\n*${property?.name}*\n📍 ${property?.location}\n💰 TZS ${Number(property?.price||0).toLocaleString()}/night\n\n📅 Check-in: ${ci}\n📅 Check-out: ${co}\n👥 Guests: ${g}\n\nPlease confirm availability. Asante! 🙏`;
   window.open('https://wa.me/255745999918?text=' + encodeURIComponent(msg), '_blank');
 }
 
 /* SHARE */
 function shareWA() {
-  const msg = `Check out this property on KaribuStay: *${property?.name}* in ${property?.location}!\n${window.location.href}`;
+  const msg = `Check out this property on Nerava: *${property?.name}* in ${property?.location}!\n${window.location.href}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 function copyLink() {
@@ -929,7 +929,7 @@ async function doSignup() {
   if (error) { errEl.textContent='❌ '+error.message; errEl.classList.add('show'); return; }
   if (data.session) {
     closeModal();
-    showToast('✅ Account created. Welcome to KaribuStay!');
+    showToast('✅ Account created. Welcome to Nerava!');
     return;
   }
   okEl.classList.add('show');

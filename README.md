@@ -1,9 +1,9 @@
-# KaribuStay
+# Nerava
 
-KaribuStay is being delivered as two connected mobile apps sharing Supabase, plus an admin web workspace:
+Nerava is being delivered as two connected mobile apps sharing Supabase, plus an admin web workspace:
 
-- **KaribuStay** — the native iPhone and Android app for guests. Source: `apps/customer`.
-- **KaribuStay Host** — the native iPhone and Android app for hosts. Source: `apps/host`.
+- **Nerava** — the native iPhone and Android app for guests. Source: `apps/customer`.
+- **Nerava Host** — the native iPhone and Android app for hosts. Source: `apps/host`.
 - **Admin web workspace** — role-protected tools for platform moderation and analytics. Source: `admin.html`.
 
 ## Open locally

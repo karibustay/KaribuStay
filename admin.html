@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KaribuStay – Admin Panel</title>
+<title>Nerava – Admin Panel</title>
 <meta name="robots" content="noindex, nofollow"/>
-<link rel="apple-touch-icon" href="logo3.png"/>
-<link rel="icon" type="image/png" href="logo3.png"/>
+<link rel="apple-touch-icon" href="nerava-icon.svg"/>
+<link rel="icon" type="image/svg+xml" href="nerava-icon.svg"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -238,13 +238,13 @@ tr:hover td{background:#FAFAFA}
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <img src="logo3.png" alt="KaribuStay" onerror="this.style.display='none'"/>
-      <h1>KaribuStay <span>Admin</span></h1>
+      <img src="nerava-logo.svg" alt="Nerava" onerror="this.style.display='none'"/>
+      <h1>Nerava <span>Admin</span></h1>
       <p>Authorised Access Only</p>
     </div>
     <div class="login-field">
       <label for="login-email">Email Address</label>
-      <input type="email" id="login-email" placeholder="admin@karibustay.com" autocomplete="email"/>
+      <input type="email" id="login-email" placeholder="admin@your-email.com" autocomplete="email"/>
     </div>
     <div class="login-field">
       <label for="login-password">Password</label>
@@ -263,7 +263,7 @@ tr:hover td{background:#FAFAFA}
 <div id="main-content">
   <div class="topbar">
     <div class="tb-left">
-      <a href="index.html" class="tb-logo">KaribuStay <span>Admin</span></a>
+      <a href="index.html" class="tb-logo">Nerava <span>Admin</span></a>
       <span class="tb-badge">⚙ Control Panel</span>
       <span class="tb-role" id="admin-role-badge">Admin</span>
     </div>
@@ -753,7 +753,7 @@ function copyInviteLink(){
 }
 
 function shareInviteWA(){
-  const msg = `Habari! 🏡\n\nKaribuStay inakualika kuwa Host.\n\nBonyeza link hii kusajili akaunti yako ya host:\n${currentInviteLink}\n\n_Link inatumika mara moja tu._`;
+  const msg = `Habari! 🏡\n\nNerava inakualika kuwa Host.\n\nBonyeza link hii kusajili akaunti yako ya host:\n${currentInviteLink}\n\n_Link inatumika mara moja tu._`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
@@ -1035,7 +1035,7 @@ function buildEnqCard(e) {
     ? `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Confirm</button><button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
     : e.status === 'confirmed' ? `<button class="btn-decline" onclick="updateEnqStatus('${e.id}','declined')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Decline</button>`
     : `<button class="btn-confirm" onclick="updateEnqStatus('${e.id}','confirmed')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Re-confirm</button>`;
-  const waMsg = phone ? encodeURIComponent(`Hi ${guestName}, your enquiry for *${e.listing_name}* (${e.checkin} → ${e.checkout}) has been ${e.status === 'confirmed' ? '✅ confirmed' : 'received'}. Thank you for choosing KaribuStay!`) : '';
+  const waMsg = phone ? encodeURIComponent(`Hi ${guestName}, your enquiry for *${e.listing_name}* (${e.checkin} → ${e.checkout}) has been ${e.status === 'confirmed' ? '✅ confirmed' : 'received'}. Thank you for choosing Nerava!`) : '';
   const waBtn = phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-wa-enq"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654A11.882 11.882 0 0012 23.448c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0012 0z"/></svg>WhatsApp</a>` : '';
   return `<div class="enq-card" id="enq-${e.id}">
     <div class="enq-card-top">

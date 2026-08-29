@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!;
-const FROM_EMAIL     = 'KaribuStay <info@karibustay.co.tz>';
+const FROM_EMAIL     = 'Nerava <info@karibustay.co.tz>';
 
 serve(async (req) => {
   // CORS preflight
@@ -40,7 +40,7 @@ serve(async (req) => {
     const templates: Record<string, { subject: string; html: string }> = {
 
       confirmation: {
-        subject: `✅ Booking Confirmed – ${propName} | KaribuStay`,
+        subject: `✅ Booking Confirmed – ${propName} | Nerava`,
         html: `
 <!DOCTYPE html>
 <html lang="en">
@@ -124,13 +124,13 @@ serve(async (req) => {
           <p style="font-size:13px;color:#555;line-height:1.7;margin:0 0 8px">
             Questions? Contact us on <a href="https://wa.me/255745999918" style="color:#27a65d;text-decoration:none">WhatsApp</a> or reply to this email.
           </p>
-          <p style="font-size:13px;color:#555;margin:0">Asante sana for choosing KaribuStay! 🌍</p>
+          <p style="font-size:13px;color:#555;margin:0">Asante sana for choosing Nerava! 🌍</p>
         </td></tr>
 
         <!-- FOOTER -->
         <tr><td style="background:#f7faf8;border-top:1px solid #e8ede9;padding:20px 40px;text-align:center">
           <p style="font-size:11px;color:#aaa;margin:0">
-            © ${new Date().getFullYear()} KaribuStay · <a href="https://karibustay.co.tz" style="color:#27a65d;text-decoration:none">karibustay.co.tz</a>
+            © ${new Date().getFullYear()} Nerava · <a href="https://karibustay.co.tz" style="color:#27a65d;text-decoration:none">karibustay.co.tz</a>
             · <a href="https://karibustay.co.tz/bookings.html" style="color:#aaa;text-decoration:none">Manage bookings</a>
           </p>
         </td></tr>
@@ -143,7 +143,7 @@ serve(async (req) => {
       },
 
       cancellation: {
-        subject: `❌ Booking Cancelled – ${propName} | KaribuStay`,
+        subject: `❌ Booking Cancelled – ${propName} | Nerava`,
         html: `
 <!DOCTYPE html>
 <html lang="en">
@@ -171,7 +171,7 @@ serve(async (req) => {
           </p>
         </td></tr>
         <tr><td style="background:#f7faf8;border-top:1px solid #e8ede9;padding:16px 40px;text-align:center">
-          <p style="font-size:11px;color:#aaa;margin:0">© ${new Date().getFullYear()} KaribuStay · <a href="https://karibustay.co.tz" style="color:#27a65d;text-decoration:none">karibustay.co.tz</a></p>
+          <p style="font-size:11px;color:#aaa;margin:0">© ${new Date().getFullYear()} Nerava · <a href="https://karibustay.co.tz" style="color:#27a65d;text-decoration:none">karibustay.co.tz</a></p>
         </td></tr>
       </table>
     </td></tr>

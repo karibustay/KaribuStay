@@ -1,4 +1,4 @@
-# KaribuStay launch checklist
+# Nerava launch checklist
 
 ## Code complete in this repository
 
@@ -25,4 +25,4 @@
 - [ ] In each app folder run `npm run typecheck`, then create Android and iOS preview builds for device testing.
 - [ ] Test the preview builds on physical Android and iPhone devices.
 - [ ] Prepare store screenshots, app description, support email, content rating, privacy/data-safety declarations, and the public privacy policy URL: `https://karibustay.co.tz/privacy.html`.
-- [ ] Build and submit `KaribuStay` and `KaribuStay Host` as two separate store apps.
+- [ ] Build and submit `Nerava` and `Nerava Host` as two separate store apps.

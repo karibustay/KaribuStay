@@ -1,11 +1,11 @@
-# Kutengeneza na Kuweka KaribuStay kwenye Stores
+# Kutengeneza na Kuweka Nerava kwenye Stores
 
 Kuna apps mbili tofauti za kuchapisha:
 
 | App | Watumiaji | Android package / iPhone bundle ID |
 | --- | --- | --- |
-| KaribuStay | Wateja wanaotafuta na kuomba accommodation | `com.karibustay.customer` |
-| KaribuStay Host | Hosts wanaosimamia properties na booking requests | `com.karibustay.host` |
+| Nerava | Wateja wanaotafuta na kuomba accommodation | `com.nerava.customer` |
+| Nerava Host | Hosts wanaosimamia properties na booking requests | `com.nerava.host` |
 
 Admin hatumpeleki App Store au Play Store. Anaendelea kutumia `admin.html` kwenye website yenye login ya admin.
 
@@ -22,8 +22,8 @@ npx eas env:set --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value YOUR_SUPABASE_PUBLI
 Rudia kwa `preview` na `development` au tumia values za mazingira hayo. `EXPO_PUBLIC_` values zinaonekana kwenye app iliyojengwa, kwa hiyo usitumie service-role key au secret nyingine.
 3. Hakikisha database, Supabase storage, na RLS policies vimewekwa kulingana na `Backend Schema.txt`. Tumia accounts za majaribio kujaribu flow nzima: host verification, property approval, booking request, host response, na review.
 4. Weka Supabase Site URL kuwa `https://karibustay.co.tz` na ongeza `https://karibustay.co.tz/reset.html` kwenye Redirect URLs. Weka Custom SMTP kabla ya kutegemea signup au reset emails za wateja.
-5. Privacy Policy na Terms za KaribuStay zipo kwenye `privacy.html` na `terms.html`; zipitie na wakili kabla ya launch. Google na Apple huomba links hizi wakati wa kuwasilisha app.
-6. Fungua Google Play Console na Apple Developer accounts za biashara ya KaribuStay. Taarifa za kisheria, support email, screenshots za apps, na maelezo ya app vitawekwa kwenye accounts hizo.
+5. Privacy Policy na Terms za Nerava zipo kwenye `privacy.html` na `terms.html`; zipitie na wakili kabla ya launch. Google na Apple huomba links hizi wakati wa kuwasilisha app.
+6. Fungua Google Play Console na Apple Developer accounts za biashara ya Nerava. Taarifa za kisheria, support email, screenshots za apps, na maelezo ya app vitawekwa kwenye accounts hizo.
 
 ## Kutengeneza build
 
@@ -48,7 +48,7 @@ npx eas submit --platform android --profile production
 npx eas submit --platform ios --profile production
 ```
 
-KaribuStay na KaribuStay Host zinatumwa kama listings mbili tofauti. Baada ya Google/Apple kukubali ukaguzi wao, watu watazipata kwa kutafuta majina hayo kwenye Play Store na App Store.
+Nerava na Nerava Host zinatumwa kama listings mbili tofauti. Baada ya Google/Apple kukubali ukaguzi wao, watu watazipata kwa kutafuta majina hayo kwenye Play Store na App Store.
 
 ## Kwa maendeleo na majaribio
 

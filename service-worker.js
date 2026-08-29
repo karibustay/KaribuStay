@@ -1,4 +1,4 @@
-const CACHE_NAME = 'karibustay-shell-v3';
+const CACHE_NAME = 'nerava-shell-v1';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -7,8 +7,8 @@ const APP_SHELL = [
   '/bookings.html',
   '/profile.html',
   '/about.html',
-  '/logo2.png',
-  '/logo3.png',
+  '/nerava-logo.svg',
+  '/nerava-icon.svg',
   '/background4.jpeg',
   '/app.webmanifest'
 ];

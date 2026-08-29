@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "KaribuStay",
-    "slug": "karibustay-customer",
+    "name": "Nerava",
+    "slug": "nerava-customer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/karibustay-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.karibustay.customer"
+      "bundleIdentifier": "com.nerava.customer"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.karibustay.customer"
+      "package": "com.nerava.customer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
